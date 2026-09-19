@@ -1,0 +1,9 @@
+{
+  "name": "rogue-edu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Educational 2D turn-based grid game engine (Flask + Canvas). npm is used ONLY for the dev-only jsdom test dependency.",
+  "devDependencies": {
+    "jsdom": "^30.1.0"
+  }
+}
