@@ -1,0 +1,28 @@
+{
+  "required_payload_keys": [
+    "turn",
+    "game_over",
+    "won",
+    "win_condition",
+    "goal_pos",
+    "goal_locked",
+    "active_dialogue",
+    "board_state",
+    "events",
+    "log"
+  ],
+  "required_board_state_keys": [
+    "width",
+    "height",
+    "hero",
+    "villains",
+    "npcs",
+    "walls"
+  ],
+  "required_hero_keys": ["name", "x", "y", "hp", "max_hp", "symbol"],
+  "required_villain_keys": ["name", "x", "y", "hp", "max_hp", "symbol"],
+  "required_npc_keys": ["name", "x", "y", "symbol"],
+  "required_wall_keys": ["x", "y", "symbol"],
+  "required_event_keys": ["beginner_text", "actor", "action", "result", "tile_pos"],
+  "allowed_event_results": ["SUCCESS", "BLOCKED", "MISSED", "WARNING", "INFO"]
+}

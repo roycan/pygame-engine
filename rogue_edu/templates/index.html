@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RogueEdu -- Learn OOP by Building a Game</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <style>
+    #board { image-rendering: pixelated; border: 2px solid #363636; border-radius: 6px; background: #f5f5f5; }
+    .log-list { max-height: 300px; overflow-y: auto; }
+    .log-row { padding: 0.25rem 0.5rem; border-bottom: 1px solid #eee; }
+    .log-row.is-clickable { cursor: pointer; }
+    .log-row.is-clickable:hover { background: #fafafa; }
+    .log-row.selected { background: #ffdd57; font-weight: 600; }
+    .hud-chip { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">RogueEdu</h1>
+      <h2 class="subtitle">Learn OOP by writing <code>Villain</code>, <code>Hero</code> and <code>NPC</code> subclasses.</h2>
+
+      <div class="columns">
+        <!-- ==================== BOARD COLUMN ==================== -->
+        <div class="column is-half">
+          <div class="box">
+            <div class="level">
+              <div class="level-item hud-chip">
+                <span class="tag is-light is-medium">Turn <strong id="hud-turn">&ndash;</strong></span>
+              </div>
+              <div class="level-item hud-chip">
+                <span class="tag is-success is-medium">HP <strong id="hud-hp">&ndash;</strong></span>
+              </div>
+              <div class="level-item hud-chip">
+                <span class="tag is-danger is-medium">Villains Remaining <strong id="hud-villains">&ndash;</strong></span>
+              </div>
+            </div>
+            <div style="position: relative;">
+              <canvas id="board" width="500" height="500"></canvas>
+              <!-- Dialogue overlay: shown while active_dialogue is set. -->
+              <div id="dialogue-box" class="message is-warning is-hidden"
+                   style="position: absolute; left: 8px; right: 8px; bottom: 8px; margin: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+                <div class="message-header" style="cursor: default;">
+                  <p id="dialogue-speaker">???</p>
+                </div>
+                <div class="message-body">
+                  <p id="dialogue-text" style="margin-bottom: 0.25rem;"></p>
+                  <p class="help" style="margin-bottom: 0;">Press any key to close.</p>
+                </div>
+              </div>
+            </div>
+            <p class="help">
+              Controls: <strong>W A S D</strong> move / bump-to-attack / bump-to-talk,
+              <strong>Space</strong> waits. Click a log row to highlight its tile.
+            </p>
+          </div>
+        </div>
+
+        <!-- ==================== SIDE PANEL ==================== -->
+        <div class="column">
+          <!-- API Reference Card (collapsible) -->
+          <details id="api-card" class="message is-info">
+            <summary class="message-header" style="cursor: pointer;">SafeGameView API Reference</summary>
+            <div class="message-body content is-small">
+              <p><strong>get_hero_position()</strong> &rarr; <code>(x, y)</code><br>
+                 <code>hx, hy = view.get_hero_position()</code></p>
+              <p><strong>distance_to_hero(entity)</strong> &rarr; <code>int</code> (Manhattan)<br>
+                 <code>if view.distance_to_hero(self) == 1: ...adjacent!</code></p>
+              <p><strong>get_direction_toward_hero(entity)</strong> &rarr; <code>(dx, dy)</code> in -1/0/1<br>
+                 <code>dx, dy = view.get_direction_toward_hero(self)</code></p>
+              <p><strong>is_tile_passable(x, y)</strong> &rarr; <code>bool</code><br>
+                 <code>if view.is_tile_passable(self.x + dx, self.y + dy): ...</code></p>
+              <p class="has-text-grey">Typos are forgiven: call <code>view.hero_pos()</code> and it suggests
+                 <code>get_hero_position()</code>.</p>
+            </div>
+          </details>
+
+          <!-- Dual-view Turn Log -->
+          <div class="box">
+            <div class="level">
+              <div class="level-left"><strong>Turn Log</strong></div>
+              <div class="level-right">
+                <label class="checkbox">
+                  <input type="checkbox" id="inspector-toggle"> Developer Inspector
+                </label>
+              </div>
+            </div>
+            <ul id="log-list" class="log-list"></ul>
+            <pre id="inspector" class="is-hidden" style="max-height: 300px; overflow-y: auto; font-size: 0.75rem;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Server-rendered initial state: game.js paints the board on load,
+    // BEFORE any keypress (see boot() in game.js).
+    window.__INITIAL_STATE__ = {{ initial_state | tojson }};
+  </script>
+  <script src="/static/game.js" defer></script>
+</body>
+</html>
