@@ -6,6 +6,8 @@ Full specification: [`plans/prompt_v2.md`](plans/prompt_v2.md) · Execution plan
 
 **Teaching with it?** The Grade 9 workshop worksheet lives at [`workshops/workshop_01_meet_the_engine.md`](workshops/workshop_01_meet_the_engine.md), and `make zip` builds the student distribution (`dist/rogue_edu_workshop.zip`).
 
+**Deploying it?** Free hosting paths (PythonAnywhere ZIP upload — never sleeps; Render GitHub flow — push-to-deploy) are in [`DEPLOYING.md`](DEPLOYING.md).
+
 ## Quick start
 
 ```bash
