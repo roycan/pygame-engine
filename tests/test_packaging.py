@@ -21,6 +21,8 @@ def test_selection_includes_essentials():
     rel = relative_selection()
     for needed in (
         "README.md",
+        "DEPLOYING.md",
+        "Procfile",
         "requirements.txt",
         "pytest.ini",
         "Makefile",

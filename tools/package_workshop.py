@@ -25,10 +25,12 @@ INCLUDED_TOP_LEVEL = (
     "tests",
     "workshops",
     "README.md",
+    "DEPLOYING.md",
     "requirements.txt",
     "pytest.ini",
     "Makefile",
     "package.json",
+    "Procfile",
 )
 
 #: Directory names that must never appear inside the ZIP.
