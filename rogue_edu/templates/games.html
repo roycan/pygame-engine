@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RogueEdu -- Class Arcade</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <style>
+    .card { height: 100%; }
+    pre.error-snippet { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">🎮 Class Arcade</h1>
+      <h2 class="subtitle">Pick whose game you want to play. Every card here arrived as a merged pull request.</h2>
+
+      <div class="columns is-multiline">
+        <!-- ==================== STARTER CARD ==================== -->
+        <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+          <div class="card">
+            <div class="card-content">
+              <p class="title is-4">🏁 The Starter Game</p>
+              <p class="subtitle is-6">The class baseline: Sir Ada vs. the Slime.</p>
+            </div>
+            <div class="card-footer">
+              <a href="/" class="card-footer-item">Play</a>
+            </div>
+          </div>
+        </div>
+
+        {% for arena in arenas %}
+        <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+          {% if arena.ok %}
+          <div class="card">
+            <div class="card-content">
+              <p class="title is-4">{{ arena.title }}</p>
+              <p class="subtitle is-6">by <code>{{ arena.slug }}</code></p>
+            </div>
+            <div class="card-footer">
+              <a class="card-footer-item" href="/play/{{ arena.slug }}">Play</a>
+            </div>
+          </div>
+          {% else %}
+          <div class="card has-background-warning-light">
+            <div class="card-content">
+              <p class="title is-4">{{ arena.title }}</p>
+              <p class="subtitle is-6">⚠️ Needs fixing &mdash; the doctor would reject this PR.</p>
+              <pre class="error-snippet is-size-7">{{ arena.error }}</pre>
+            </div>
+            <div class="card-footer">
+              <span class="card-footer-item has-text-grey">Unplayable</span>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <p class="help">
+        Your game here: copy <code>rogue_edu/arenas/_template/</code>, follow
+        <code>rogue_edu/arenas/README.md</code>, pass
+        <code>python check_my_class.py arenas/<your_pair>/game_config</code>,
+        then open a pull request.
+      </p>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RogueEdu -- Arena needs fixing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="message is-warning">
+        <div class="message-header">
+          <p>⚠️ "{{ arena.title }}" needs fixing</p>
+        </div>
+        <div class="message-body">
+          <p>This arena was merged, but its code crashes before a game can start.
+             The pair who owns it can read the error below, fix it in their folder,
+             and open a new pull request.</p>
+          <pre class="is-size-7" style="white-space: pre-wrap; word-break: break-word;">{{ arena.error }}</pre>
+          <p class="help">Tip: run <code>python check_my_class.py arenas/{{ arena.slug }}/game_config</code> &mdash; the doctor explains most failures in plain words.</p>
+        </div>
+      </div>
+      <a class="button is-link" href="/games">← Back to the arcade</a>
+    </div>
+  </section>
+</body>
+</html>

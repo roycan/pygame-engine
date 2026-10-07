@@ -1,68 +1,27 @@
-# Deploying RogueEdu (free options)
+# Deploying RogueEdu (Render + GitHub)
 
-Two free ways to put your game on a real URL. Both are fine; pick by workflow:
-
-| | Path A: **PythonAnywhere** | Path B: **Render** |
-| --- | --- | --- |
-| Accounts needed | PythonAnywhere (email) | GitHub + Render |
-| Upload method | The workshop ZIP (upload in browser) | `git push` |
-| Sleeps? | **Never sleeps** | Sleeps after ~15 min idle (first visitor waits ~30–60 s, then refresh once) |
-| Best for | Grade 9: simplest possible deploy, always-on showcase link | Quarter pairs: real-world push-to-deploy workflow |
+One free path, on purpose — it **teaches the real-world workflow**:
+GitHub fork → branch → pull request → review → merge → automatic
+redeploy. Every merged arena folder appears as a card on the class
+arcade at `/games` about two minutes after its PR merges.
 
 ## Read this first: how the game behaves in the cloud
 
-- The app keeps games **in memory** (the `GAMES` dict). If the server sleeps or restarts, players get a **fresh game** on their next visit — that is the accepted tradeoff for free hosting, and `POST /api/reset` means a reset was always one click anyway.
-- The start command runs **exactly one worker** (`--workers 1`). Two workers would keep two separate memory worlds, and players' keypresses would land in different games. Never "fix" slowness by raising workers on a free tier.
+- The app keeps games **in memory** (the `GAMES` dict). If the server
+  sleeps or restarts, players get a **fresh game** on their next visit —
+  the accepted tradeoff for free hosting, and `POST /api/reset` means a
+  reset was always one click anyway.
+- The start command runs **exactly one worker** (`--workers 1`). Two
+  workers would keep two separate memory worlds, and players'
+  keypresses would land in different games. Never "fix" slowness by
+  raising workers on a free tier.
+- Before merging a student PR: the CI check
+  (`.github/workflows/tests.yml`) must be green, and the pair must have
+  run the doctor locally.
 
----
+## One-time setup (teacher, ~20 minutes)
 
-## Path A: PythonAnywhere (ZIP upload, ~15 minutes, no GitHub)
-
-You need: the `rogue_edu_workshop.zip` from your teacher (or `make zip`), and a free account at [pythonanywhere.com](https://www.pythonanywhere.com) (no credit card).
-
-1. **Upload the ZIP.** On your PythonAnywhere dashboard open the **Files** tab → *Upload a file* → choose `rogue_edu_workshop.zip` (it lands in your home folder).
-2. **Unzip it.** Open a **Bash console** (Consoles tab) and run:
-
-       unzip rogue_edu_workshop.zip
-
-   You now have a `rogue_edu_workshop` folder in your home directory.
-3. **Create the virtual environment and install dependencies** (in the same console):
-
-       cd ~/rogue_edu_workshop
-       python3 -m venv venv
-       venv/bin/pip install -r requirements.txt
-
-4. **Create the web app.** Go to the **Web** tab → *Add a new web app* → next → **Manual configuration** → pick the newest Python → Create.
-5. **Point it at your code.** Still on the Web tab:
-   - *Source directory*: `/home/YOUR_USERNAME/rogue_edu_workshop/rogue_edu`
-   - *Virtualenv*: `/home/YOUR_USERNAME/rogue_edu_workshop/venv`
-6. **Edit the WSGI file.** Near the top of the Web tab there is a link like `/var/www/YOUR_USERNAME_pythonanywhere_com_wsgi.py`. Open it, delete the demo content, and put in:
-
-   ```python
-   import os
-   import sys
-
-   path = "/home/YOUR_USERNAME/rogue_edu_workshop/rogue_edu"
-   if path not in sys.path:
-       sys.path.insert(0, path)
-
-   os.environ.setdefault("SECRET_KEY", "change-me-to-a-long-random-string")
-
-   from app import app as application
-   ```
-
-   (Replace both `YOUR_USERNAME`s. The `SECRET_KEY` line is what makes per-browser game sessions work.)
-7. **Reload.** Click the big green **Reload** button on the Web tab, then open `https://YOUR_USERNAME.pythonanywhere.com`. Play.
-
-**Updating your game later:** edit files in the Files tab (or re-upload the ZIP and `unzip -o`), then click **Reload** on the Web tab. No sleep, no cold start — your link works for anyone, any time.
-
----
-
-## Path B: Render (GitHub push-to-deploy, ~20 minutes)
-
-You need: this repo pushed to a **GitHub** account, and a free account at [render.com](https://render.com).
-
-1. **Push the project to GitHub** (from the repo root, one time):
+1. **Push this repo to GitHub** as the class repo (from the repo root):
 
        git init
        git add .
@@ -71,20 +30,48 @@ You need: this repo pushed to a **GitHub** account, and a free account at [rende
        git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
        git push -u origin main
 
-2. On Render: **New + → Web Service** → connect your GitHub account → pick the repo.
+2. On [render.com](https://render.com): **New + → Web Service** →
+   connect your GitHub account → pick the repo.
 3. Configure:
    - **Runtime**: Python 3
    - **Build command**: `pip install -r requirements.txt`
    - **Start command**: `gunicorn --chdir rogue_edu app:app --workers 1 --threads 4 --bind 0.0.0.0:$PORT`
-     (A `Procfile` with the same command already lives in the repo — Render will find it.)
-   - **Environment variable**: `SECRET_KEY` = any long random string.
-4. **Create Web Service.** The first build takes a minute; Render gives you a `https://YOUR-APP.onrender.com` URL.
-5. **Updating:** edit code → `git push` → Render rebuilds and redeploys automatically. That loop is the real-world skill.
+     (a `Procfile` with the same command already lives in the repo — Render finds it)
+   - **Environment variable**: `SECRET_KEY` = any long random string
+4. **Create Web Service.** The first build takes a minute; Render gives
+   you a `https://YOUR-APP.onrender.com` URL. Open `/games` on that URL —
+   that is the class arcade.
 
-**Sleep note:** on the free tier the service spins down after ~15 idle minutes. The first visitor waits a few seconds (they may need one refresh), then it is awake again. Games do not survive the nap — a fresh board is waiting.
+## The student loop (Weeks 5–6)
 
----
+1. **Fork** the class repo on GitHub — the fork is their copy where
+   they have write permission.
+2. **Clone** the fork on the lab computer (HTTPS + Git Credential
+   Manager), create a branch, edit **their own folder** under
+   `rogue_edu/arenas/<their_pair>/`, run the doctor, commit, push.
+3. **Open a pull request** (fork → class repo). CI runs the full test
+   gate on the PR; a classmate leaves one review comment.
+4. **Merge.** Render redeploys automatically. **Sync fork** (the GitHub
+   button) keeps a student's fork current with the class repo.
+5. Everyone refreshes `/games` — the new card is on the class arcade.
+   Say it out loud: *your commit is now running in production.*
+
+## Sleep note
+
+On the free tier the service spins down after ~15 idle minutes. The
+first visitor waits a few seconds (they may need one refresh), then it
+is awake again. Games do not survive the nap — a fresh board is
+waiting. Present this as a fact of free hosting, not a failure.
+
+## Smoke-checking a deploy
+
+From the repo root: `make smoke` boots the real server locally and
+probes every page (`/`, `/games`, `/play/sample_pair`, the step API).
+Run it before pushing or after a suspicious merge. It is deliberately
+NOT part of `make test` — process flakiness must never break the gate.
 
 ## Local development is unchanged
 
-Windows students keep using `venv\Scripts\python rogue_edu\app.py` — gunicorn is Linux-only and is only ever executed by the hosting platform, never on your laptop.
+Windows students keep using `venv\Scripts\python rogue_edu\app.py` —
+gunicorn is Linux-only and is only ever executed by the hosting
+platform, never on your laptop.

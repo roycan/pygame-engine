@@ -2,10 +2,12 @@ __pycache__/
 *.pyc
 .pytest_cache/
 node_modules/
-package-lock.json
 venv/
 .venv/
 temp/
 inceptions/
 dist/
 tools/__pycache__/
+
+# NOTE: package-lock.json is deliberately NOT ignored -- CI runs `npm ci`
+# and needs the committed lockfile (guarded by tests/test_ci.py).

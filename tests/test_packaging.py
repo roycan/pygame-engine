@@ -26,6 +26,7 @@ def test_selection_includes_essentials():
         "requirements.txt",
         "pytest.ini",
         "Makefile",
+        "package.json",
         "rogue_edu/app.py",
         "rogue_edu/engine/core.py",
         "rogue_edu/student_starter/classes.py",
@@ -34,6 +35,14 @@ def test_selection_includes_essentials():
         "rogue_edu/demos/demo_dungeon/game_config.py",
         "rogue_edu/static/game.js",
         "workshops/workshop_01_meet_the_engine.md",
+        # The class arcade scaffold ships so Week 5 pairs see where
+        # their folder goes (the _template is invisible to the menu).
+        "rogue_edu/arenas/README.md",
+        "rogue_edu/arenas/_template/classes.py",
+        "rogue_edu/arenas/_template/game_config.py",
+        "rogue_edu/arenas/sample_pair/classes.py",
+        "rogue_edu/arenas/sample_pair/game_config.py",
+        "rogue_edu/templates/games.html",
     ):
         assert needed in rel, f"workshop ZIP must include {needed!r}"
 

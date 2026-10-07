@@ -8,6 +8,10 @@
  *     pass a stub context and assert draw calls -- no pixels required.
  *   - boot() wires the DOM; it exits early when no 2D canvas exists
  *     (e.g. under jsdom), which keeps requiring this file side-effect-safe.
+ *   - submitKey(key) is the ONE input seam: the keyboard listener AND
+ *     the on-screen D-pad (via synthetic KeyboardEvents) both reach it.
+ *     An in-flight guard (_busy) drops duplicate taps/keys so key spam
+ *     can never fire concurrent POSTs against the server's engine.
  */
 "use strict";
 
@@ -169,6 +173,7 @@ function appendLogRow(list, text, tilePos) {
 let _ctx = null;
 let _cell = 50;
 let _lastPayload = null;
+let _busy = false; // one input request in flight at a time (see submitKey)
 
 function update(payload) {
   _lastPayload = payload;
@@ -229,6 +234,34 @@ function highlightFromLog(rowEl) {
   );
 }
 
+/** The ONE input seam: both the keyboard listener and the on-screen
+ * D-pad (synthetic KeyboardEvents) end here. The _busy guard means key
+ * spam or a double-tap fires at most ONE POST per turn -- concurrent
+ * steps against the server's engine are impossible by construction.
+ * Cleared in .finally(), so even a failed request unlocks input. */
+function submitKey(key) {
+  if (_busy) return; // a request is already in flight: drop duplicates
+  const intent = handleKey(key, _lastPayload);
+  if (intent === null) return; // game over (or pre-first-paint): locked
+  if (typeof fetch === "undefined") return; // non-browser environment
+  _busy = true;
+  fetch("/api/step", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key: key }),
+  })
+    .then(function (res) {
+      return res.json();
+    })
+    .then(update)
+    .catch(function () {
+      /* server unreachable; keep the last known board */
+    })
+    .finally(function () {
+      _busy = false;
+    });
+}
+
 function boot() {
   const canvas = typeof document !== "undefined" ? document.getElementById("board") : null;
   if (!canvas || !canvas.getContext) return;
@@ -249,26 +282,13 @@ function boot() {
   document.addEventListener("keydown", function (ev) {
     const key = ev.code === "Space" ? "space" : (ev.key || "").toLowerCase();
     if (["w", "a", "s", "d", "space"].indexOf(key) === -1) return;
-    const intent = handleKey(key, _lastPayload);
-    if (intent === null) return; // game over: input locked
     ev.preventDefault();
-    fetch("/api/step", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: key }),
-    })
-      .then(function (res) {
-        return res.json();
-      })
-      .then(update)
-      .catch(function () {
-        /* server unreachable; keep the last known board */
-      });
+    submitKey(key);
   });
 
   // First paint: render the server-embedded state immediately so the
   // board is never blank. This also seeds _lastPayload, which the
-  // keydown gate requires before accepting input.
+  // input gate requires before accepting input.
   if (typeof window !== "undefined" && window.__INITIAL_STATE__) {
     update(window.__INITIAL_STATE__);
   }
@@ -293,5 +313,7 @@ if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
     renderLogs: renderLogs,
     highlightEventTile: highlightEventTile,
     updateDialogue: updateDialogue,
+    update: update,
+    submitKey: submitKey,
   };
 }
