@@ -149,18 +149,9 @@ Assessment is built in: the checker's output, the working game itself, and two r
 
 ---
 
-## 7. Deployment — free, and a genuine lesson in itself
+## 7. Deployment — Render + GitHub, because it IS the lesson
 
-Both paths cost nothing and are documented step-by-step in [`DEPLOYING.md`](DEPLOYING.md:1).
-
-| | Path A: **PythonAnywhere** | Path B: **Render** |
-| --- | --- | --- |
-| Workflow | Upload the workshop ZIP in a browser | `git push` from GitHub |
-| Time | ~15 minutes | ~20 minutes |
-| Sleeps? | **Never** — always-on showcase link | Sleeps after ~15 idle minutes; first visitor refreshes once |
-| Best for | Grade 9: simplest deploy, shareable link | Quarter pairs: real push-to-deploy habit |
-
-**The Render flow is the career-relevant one**, and it is four moves: push the repo to GitHub, create a Web Service on render.com, set the start command (a [`Procfile`](Procfile:1) with the exact command already lives in the repo), add one environment variable (`SECRET_KEY` = any long random string). From then on, *every* `git push` auto-redeploys — edit → push → live URL. That loop is the real-world skill, and students can genuinely own it.
+One path, documented step-by-step in [`DEPLOYING.md`](DEPLOYING.md:1): push the class repo to GitHub, create a Web Service on render.com, set the start command (a [`Procfile`](Procfile:1) with the exact command already lives in the repo), add one environment variable (`SECRET_KEY` = any long random string). From then on, *every* merge of a student pull request auto-redeploys — fork → PR → merge → the class arcade at `/games` updates. That loop is the real-world skill, and students can genuinely own it. (The old ZIP-upload path was retired on purpose: teaching one real workflow beats teaching two.)
 
 **Two honest limitations to state up front** (they are features of free hosting, not bugs, and both are already handled):
 
@@ -180,13 +171,13 @@ The engine validates every returned action; bad stats are clamped *with a warnin
 No. Attack damage is computed from sanitized `attack_power` (0–40) engine-side; movement happens only through validated intents; the `view` given to `act()` is read-only. Overrides of the damage method exist for flavor (critical hits) but are never trusted.
 
 **"How much do I need to understand before teaching it?"**
-Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) (77 lines) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) (54 lines) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by **151 automated tests** (`make test`), including end-to-end golden scenarios, so its behavior is pinned.
+Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) (77 lines) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) (54 lines) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by the full automated gate (`make test` — 185 pytest + 21 node tests at last count), including end-to-end golden scenarios, so its behavior is pinned.
 
 **"What does a multi-week unit look like?"**
 Week 1: workshop (`make zip` builds the ready-to-distribute [`dist/rogue_edu_workshop.zip`](tools/package_workshop.py:1); Windows setup walkthrough included). Weeks 2–3: the edit→check→play loop toward a tiered goal. Week 4: deploy to Render, then a play-day where students try each other's games and explain each other's villain AI — explaining the AI *is* the code review.
 
 **"How do I prove it works before standing up in front of a class?"**
-Clone it, run `make test` (151 tests green), run the checker, run `python app.py`, play. Ten minutes, and you have personally verified every claim in this guide.
+Clone it, run `make test` (the whole gate green), run the checker, run `python app.py`, open `/games`, play. Ten minutes, and you have personally verified every claim in this guide.
 
 ---
 
@@ -194,14 +185,28 @@ Clone it, run `make test` (151 tests green), run the checker, run `python app.py
 
 ```text
 TEACHER_GUIDE.md            ← you are here
-README.md                   ← quick start + 8-point visual checklist (canvas gate)
-DEPLOYING.md                ← PythonAnywhere + Render, step by step
+README.md                   ← quick start + manual visual checklist (incl. mobile points)
+DEPLOYING.md                ← Render + GitHub, step by step
 workshops/                  ← the 90-minute student worksheet + answer key
-rogue_edu/student_starter/  ← THE two files students edit
+rogue_edu/student_starter/  ← THE two files students edit (Weeks 1–4)
+rogue_edu/arenas/           ← the class arcade: _template + sample_pair + one folder per pair
 rogue_edu/demos/            ← read-only worked example (three villain AIs)
-rogue_edu/engine/           ← the black box students never edit (151 tests guard it)
-rogue_edu/check_my_class.py ← the code doctor students run after every edit
-Makefile                    ← make test (the gate) · make zip (the student distribution)
+rogue_edu/engine/           ← the black box students never edit (the test gate guards it)
+rogue_edu/check_my_class.py ← the code doctor (also checks pair arenas + TITLE)
+Makefile                    ← make test (the gate) · make zip (Workshop 01) · make smoke (live check)
 ```
 
-The pitch to your students writes itself: *"You write two Python files. You get an RPG game on the internet."*
+The pitch to your students writes itself: *"You write two Python files. You get an RPG game on the internet — with a menu card next to all your classmates' games."*
+
+---
+
+## 10. The class arcade (`/games`)
+
+Every merged folder under [`rogue_edu/arenas/`](rogue_edu/arenas/README.md:1) becomes a playable card on the deployed site's `/games` page — auto-discovered, no registration, no shared file to edit, so pull requests never conflict on anyone else's code. What you should know as the teacher:
+
+- **The recipe lives in [`rogue_edu/arenas/README.md`](rogue_edu/arenas/README.md:1)**: copy `_template/`, rename the folder (lowercase/underscores — it becomes the URL), set `TITLE`, compose the game, pass the doctor, PR.
+- **The gate is the doctor**: `python check_my_class.py arenas/<pair>/game_config` checks the pair's classes AND that `TITLE` is set (it names their menu card).
+- **Broken arenas cannot break the site.** Discovery is fail-soft: a folder that cannot build its game shows a yellow "needs fixing" card *with the error printed on it* — send the pair to read their own production error; that is real debugging, in public, with training wheels.
+- **One URL serves the whole class**: sessions are per-browser-cookie and the deployment pins `--workers 1`, so every visitor gets a private game while sharing the arcade.
+- **CI guards the merges**: [`.github/workflows/tests.yml`](.github/workflows/tests.yml:1) runs the full gate on every PR — merge green PRs only, and the arcade stays healthy.
+- **Local live check**: `make smoke` boots the real server and probes every page. It is deliberately outside `make test` so it can never flake the gate.

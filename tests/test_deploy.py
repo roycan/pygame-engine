@@ -1,8 +1,9 @@
 """D-gates: deployment artifacts exist and are correctly configured.
 
-These lock in the three things a free host needs from us: a production
-server in requirements, a start command that is SAFE for our in-memory
-game state (one worker!), and documentation covering both platforms.
+These lock in the things a free host needs from us: a production server
+in requirements, a start command that is SAFE for our in-memory game
+state (one worker!), and documentation for the ONE workflow the class
+teaches: GitHub fork -> PR -> merge -> Render auto-redeploy.
 """
 
 import importlib.util
@@ -40,16 +41,25 @@ def test_app_reads_secret_key_from_environment():
     assert 'os.environ.get("SECRET_KEY"' in source
 
 
-def test_deploying_doc_covers_both_platforms():
+def test_deploying_doc_covers_the_render_workflow():
     doc = (REPO / "DEPLOYING.md").read_text(encoding="utf-8").lower()
     for needle in (
-        "pythonanywhere",
         "render",
-        "unzip rogue_edu_workshop.zip",
-        "gunicorn --chdir rogue_edu",
+        "github",
+        "sync fork",
         "secret_key",
-        "reload",
-        "workers",
         "sleep",
+        "pull request",
+        "/games",
     ):
         assert needle in doc, f"DEPLOYING.md missing: {needle!r}"
+    # The PythonAnywhere ZIP-upload path was retired: the class teaches
+    # ONE real-world workflow (fork -> PR -> merge -> auto-deploy).
+    assert "pythonanywhere" not in doc, (
+        "retired platform still documented -- teach one workflow, not two"
+    )
+
+
+def test_deploying_doc_keeps_the_single_worker_warning():
+    doc = (REPO / "DEPLOYING.md").read_text(encoding="utf-8")
+    assert "--workers 1" in doc, "the one-worker warning is load-bearing"

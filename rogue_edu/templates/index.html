@@ -6,19 +6,28 @@
   <title>RogueEdu -- Learn OOP by Building a Game</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
   <style>
-    #board { image-rendering: pixelated; border: 2px solid #363636; border-radius: 6px; background: #f5f5f5; }
+    /* Phone-first: the canvas keeps its 500x500 internal resolution
+       (renderer math is untouched) but scales down to any screen. */
+    #board { image-rendering: pixelated; border: 2px solid #363636; border-radius: 6px; background: #f5f5f5; max-width: 100%; height: auto; }
     .log-list { max-height: 300px; overflow-y: auto; }
     .log-row { padding: 0.25rem 0.5rem; border-bottom: 1px solid #eee; }
     .log-row.is-clickable { cursor: pointer; }
     .log-row.is-clickable:hover { background: #fafafa; }
     .log-row.selected { background: #ffdd57; font-weight: 600; }
     .hud-chip { margin-right: 1rem; }
+    /* Touch controls: hidden on desktop keyboards, shown on phones
+       (coarse pointers) and narrow screens. >=44px tap targets. */
+    #dpad { display: none; margin-top: 0.75rem; }
+    @media (pointer: coarse), (max-width: 768px) {
+      #dpad { display: flex; }
+    }
+    #dpad .button { min-width: 56px; min-height: 44px; font-size: 1.25rem; }
   </style>
 </head>
 <body>
   <section class="section">
     <div class="container">
-      <h1 class="title">RogueEdu</h1>
+      <h1 class="title">{{ arena_title or "RogueEdu" }}</h1>
       <h2 class="subtitle">Learn OOP by writing <code>Villain</code>, <code>Hero</code> and <code>NPC</code> subclasses.</h2>
 
       <div class="columns">
@@ -52,8 +61,19 @@
             </div>
             <p class="help">
               Controls: <strong>W A S D</strong> move / bump-to-attack / bump-to-talk,
-              <strong>Space</strong> waits. Click a log row to highlight its tile.
+              <strong>Space</strong> waits. On a phone, use the buttons below the board.
+              Click a log row to highlight its tile.
             </p>
+            <!-- Touch controls: they dispatch REAL KeyboardEvents, so the
+                 buttons ride the exact same input path as WASD -- there is
+                 no second copy of the game-input logic. -->
+            <div id="dpad" class="buttons is-centered" role="group" aria-label="Touch controls">
+              <button id="pad-up" class="button" data-key="w" aria-label="Move up">▲</button>
+              <button id="pad-left" class="button" data-key="a" aria-label="Move left">◀</button>
+              <button id="pad-wait" class="button" data-key=" " data-code="Space" aria-label="Wait one turn">💤</button>
+              <button id="pad-right" class="button" data-key="d" aria-label="Move right">▶</button>
+              <button id="pad-down" class="button" data-key="s" aria-label="Move down">▼</button>
+            </div>
           </div>
         </div>
 
@@ -89,6 +109,8 @@
             <ul id="log-list" class="log-list"></ul>
             <pre id="inspector" class="is-hidden" style="max-height: 300px; overflow-y: auto; font-size: 0.75rem;"></pre>
           </div>
+
+          <a href="/games" class="button is-light is-small">🎮 Back to the arcade</a>
         </div>
       </div>
     </div>
@@ -98,6 +120,16 @@
     // Server-rendered initial state: game.js paints the board on load,
     // BEFORE any keypress (see boot() in game.js).
     window.__INITIAL_STATE__ = {{ initial_state | tojson }};
+    // On-screen D-pad: dispatch real keyboard events so the touch buttons
+    // ride the exact same input path as WASD (no duplicated logic).
+    document.querySelectorAll('#dpad button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.dispatchEvent(new KeyboardEvent('keydown', {
+          key: btn.getAttribute('data-key'),
+          code: btn.getAttribute('data-code') || ''
+        }));
+      });
+    });
   </script>
   <script src="/static/game.js" defer></script>
 </body>

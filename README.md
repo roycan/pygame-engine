@@ -6,7 +6,7 @@ Full specification: [`plans/prompt_v2.md`](plans/prompt_v2.md) · Execution plan
 
 **Teaching with it?** The Grade 9 workshop worksheet lives at [`workshops/workshop_01_meet_the_engine.md`](workshops/workshop_01_meet_the_engine.md), and `make zip` builds the student distribution (`dist/rogue_edu_workshop.zip`).
 
-**Deploying it?** Free hosting paths (PythonAnywhere ZIP upload — never sleeps; Render GitHub flow — push-to-deploy) are in [`DEPLOYING.md`](DEPLOYING.md).
+**Deploying it?** The class site runs free on **Render** with GitHub push-to-deploy: fork → PR → merge → the class arcade at `/games` redeploys automatically. Details in [`DEPLOYING.md`](DEPLOYING.md).
 
 ## Quick start
 
@@ -16,7 +16,7 @@ python3 -m venv venv
 venv/bin/pip install -r requirements.txt
 npm install --save-dev jsdom        # dev-only, used by the canvas tests
 
-# 2) run the automated gate (114 pytest + 11 node tests)
+# 2) run the automated gate (pytest + jsdom; `npm test` runs the same suite)
 make test
 
 # 3) check your student classes, then play
@@ -29,6 +29,12 @@ Play the finished worked-example dungeon instead:
 
 ```bash
 GAME_CONFIG_MODULE=demos.demo_dungeon.game_config python app.py
+```
+
+Or open the **class arcade** — one card per student pair, plus the starter:
+
+```bash
+python app.py    # then open http://127.0.0.1:5000/games
 ```
 
 ## How students use it
@@ -46,6 +52,7 @@ GAME_CONFIG_MODULE=demos.demo_dungeon.game_config python app.py
 | `W A S D` | move; into a villain = attack; into an NPC = dialogue (villains freeze that turn) |
 | `Space` | wait (pass the turn) |
 | any key | dismisses open dialogue for free (no turn passes) |
+| D-pad buttons | phone/tablet: the on-screen pad sends the same W/A/S/D/Space inputs |
 
 ## Manual visual checklist (formal Phase 6 exit gate)
 
@@ -59,6 +66,9 @@ Automated tests cover renderer *logic* via a stub canvas; pixels need eyes. Open
 6. [ ] Bumping the NPC opens the yellow dialogue box over the board (speaker name + "press any key to close"), villains visibly freeze, and any key dismisses it without the turn counter advancing.
 7. [ ] Clicking a clickable log row draws a dashed red outline around the referenced tile and highlights the row.
 8. [ ] Toggling **Developer Inspector** shows raw event JSON; the goal tile shows 🏆 (or 🔒 in `clear_and_reach_goal` while villains live); victory/defeat locks the keyboard.
+9. [ ] On a phone-width window the board scales down and stays fully visible (no horizontal scroll).
+10. [ ] The D-pad appears under the board on a touch/small screen and each button moves the hero.
+11. [ ] `/games` shows the starter plus every arena as a card; on a phone the cards stack in one column, and a broken arena shows a yellow "needs fixing" card instead of breaking the menu.
 
 ## Project layout
 
@@ -70,6 +80,7 @@ rogue_edu/
 │   ├── view.py        #   SafeGameView: read-only snapshot + difflib typo catcher
 │   └── core.py        #   GameEngine: turn loop, loud validation, turn JSON
 ├── student_starter/   # classes.py (edit me) + game_config.py (compose me)
+├── arenas/            # the class arcade: one folder per pair, _template + sample_pair
 ├── demos/demo_dungeon/# read-only worked example
 ├── check_my_class.py  # student diagnostic
 ├── app.py             # Flask server (sessions, /api/step, /api/reset)

@@ -2,7 +2,12 @@
   "name": "rogue-edu",
   "version": "1.0.0",
   "private": true,
-  "description": "Educational 2D turn-based grid game engine (Flask + Canvas). npm is used ONLY for the dev-only jsdom test dependency.",
+  "description": "Educational 2D turn-based grid game engine (Flask + Canvas). npm is used ONLY for the dev-only jsdom test dependency. `npm test` runs the FULL gate (pytest + node --test) with parity to `make test`.",
+  "scripts": {
+    "test": "npm run test:py && npm run test:js",
+    "test:py": "venv/bin/pytest -q tests/",
+    "test:js": "node --test tests/js/*.test.js"
+  },
   "devDependencies": {
     "jsdom": "^30.1.0"
   }

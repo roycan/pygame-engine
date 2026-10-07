@@ -186,7 +186,7 @@ Debrief: the engine never *trusts* student code, and it never *fails silently*. 
 | --- | --- |
 | 0–15 | **Open the PR** (fork → upstream): what a **diff** shows (green/red lines = your commit made visible); write a description that names *what* and *why*. |
 | 15–30 | **Review day:** every student leaves one comment on a classmate's PR. Comment standard: *name a line + say why* ("line 48: the flee threshold uses `>=`; did you mean `>`?" or a genuine praise-with-reason). Approve or request changes. |
-| 30–45 | **THE MONEY MOMENT:** teacher merges one PR live → the class Render URL redeploys automatically → everyone refreshes and plays *that student's* monster on the shared deployment. (Sessions are per-browser-cookie and the Procfile pins `--workers 1`, so one URL serves the whole class with a private game each.) Say it out loud: *your commit is now running in production.* |
+| 30–45 | **THE MONEY MOMENT:** teacher merges one PR live → the class Render URL redeploys automatically → everyone refreshes `/games` and plays *that student's* card on the class arcade. (Sessions are per-browser-cookie and the Procfile pins `--workers 1`, so one URL serves the whole class with a private game each.) Say it out loud: *your commit is now running in production.* |
 
 ### Meeting 6.2 (45 min) — The full cycle, solo, from an issue
 
@@ -208,26 +208,31 @@ Debrief: the engine never *trusts* student code, and it never *fails silently*. 
 
 ---
 
-## 7) Optional prep — pair-owned files (recommended before Week 5)
+## 7) Optional prep — pair-owned arena folders (recommended before Week 5)
 
-Restructure the student starter so merge conflicts become nearly impossible:
+Superseded design note: this section originally proposed a `cast/` folder of per-pair *files* imported by one shared `game_config.py`. The shipped design goes further — **one folder per pair**, and every folder is a complete playable game that the deployed site auto-discovers:
 
 ```text
-rogue_edu/student_starter/
-    classes.py            ← stays as the taught example (Weeks 1–4)
-    cast/                 ← NEW: one file per pair, created by the teacher
-        __init__.py
-        ada_and_ivo.py    ← that pair's monsters, their file, their PRs
-        miguel_and_kim.py
+rogue_edu/arenas/
+    README.md            ← the pair recipe (copy → rename → doctor → PR)
+    _template/           ← the scaffold pairs copy (invisible to the menu)
+        classes.py / game_config.py
+    sample_pair/         ← the shipped worked example (a merged PR in folder form)
+    ada_and_ivo/         ← that pair's arena: their folder, their PRs
+    miguel_and_kim/
 ```
 
-Each pair's file defines their classes; [`game_config.py`](../rogue_edu/student_starter/game_config.py) imports them by name (a one-line change per merge, done by whoever merges). PRs then touch only the pair's own file → conflicts essentially never happen, and *ownership* is visible in the repo — which is itself an encapsulation lesson at the project scale.
+Each folder carries `classes.py` + `game_config.py` (with a `TITLE` naming its menu card). The app **auto-scans** `arenas/` — no registry, no shared file — so a PR touches *only* the pair's own folder → conflicts essentially never happen, and ownership is visible in the repo, which is itself an encapsulation lesson at project scale. Discovery is **fail-soft**: a broken arena renders as a yellow "needs fixing" card on [`/games`](../rogue_edu/templates/games.html) with the error printed on it — a live debugging exhibit — while the menu itself never breaks. The PR gate:
+
+    python check_my_class.py arenas/ada_and_ivo/game_config
+
+The Week 6 "money moment" upgrades accordingly: merge → Render redeploys → the pair's card appears on the class arcade for everyone to play. Full spec: [`class_arcade_plan.md`](class_arcade_plan.md).
 
 ---
 
-## 8) Optional enhancement — CI on pull requests
+## 8) CI on pull requests (shipped)
 
-The repo already carries a full test suite ([`make test`](../Makefile): 138 pytest + 13 node at last count). A single GitHub Actions workflow (`.github/workflows/tests.yml`) running pytest on every PR would give students a **red/green X on their own PR** — authentic CI with zero extra teaching (the checks tab is read, not written). Worth adding before Week 5; it also automates caution #2 in §6.
+The repo carries a full test suite (`make test` == `npm test`). [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) now runs that exact gate on every PR and on pushes to `main`, giving students a **red/green X on their own PR** — authentic CI with zero extra teaching (the checks tab is read, not written). This automates caution #2 in §6: the teacher merges only green PRs, so a bad merge can no longer break the class game (and a broken arena, if it ever slips through, shows as a "needs fixing" card rather than breaking the [`/games`](../rogue_edu/templates/games.html) menu).
 
 ---
 

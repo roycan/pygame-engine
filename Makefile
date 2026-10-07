@@ -1,9 +1,9 @@
-# RogueEdu test gate — run with: make test
+# RogueEdu test gate — run with: make test   (full parity: npm test)
 # The project venv (python3 -m venv venv; venv/bin/pip install -r requirements.txt)
 # keeps the gate reproducible regardless of system Python state.
 # NOTE: recipe lines below MUST start with TAB characters.
 
-.PHONY: test zip
+.PHONY: test zip smoke
 
 test:
 	venv/bin/pytest -q tests/
@@ -11,3 +11,7 @@ test:
 
 zip:
 	venv/bin/python tools/package_workshop.py
+
+# Out-of-gate live check (boots the real server; never runs in make test):
+smoke:
+	venv/bin/python tools/smoke_deploy.py

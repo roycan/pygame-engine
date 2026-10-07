@@ -3,13 +3,18 @@
 
 Run it from the rogue_edu/ folder after every edit:
 
-    python check_my_class.py
+    python check_my_class.py                            # the starter file
+    python check_my_class.py arenas/ada_and_ivo/game_config   # a pair's arena
 
-It reads student_starter/classes.py and checks:
+With no argument it reads student_starter/classes.py and checks:
   1. your classes inherit from Hero, Villain or NPC,
   2. the required methods exist (act / interact / symbol),
   3. act() and interact() actually RETURN valid Actions when called
      against a mock read-only view.
+
+Given an arena's game_config (a path or a dotted module name), it checks
+the sibling classes module the same way AND verifies that TITLE is set
+(it names your card on the /games class arcade).
 
 You get [PASS]/[WARN]/[FAIL] lines with friendly fixes -- never a raw
 Python traceback. Exit code is 1 if any [FAIL] was printed (handy for
@@ -300,11 +305,60 @@ def format_findings(findings: list[Finding]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    print("Checking student_starter/classes.py ...\n")
-    print(format_findings(inspect_classes()))
-    fails = sum(1 for f in inspect_classes() if f.level == "FAIL")
-    return 1 if fails else 0
+def _resolve_target(raw: str | None) -> str:
+    """Turn a CLI argument into an importable dotted module name.
+
+    Accepts a dotted module ("arenas.ada_and_ivo.classes") OR a path
+    ("arenas/ada_and_ivo/classes.py" -> "arenas.ada_and_ivo.classes").
+    No argument -> the default student starter file.
+    """
+    if raw is None or not raw.strip():
+        return "student_starter.classes"
+    cleaned = raw.strip()
+    if cleaned.endswith(".py"):
+        cleaned = cleaned[:-3]
+    parts = [p for p in cleaned.replace("\\", "/").split("/") if p not in ("", ".")]
+    return ".".join(parts)
+
+
+def _title_findings(game_config_module: str) -> list[Finding]:
+    """The /games class arcade reads TITLE from the arena's game_config."""
+    try:
+        module = importlib.import_module(game_config_module)
+    except Exception:
+        return []  # the import problem is already reported by inspect_classes
+    declared = getattr(module, "TITLE", None)
+    if isinstance(declared, str) and declared.strip():
+        return [
+            Finding(
+                "PASS",
+                f"TITLE found: \"{declared}\" -- this names your /games menu card.",
+            )
+        ]
+    return [
+        Finding(
+            "WARN",
+            "No TITLE = \"...\" found in game_config.py.",
+            "The /games menu falls back to the folder name. Fix: "
+            "TITLE = \"Ada & Ivo's Gauntlet\"",
+        )
+    ]
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    target = _resolve_target(args[0] if args else None)
+    findings: list[Finding] = []
+    if target.rsplit(".", 1)[-1] == "game_config":
+        classes_target = target[: -len("game_config")] + "classes"
+        print(f"Checking {classes_target} ...\n")
+        findings.extend(inspect_classes(classes_target))
+        findings.extend(_title_findings(target))
+    else:
+        print(f"Checking {target} ...\n")
+        findings.extend(inspect_classes(target))
+    print(format_findings(findings))
+    return 1 if any(f.level == "FAIL" for f in findings) else 0
 
 
 if __name__ == "__main__":
