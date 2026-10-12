@@ -115,6 +115,23 @@ def test_arena_sessions_are_isolated_per_browser(client, arenas_dir):
     assert theirs["turn"] == 1  # ...a separate starter game did too
 
 
+def test_two_sessions_on_the_same_arena_are_independent(client, arenas_dir):
+    """I1, the literal readiness gate: BOTH browsers on the SAME arena.
+    Session A's turns must not appear in session B's engine (separate
+    game instances built from the same create_game())."""
+    client.get("/play/good_pair")
+    other = app.test_client()
+    other.get("/play/good_pair")
+    a1 = client.post("/api/step", json={"key": "space"}).get_json()
+    b_probe = other.post("/api/step", json={"key": "zzz"}).get_json()  # no-op key
+    assert a1["turn"] == 1
+    assert b_probe["turn"] == 0  # B saw none of A's turn
+    b1 = other.post("/api/step", json={"key": "space"}).get_json()
+    assert b1["turn"] == 1  # B's own game is its own engine
+    a2 = client.post("/api/step", json={"key": "zzz"}).get_json()
+    assert a2["turn"] == 1  # and A never saw B's turn either
+
+
 def test_slash_always_returns_to_the_starter(client, arenas_dir):
     client.get("/play/good_pair")
     client.get("/")  # clears the arena choice -- / is the starter game
@@ -140,3 +157,28 @@ def test_sample_pair_example_is_discoverable_and_playable(client):
     page = client.get("/play/sample_pair")
     assert page.status_code == 200
     assert b"Sir Rosita" in page.data
+
+
+def test_games_survives_an_arena_with_an_infinite_import_loop(
+    client, tmp_path, monkeypatch
+):
+    """THE hang-proof headline (scoped): a `while True` in someone's
+    import surfaces as a yellow 'timed out' card WITHOUT wedging the
+    /games request -- the healthy card still renders beside it."""
+    loop = tmp_path / "loop_pair"
+    loop.mkdir()
+    (loop / "game_config.py").write_text("while True:\n    pass\n", encoding="utf-8")
+    good = tmp_path / "good_pair"
+    good.mkdir()
+    (good / "game_config.py").write_text(
+        'TITLE = "Good Pair Arena"\n' + GOOD_CONFIG, encoding="utf-8"
+    )
+    monkeypatch.setattr(app_module, "ARENAS_BASE", tmp_path)
+    import arenas as arenas_pkg
+
+    monkeypatch.setattr(arenas_pkg, "_PROBE_TIMEOUT_SECONDS", 2.0)
+    page = client.get("/games")
+    assert page.status_code == 200
+    html = page.data.decode("utf-8")
+    assert "timed out" in html  # the looping arena is honestly named
+    assert "Good Pair Arena" in html  # healthy neighbors are unaffected

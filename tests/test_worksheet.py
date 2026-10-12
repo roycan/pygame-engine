@@ -1,5 +1,9 @@
 """W2 gates: the workshop worksheet's structural contract, its answer
-code (exercised against the real engine), and worksheet<->answer sync."""
+code (exercised against the real engine), and key<->answer sync.
+
+The student handout must NOT contain the answer key: the key lives in
+``plans/workshop_01_teacher_answer_key.md`` (teacher-only, excluded from
+the student ZIP along with this file and the answer fixture)."""
 
 import re
 import sys
@@ -16,6 +20,8 @@ from engine.core import GameEngine  # noqa: E402
 
 WORKSHEET = REPO / "workshops" / "workshop_01_meet_the_engine.md"
 WORKSHEET_TEXT = WORKSHEET.read_text(encoding="utf-8")
+TEACHER_KEY = REPO / "plans" / "workshop_01_teacher_answer_key.md"
+TEACHER_KEY_TEXT = TEACHER_KEY.read_text(encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -117,9 +123,13 @@ def test_required_sections_present():
         "part 3: you",
         "reflect",
         "the quarter",
-        "answer key",
     ):
         assert needle in lowered, f"worksheet missing section: {needle!r}"
+    # The key itself moved to the teacher pack...
+    assert "answer key" in TEACHER_KEY_TEXT.lower(), "teacher key file lost its heading"
+    # ...and the student handout must NOT contain any answer content.
+    assert "Magma Blob" not in WORKSHEET_TEXT, "answers leaked into the student worksheet"
+    assert "worksheet_answers" not in WORKSHEET_TEXT, "fixture reference leaked into the student worksheet"
 
 
 def test_header_blanks_present():
@@ -159,6 +169,7 @@ def test_every_referenced_file_exists():
         "rogue_edu/app.py",
         "rogue_edu/demos/demo_dungeon/entities.py",
         "tests/fixtures/worksheet_answers.py",
+        "plans/workshop_01_teacher_answer_key.md",
     ):
         assert (REPO / relative).exists(), f"worksheet references missing file {relative}"
 
@@ -177,7 +188,27 @@ def test_windows_setup_steps_present():
 
 
 def test_worksheet_matches_tested_answers():
-    """The anti-drift gate: the code shown to students must contain the
-    signature lines of the engine-tested answer fixture, verbatim."""
+    """The anti-drift gate, two-sided:
+    (1) the TEACHER KEY must contain the signature lines of the
+        engine-tested answer fixture, verbatim;
+    (2) the student handout must contain none of the ANSWER-IDENTIFYING
+        content (class/identity names). Generic code lines that appear
+        in the fill-in-the-blank scaffold (e.g. ``if self.hp * 2 >=
+        self.max_hp:``) are deliberately allowed there -- students
+        complete them; they are not answers."""
     for line in answers.SIGNATURE_LINES:
-        assert line in WORKSHEET_TEXT, f"worksheet drifted from tested answer: {line!r}"
+        assert line in TEACHER_KEY_TEXT, f"teacher key drifted from tested answer: {line!r}"
+
+    answer_markers = (
+        "Magma Blob",      # Tier 1 answer identity
+        "Sir Wobbles",     # Tier 2 answer identity
+        "Roundabout",      # Tier 2 alternate answer identity
+        "ReskinnedSlime",
+        "CowardSlime",
+        "PatrolSlime",
+        "ArenaChamp",      # Tier 3 answer identity
+        "create_arena_game",
+    )
+    for marker in answer_markers:
+        assert marker not in WORKSHEET_TEXT, f"answer content leaked into student handout: {marker!r}"
+        assert marker in TEACHER_KEY_TEXT, f"teacher key lost answer content: {marker!r}"

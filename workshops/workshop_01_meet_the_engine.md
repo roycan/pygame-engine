@@ -65,7 +65,7 @@ Here is the deal it offers you:
 - **You write** the characters — their names, stats, looks, and *behavior* — in plain Python classes.
 - **The engine does** everything else: the grid, the turns, the collisions, the combat math, the browser graphics, the rules.
 
-Think of the engine as the **referee of a board game**. You never move your own piece — you *say* what you want to do, the referee checks the rules, and moves it for you. You cannot cheat, and neither can anyone else.
+Think of the engine as the **referee of a board game**. You never move your own piece — you *say* what you want to do, the referee checks the rules, and moves it for you. Nobody can touch anyone else's pieces, and every attack is checked and capped. (Your own piece's stats are still ordinary Python, though — exactly where that fence ends is a riddle you'll crack later in this unit.)
 
 ### Key features
 
@@ -80,7 +80,7 @@ Think of the engine as the **referee of a board game**. You never move your own 
 | Concept | Analogy |
 | --- | --- |
 | Returning an `Action` | An **order slip at a restaurant**: you don't barge into the kitchen and cook — you hand over a slip that says `MoveAction(1, 0)` and the kitchen (engine) decides what actually happens. |
-| `SafeGameView` | A **window with a view**: your character can look out at the whole board, but the glass doesn't open. Looking is free; touching is impossible. |
+| `SafeGameView` | A **window with a view**: your character can look out at the whole board, but the glass doesn't open. Looking is free; touching is impossible. (More precisely: a **photo taken the instant your turn starts** — the board can change after the photo, and your photo does not update.) |
 | `class Slime(Villain)` | A **family recipe**: your Slime starts with everything every Villain can do, inherited from the cookbook. `act()` is the family twist you add. |
 | Stat clamping | The **amusement-park height stick**: you cannot ride at 250 hp. And the operator *announces it loudly* — no quietly shrinking anyone. |
 | The turn loop | **Chess, not tag**: everyone wants to move at once; the referee resolves wishes one at a time, in a fixed order. |
@@ -181,87 +181,9 @@ The engine you met today is the same engine the demo dungeon runs on — and tha
 
 ---
 
-## 7) Teacher Answer Key
-
-*(Students: the fun is in the struggle. Peek only to unstick yourself, then close it.)*
-
-**Tier 🌱 — the reskinned chase:**
-
-```python
-class ReskinnedSlime(Villain):
-    def __init__(self, x, y):
-        super().__init__("Magma Blob", x, y, hp=14, attack_power=4)
-
-    def act(self, view):
-        dx, dy = view.get_direction_toward_hero(self)
-        if view.distance_to_hero(self) == 1:
-            return AttackAction(dx, dy)
-        return MoveAction(dx, dy)
-
-    def symbol(self):
-        return "🔥"
-```
-
-**Tier 🌿 — the coward:**
-
-```python
-class CowardSlime(Villain):
-    def __init__(self, x, y):
-        super().__init__("Sir Wobbles", x, y, hp=12, attack_power=5)
-
-    def act(self, view):
-        dx, dy = view.get_direction_toward_hero(self)
-        if self.hp * 2 >= self.max_hp:
-            if view.distance_to_hero(self) == 1:
-                return AttackAction(dx, dy)
-            return MoveAction(dx, dy)
-        if (dx or dy) and view.is_tile_passable(self.x - dx, self.y - dy):
-            return MoveAction(-dx, -dy)
-        return WaitAction()
-
-    def symbol(self):
-        return "🐭"
-```
-
-**Tier 🌿 alternate — the patroller:**
-
-```python
-class PatrolSlime(Villain):
-    def __init__(self, x, y):
-        super().__init__("Roundabout", x, y, hp=14, attack_power=4)
-        self._route = [(1, 0), (0, 1), (-1, 0), (0, -1)] * 2
-        self._step = 0
-
-    def act(self, view):
-        if view.distance_to_hero(self) == 1:
-            dx, dy = view.get_direction_toward_hero(self)
-            return AttackAction(dx, dy)
-        dx, dy = self._route[self._step % len(self._route)]
-        self._step += 1
-        if view.is_tile_passable(self.x + dx, self.y + dy):
-            return MoveAction(dx, dy)
-        return WaitAction()
-
-    def symbol(self):
-        return "🌀"
-```
-
-**Tier 🌳 — the mini arena (in `game_config.py`):**
-
-```python
-def create_arena_game() -> GameEngine:
-    game = GameEngine(width=10, height=10, win_condition="defeat_all")
-    game.add_hero(ArenaChamp(x=1, y=1))
-    game.add_villain(ReskinnedSlime(x=8, y=1))
-    game.add_villain(CowardSlime(x=8, y=8))
-    game.add_wall(Wall("Rock", 4, 4))
-    game.add_wall(Wall("Rock", 5, 4))
-    return game
-```
-
-*(The full tested versions of every answer live in `tests/fixtures/worksheet_answers.py` — the automated test suite plays against them.)*
-
----
+> *(Teachers: the answer key for this worksheet lives in the teacher
+> pack, not in this handout. Unstick yourself by asking, or by running
+> `python check_my_class.py` — that is what it is for.)*
 
 ## Appendix — facilitator timings (for the teacher)
 

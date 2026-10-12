@@ -27,6 +27,8 @@ def test_selection_includes_essentials():
         "pytest.ini",
         "Makefile",
         "package.json",
+        ".gitignore",
+        "tools/probe_arena.py",
         "rogue_edu/app.py",
         "rogue_edu/engine/core.py",
         "rogue_edu/student_starter/classes.py",
@@ -45,6 +47,23 @@ def test_selection_includes_essentials():
         "rogue_edu/templates/games.html",
     ):
         assert needed in rel, f"workshop ZIP must include {needed!r}"
+
+
+def test_teacher_answer_layer_never_ships():
+    """Students get the worksheet WITHOUT its key: the answer module and
+    the test file that asserts against it stay out of the ZIP (the
+    worksheet itself keeps shipping). The CI/lockfile gates are also
+    teacher-repo only -- GitHub does not live in a student's folder."""
+    rel = relative_selection()
+    for banned in (
+        "tests/fixtures/worksheet_answers.py",
+        "tests/test_worksheet.py",
+        "tests/test_ci.py",
+        "tests/test_gate_parity.py",
+        ".github/workflows/tests.yml",
+    ):
+        assert banned not in rel, f"{banned} must not ship to students"
+    assert "workshops/workshop_01_meet_the_engine.md" in rel  # sanity
 
 
 def test_selection_excludes_dev_and_cache_dirs():

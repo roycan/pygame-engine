@@ -3,6 +3,11 @@
 Students open pull requests against the class repo; a red/green X on
 their PR is authentic CI with zero extra teaching. This file pins the
 workflow so it cannot silently stop running the whole gate.
+
+NOTE: this file is TEACHER-REPO ONLY -- tools/package_workshop.py
+excludes it from the student ZIP, because the CI workflow and the
+lockfile belong to the class repo (GitHub), not to a student's
+extracted folder. The ZIP-internal suite stays green without it.
 """
 
 import json

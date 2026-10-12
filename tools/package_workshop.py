@@ -23,7 +23,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 INCLUDED_TOP_LEVEL = (
     "rogue_edu",
     "tests",
+    "tools",
     "workshops",
+    ".gitignore",
     "README.md",
     "DEPLOYING.md",
     "requirements.txt",
@@ -32,6 +34,17 @@ INCLUDED_TOP_LEVEL = (
     "package.json",
     "Procfile",
 )
+
+#: File NAMES (any depth) that must never appear inside the ZIP.
+#: test_worksheet.py + worksheet_answers.py are the teacher answer layer:
+#: students get the worksheet WITHOUT its key. test_ci.py + test_gate_parity.py
+#: gate the class repo's GitHub workflow/lockfile, which do not ship.
+EXCLUDED_FILE_NAMES = {
+    "test_worksheet.py",
+    "worksheet_answers.py",
+    "test_ci.py",
+    "test_gate_parity.py",
+}
 
 #: Directory names that must never appear inside the ZIP.
 EXCLUDED_DIR_NAMES = {
@@ -54,6 +67,8 @@ EXCLUDED_SUFFIXES = (".pyc", ".log")
 def _excluded(path: Path) -> bool:
     relative = path.relative_to(REPO_ROOT)
     if set(relative.parts) & EXCLUDED_DIR_NAMES:
+        return True
+    if path.name in EXCLUDED_FILE_NAMES:
         return True
     return path.name.endswith(EXCLUDED_SUFFIXES)
 

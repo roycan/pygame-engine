@@ -86,7 +86,7 @@ rogue_edu/
 ├── app.py             # Flask server (sessions, /api/step, /api/reset)
 ├── templates/         # Bulma UI: canvas, API reference card, dual-view log
 └── static/game.js     # renderer + input + log-to-tile highlighting
-tests/                 # 114 pytest tests + 11 node tests = the make test gate
+tests/                 # the make test gate (pytest + jsdom; current count is printed by the run)
 ```
 
 ## Engine invariants worth knowing
