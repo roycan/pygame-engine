@@ -12,6 +12,12 @@ Two rules for this file:
    coordinates are assigned in game_config.py.
 2. Never mutate the world yourself: your methods RECEIVE a read-only
    ``view`` and RETURN an Action. The engine does the moving and hitting.
+
+One honest boundary note: the engine guards the *world* -- other
+entities, combat math, legal movement. Your own object's attributes
+(``x``, ``y``, ``hp``) are still ordinary Python, and nothing stops you
+from changing them inside your own class. Part of this unit is
+understanding exactly where that fence ends, and why.
 """
 
 from engine.actions import AttackAction, MoveAction, SpeakAction

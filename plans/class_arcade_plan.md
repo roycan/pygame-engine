@@ -26,7 +26,7 @@ _Companion to [`quarter2_oop_github_plan.md`](quarter2_oop_github_plan.md) §7. 
 
 ```mermaid
 flowchart TD
-    P0["Phase 0: npm test gate parity"] --> P1["Phase 1: discovery core<br/>pure fn + fail-soft + TITLE"]
+    P0["Phase 0: npm test gate parity"] --> P1["Phase 1: discovery core<br/>scan + isolated probe + fail-soft + TITLE"]
     P1 --> P2["Phase 2: routes + sessions<br/>/games /play/slug + (sid, arena)"]
     P2 --> P3["Phase 3: mobile-first UX<br/>scaled board + D-pad + submitKey"]
     P3 --> P4["Phase 4: load/refresh/abuse gates<br/>+ make smoke out-of-gate"]
@@ -47,12 +47,19 @@ flowchart TD
 
 ---
 
-## Phase 1 — Arena discovery core (pure Python, no HTTP)
+## Phase 1 — Arena discovery core (scan + isolated subprocess probe, no HTTP)
+
+> **Terminology note (binding):** discovery is NOT a pure function. It is
+> filesystem discovery plus an ISOLATED VALIDATION PROBE: deterministic at
+> the interface level, but the probe intentionally executes untrusted
+> arena import/create_game code inside a separately terminable
+> subprocess (`tools/probe_arena.py`). A hung import must cost the probe
+> timeout, never a worker thread.
 
 **T1.1 — `rogue_edu/arenas/` package + `discover_arenas(base)` (F97 C96)**
 - `rogue_edu/arenas/__init__.py` exposes `discover_arenas(base: Path) -> list[ArenaInfo]`; `ArenaInfo` dataclass: `slug`, `title`, `ok`, `error`.
 - Scan rules: only immediate subdirs; skip `_`-prefixed (template, `__pycache__`); slug must match `[a-z0-9_]+`; requires `game_config.py` inside.
-- `app.py` gains module-level `ARENAS_BASE = Path(__file__).resolve().parent / "arenas"` — the ONE seam tests monkeypatch to a `tmp_path`. Discovery itself is pure → deterministic, no server.
+- `app.py` gains module-level `ARENAS_BASE = Path(__file__).resolve().parent / "arenas"` — the ONE seam tests monkeypatch to a `tmp_path`. Discovery is deterministic at the interface (no server, stable output ordering) while the validation probe runs each arena in its own subprocess.
 - Gate `tests/test_discovery.py`: finds valid arena; skips `_template`, `__pycache__`, bad-slug dirs; sorts by title.
 
 **T1.2 — Fail-soft contract (F96 C95)**
@@ -221,7 +228,7 @@ All in-gate tasks outside this ledger sit at **≥92/92** by construction.
 ## UX / DX / AX tradeoff summary
 
 - **UX (students on phones):** scaled board + D-pad + single-column cards serve the 70% phone reality; yellow broken-cards turn production failures into feedback instead of mystery.
-- **DX (next dev):** discovery is a pure function with one monkeypatchable seam (`app.ARENAS_BASE`); `npm test` == `make test`; structural gates document the frontend contract in-repo; `submitKey` gives the input path a named seam.
+- **DX (next dev):** discovery is deterministic at the interface with one monkeypatchable seam (`app.ARENAS_BASE`, plus the probe-timeout knob for tests); the untrusted-code execution is quarantined in a killable subprocess (`tools/probe_arena.py`) instead of the server process; `npm test` == `make test`; structural gates document the frontend contract in-repo; `submitKey` gives the input path a named seam.
 - **AX (next agent):** every phase is independently green; tasks name files, tests-first, and done-criteria; no hidden manual step is ever load-bearing for the gate (pixels are explicitly manual and labeled as such).
 
 ## Build order

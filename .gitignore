@@ -8,6 +8,9 @@ temp/
 inceptions/
 dist/
 tools/__pycache__/
+curriculum/
+plans/
+
 
 # NOTE: package-lock.json is deliberately NOT ignored -- CI runs `npm ci`
 # and needs the committed lockfile (guarded by tests/test_ci.py).

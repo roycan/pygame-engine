@@ -38,8 +38,38 @@ on anyone else's code.
   `GameEngine`. A folder that cannot build its game shows up as a yellow
   "needs fixing" card **with the error printed on it** — the menu never
   breaks because of one broken arena, but everyone can see who needs help.
+- A folder whose import or `create_game()` never finishes (an accidental
+  `while True`) shows a yellow **"timed out"** card — validation runs in
+  a separate, killable process, so one slow loop can never wedge the
+  menu for everyone else. (A loop inside a villain's `act()` is
+  different: it can only ever hang that player's own game.)
 - Folders starting with `_` are invisible to the menu (`_template` is
   the scaffold, never a game).
+
+## State rule: everything on `self`
+
+**Student game state belongs on `self`.** Mutable class attributes and
+module globals are process-shared and are NOT session-isolated: two
+players clicking the same arena share one Python process on the server,
+so a class-attribute counter (or any `global`) misbehaves for *everyone
+at once* — not just for you. Instance attributes (`self.hp`,
+`self._step`) live inside each visitor's own engine instance and are
+always private to their session. Concretely:
+
+```python
+# WRONG  -- shared by every visitor of your arena:
+class Slime(Villain):
+    times_seen = []            # class attribute: process-shared!
+
+# RIGHT  -- one private copy per player session:
+class Slime(Villain):
+    def __init__(self, x, y):
+        super().__init__("Slime", x, y, hp=8, attack_power=3)
+        self.times_seen = 0    # instance attribute: yours alone
+```
+
+When the class arcade is live, this rule is the difference between
+"works on my screen" and "works on every screen."
 
 ## Worked example
 

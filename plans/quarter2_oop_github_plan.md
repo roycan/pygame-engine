@@ -4,6 +4,11 @@ _A teacher-facing curriculum design. Builds on [`../workshops/workshop_01_meet_t
 
 **Format:** 6 weeks × 2 meetings × 45 minutes. Weeks 1–4 = Abstraction, Encapsulation, Inheritance, Polymorphism (one pillar per week). Weeks 5–6 = the GitHub workflow (fork → branch → edit → PR → review → merge → auto-deploy on Render).
 
+> **PILOT SEQUENCING MEMO (authoritative — supersedes the ordering below).**
+> The Grade 9 pilot runs: **Wk 1 Encapsulation → Wk 2 Inheritance → Wk 3 Departmental exam (E+I only) → Wk 4 Polymorphism → Wk 5 Abstraction → Wk 6 design proposal → Wk 7 Git/GitHub → Wk 8+ practical arena work (Class Arcade, per `class_arcade_plan.md`).**
+> Mapping from this plan's original weeks: Q2-wk2 Encapsulation → pilot wk1 · Q2-wk3 Inheritance → pilot wk2 · Q2-wk4 Polymorphism → pilot wk4 · Q2-wk1 Abstraction → pilot wk5 (reframed as "formalize what you've used") · Q2-wk5–6 GitHub → pilot wk7+.
+> The Week 3 exam deliberately truncates the pillar sequence: everything tagged Encapsulation/Inheritance below must be locked before it; Polymorphism/Abstraction material is NOT examinable at Week 3.
+
 ---
 
 ## 0) The plan in one page
@@ -89,8 +94,11 @@ Students play **attackers**. For each attempt below they must first write a *pre
 | 4 | Return `MoveAction(1, 1)` (diagonal) | [`_validated_action()`](../rogue_edu/engine/core.py) converts to a wait + WARNING |
 | 5 | Return `"hello"` from `act()` | "not an Action … treated as a wait" |
 | 6 | `AttackAction(dx, dy, damage=99)` | Python raises `TypeError` — the field does not exist; even the *language* backs the rule |
+| 7 | **Own-object mutation:** `self.x = 5` inside `act()` | **It works** — the engine applies the returned MoveAction from wherever the villain put itself. The engine guards *others* from you; your own object is yours (Python has convention, not enforcement) |
+| 8 | **Own-object mutation:** override `take_damage()` to `return 0` | **It works** — the hero/villain becomes untouchable. Damage dealt is sanitized engine-side; damage *taken* is handled by the target's own method. Only ever your own session's game |
+| 9 | **Own-object mutation:** `self.hp = self.max_hp` inside `act()` | **It works** — the villain undoes the hits it took. Same lesson: the invariant is enforced where the *data crossing* happens, not inside your object |
 
-Debrief: the engine never *trusts* student code, and it never *fails silently*. Connect both halves: encapsulation = guarded state + loud reporting.
+Debrief: the engine never *trusts* student code that crosses the boundary, and it never *fails silently*. Rows 1–6 were stopped because the data crossed into the engine; rows 7–9 were not, because nothing crossed — the mutation stayed inside the student's own object. Connect both halves: encapsulation = guarded state + loud reporting, AND knowing exactly where the fence ends (that is also why every arena in the class arcade is a separate session: your own-object experiments stay your own).
 
 ### Meeting 2.2 (45 min) — Why we build the fence ourselves
 

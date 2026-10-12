@@ -36,6 +36,11 @@ Object-oriented programming is the hardest abstraction Grade 9 meets: "a class i
 | Composition | placing instances in `game_config.py` | The level itself changes |
 | Read-only data / encapsulation | the `view` object handed to `act()` | Students *sense* the world, never mutate it |
 
+The `view` analogy, made precise: it is a **photo taken the instant your
+turn starts** — the board can change after the photo, and the photo does
+not update. The full architecture and its honest limits are described in
+section 3.
+
 And the deployment step turns the project into a **real-world software story**: code → GitHub → live URL. That is the same loop professional developers use, minus the parts that need money or Linux administration.
 
 ---
@@ -56,11 +61,11 @@ def act(self, view):
 
 The engine then validates that intent and performs the actual move/hit. Consequences:
 
-- A student cannot corrupt the game state, teleport, or write an infinite game-breaking loop — the engine is the **sole mutator** of the board.
+- The engine is the only code that ever moves or damages *anyone else* — every returned intent is validated, and the `view` carries no path to another entity. Two honest limits, both part of the teaching: (1) the engine does not police a student's *own* object — `self.x`, `self.hp`, and a `take_damage()` override remain theirs, because Python has convention, not enforcement (Week 2's Heist Lab rows 7–9 teach exactly where this fence ends); (2) an infinite loop inside `act()` can hang that student's own server (`Ctrl+C` and fix — teacher triage card). In the class arcade both limits stay confined to the student's own session: every browser session owns its engine instance, and no engine state crosses session boundaries.
 - `AttackAction(dx, dy)` carries a *direction*, never a damage number. Damage comes from `attack_power` and is sanitized engine-side (negative → 0, above 40 → 40), so an "overpowered" override quietly gets clamped instead of breaking the class.
 - Out-of-range stats are **clamped loudly**: the game runs, and a human-readable warning appears in the log. A typo never nukes the lesson.
 
-Read the starter [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) once end-to-end — it is 77 lines including comments, and every class in it is a complete, working example students are meant to rename, reskin, and extend.
+Read the starter [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) once end-to-end — it is ~80 lines including comments, and every class in it is a complete, working example students are meant to rename, reskin, and extend.
 
 ---
 
@@ -145,7 +150,7 @@ The 90-minute workshop worksheet ([`workshops/workshop_01_meet_the_engine.md`](w
 - 🌿 **Personality** — write a new villain AI (a "coward" that moves *away* from the hero; a "berserker" that always charges). Requires a real `if` and real reasoning about `view`.
 - 🌳 **Mini-arena** — compose a new level in `game_config.py`: walls, multiple villains, a chosen win condition.
 
-Assessment is built in: the checker's output, the working game itself, and two reflection pauses (3 questions each) already written into the worksheet. An answer key for teachers is at the bottom of the worksheet, with a single source of truth in [`tests/fixtures/worksheet_answers.py`](tests/fixtures/worksheet_answers.py:1).
+Assessment is built in: the checker's output, the working game itself, and two reflection pauses (3 questions each) already written into the worksheet. The answer key for teachers lives in the teacher pack at [`plans/workshop_01_teacher_answer_key.md`](plans/workshop_01_teacher_answer_key.md:1) — deliberately NOT in the student handout — with a single tested source of truth in [`tests/fixtures/worksheet_answers.py`](tests/fixtures/worksheet_answers.py:1) (both the key and that fixture are excluded from the student ZIP).
 
 ---
 
@@ -168,10 +173,10 @@ Windows note for your lab: students run `venv\Scripts\python rogue_edu\app.py` l
 The engine validates every returned action; bad stats are clamped *with a warning*, never with a crash. And [`rogue_edu/check_my_class.py`](rogue_edu/check_my_class.py:1) catches syntax errors, missing methods, and broken `__init__` signatures *before* the game ever runs — with friendly fixes instead of tracebacks.
 
 **"Can students cheat — giant damage, teleporting?"**
-No. Attack damage is computed from sanitized `attack_power` (0–40) engine-side; movement happens only through validated intents; the `view` given to `act()` is read-only. Overrides of the damage method exist for flavor (critical hits) but are never trusted.
+Nobody can touch *anyone else*: attack damage is computed from sanitized `attack_power` (0–40) engine-side; movement happens only through validated intents; the `view` given to `act()` carries no reference to any other entity. A student's *own* object is different — `self.x`, `self.hp`, and a `take_damage()` override are ordinary Python the engine never re-checks (Python has convention, not enforcement). That is deliberate: the Heist Lab rows 7–9 turn those "own-object mutations" into the week's deepest lesson. One operational note: an infinite loop in `act()` can hang that student's own server — `Ctrl+C` and fix (triage card).
 
 **"How much do I need to understand before teaching it?"**
-Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) (77 lines) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) (54 lines) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by the full automated gate (`make test` — 185 pytest + 21 node tests at last count), including end-to-end golden scenarios, so its behavior is pinned.
+Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by the full automated gate (`make test`, all green), including end-to-end golden scenarios, so its behavior is pinned.
 
 **"What does a multi-week unit look like?"**
 Week 1: workshop (`make zip` builds the ready-to-distribute [`dist/rogue_edu_workshop.zip`](tools/package_workshop.py:1); Windows setup walkthrough included). Weeks 2–3: the edit→check→play loop toward a tiered goal. Week 4: deploy to Render, then a play-day where students try each other's games and explain each other's villain AI — explaining the AI *is* the code review.
@@ -187,7 +192,7 @@ Clone it, run `make test` (the whole gate green), run the checker, run `python a
 TEACHER_GUIDE.md            ← you are here
 README.md                   ← quick start + manual visual checklist (incl. mobile points)
 DEPLOYING.md                ← Render + GitHub, step by step
-workshops/                  ← the 90-minute student worksheet + answer key
+workshops/                  ← the 90-minute student worksheet (answer key lives in plans/, teacher-only)
 rogue_edu/student_starter/  ← THE two files students edit (Weeks 1–4)
 rogue_edu/arenas/           ← the class arcade: _template + sample_pair + one folder per pair
 rogue_edu/demos/            ← read-only worked example (three villain AIs)
@@ -207,6 +212,8 @@ Every merged folder under [`rogue_edu/arenas/`](rogue_edu/arenas/README.md:1) be
 - **The recipe lives in [`rogue_edu/arenas/README.md`](rogue_edu/arenas/README.md:1)**: copy `_template/`, rename the folder (lowercase/underscores — it becomes the URL), set `TITLE`, compose the game, pass the doctor, PR.
 - **The gate is the doctor**: `python check_my_class.py arenas/<pair>/game_config` checks the pair's classes AND that `TITLE` is set (it names their menu card).
 - **Broken arenas cannot break the site.** Discovery is fail-soft: a folder that cannot build its game shows a yellow "needs fixing" card *with the error printed on it* — send the pair to read their own production error; that is real debugging, in public, with training wheels.
+- **Loops cannot break the site either.** Validation of each arena runs in a killable subprocess, so even a student's infinite loop in an import or `create_game()` becomes a yellow "timed out" card instead of a wedged server. (Scoped honestly: that guarantee covers discovery; a loop inside `act()` during play still hangs only that student's own session — triage card row 1.)
+- **Public, not multiplayer.** Everyone may open and play an arena, but every browser session receives its own engine instance; no engine state crosses session boundaries. What your villains do, they do in *your* game.
 - **One URL serves the whole class**: sessions are per-browser-cookie and the deployment pins `--workers 1`, so every visitor gets a private game while sharing the arcade.
 - **CI guards the merges**: [`.github/workflows/tests.yml`](.github/workflows/tests.yml:1) runs the full gate on every PR — merge green PRs only, and the arcade stays healthy.
 - **Local live check**: `make smoke` boots the real server and probes every page. It is deliberately outside `make test` so it can never flake the gate.
