@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encapsulation — Study Guide 8 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  /* teaching labels */
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}     /* curriculum wording */
+  .pr{background:var(--teal); color:#fff}            /* python reality */
+  .re{background:var(--green); color:#fff}           /* roguedu engine */
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  /* layout blocks */
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  /* code */
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}   /* keyword */
+  pre.code .s{color:#e6c98a}   /* string */
+  pre.code .c{color:#8a8474; font-style:italic} /* comment */
+  pre.code .d{color:#f0a5a0}   /* decorator */
+  pre.code .g{color:#a7d78f}   /* good/valid */
+  pre.code .b{color:#f0a5a0}   /* bad/invalid */
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  /* underscore glyphs sit below the baseline — give them a centered, visible chip
+     (slide 16 takeaway #2; typography fix from render QA, wording unchanged) */
+  .ucode{display:inline-block; font-family:var(--mono); font-weight:700; font-size:.9em;
+         line-height:1.1; padding:4px 16px 7px; letter-spacing:.18em; text-align:center;
+         background:var(--paper2); border-radius:6px; vertical-align:baseline}
+  /* vertical flow (mutation diagrams) */
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  /* horizontal bridge */
+  .bridge{display:grid; grid-template-columns:1fr 140px 1fr; align-items:center; gap:0}
+  .bcol{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:24px 28px}
+  .bcol h4{font-family:var(--mono); font-size:19px; letter-spacing:.1em; text-transform:uppercase;
+           color:var(--muted); margin-bottom:12px}
+  .bmid{display:flex; flex-direction:column; align-items:center; color:var(--teal)}
+  .bmid .a{font-size:44px; line-height:1}
+  .bmid .t{font-family:var(--mono); font-size:16px; color:var(--muted); text-align:center;
+           margin-top:6px; max-width:130px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 8 · Encapsulation · Grade 9 CS · 2 meetings (100 min)</div>
+  <h1>Encapsulation</h1>
+  <p class="sub" style="margin-top:22px; font-size:34px; color:var(--ink)">
+    <b>Controlling how an object's data is accessed and changed — while keeping the data
+    and the behavior together.</b></p>
+  <p class="sub" style="margin-top:16px">Encapsulation is <b>not</b> merely “making variables private.”</p>
+  <p class="sub" style="margin-top:14px">PSHS Computer Science Curriculum | Content engineered in 2026 by Sir Roy alongside Hermes, Gemini &amp; ChatGPT</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:48px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> the problem → the idea → access conventions → getters &amp; setters → validation</li>
+        <li><b>Meeting 2:</b> <code>@property</code> → BankAccount application → RogueEdu connection → prediction round → takeaways</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Learning competency <span class="small">(SG8)</span></h3>
+      <p>Implement encapsulation by using <b>access modifiers</b> and <b>getter/setter
+      methods</b> — and explain how encapsulation protects data and keeps code organized.</p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 8 Encapsulation_V3 (Final).md</b> — header, outline, module objectives</span><span>1 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · THE PROBLEM ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">1 · The problem encapsulation solves</div>
+  <h2>Anything can write anything</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div>
+<pre class="code">a = Account()
+a.balance = <span class="b">-500</span>     <span class="c"># no complaint</span>
+
+s = Student()
+s.age = <span class="b">-100</span>         <span class="c"># no complaint</span>
+
+a.balance = <span class="b">10**18</span>   <span class="c"># sure, why not</span></pre>
+      <p class="small" style="margin-top:14px">Python trusts the caller completely.
+      <b>Any</b> code holding the object can set <b>any</b> attribute to <b>any</b> value.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf">outside code</div>
+      <div class="varr">↓</div>
+      <div class="vf"><b>balance = -500</b></div>
+      <div class="varr">↓</div>
+      <div class="vf bad"><b>BAD STATE</b> — negative balance, negative age,<br>reports &amp; logic quietly poisoned</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="warn"><b>Why this is a real problem:</b> the object cannot defend itself.
+    Bad data enters silently and surfaces later — as a wrong report, a crash on
+    withdrawal, a monster with negative hp. <b>The fix is not “be careful.” The fix is
+    putting the check <i>inside the object</i>.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 § Introduction</b> (“change a book's copies to a negative number…”) · verified in Python</span><span>2 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · THE IDEA ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">2 · What encapsulation means</div>
+  <h2>data + behavior + controlled interface</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr 1fr; margin-top:34px">
+    <div class="card" style="text-align:center">
+      <p style="font-size:44px; font-weight:700">DATA</p>
+      <p class="small">attributes<br><code>__balance</code>, <code>__age</code></p>
+    </div>
+    <div class="card" style="text-align:center">
+      <p style="font-size:44px; font-weight:700">BEHAVIOR</p>
+      <p class="small">methods<br><code>deposit()</code>, <code>set_age()</code></p>
+    </div>
+    <div class="card" style="text-align:center; border:3px solid var(--teal)">
+      <p style="font-size:44px; font-weight:700; color:var(--teal)">CONTROLLED INTERFACE</p>
+      <p class="small">the only doors in or out:<br>getters · setters · properties</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note"><b>Bundled together:</b> the data and the methods that guard it live in
+    <i>one class</i> — the check travels with the thing it protects. SG8's capsule 💊 and
+    TV-remote 📺 analogies point here: you use the buttons; you never open the case.
+    <b>The analogy is the on-ramp — the code is the destination.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.2</b> (bundling + restricting direct access) · <b>student-lesson.md § part 1</b> (Backpack guard)</span><span>3 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · ACCESS CONVENTIONS ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">3 · Access control in Python</div>
+  <h2>Three spellings — one honest table</h2>
+  <table class="cmp" style="margin-top:26px">
+    <tr><th>Convention</th><th>Example</th><th>Curriculum wording <span class="lab cw">SG8</span></th><th>Python reality <span class="lab pr">verified</span></th></tr>
+    <tr><td><b>public</b></td><td><code>self.name</code></td><td>Accessible anywhere</td><td>Accessible anywhere — nothing to enforce</td></tr>
+    <tr><td><b>protected</b></td><td><code>self._hp</code></td><td>“Accessible within the same <i>package</i>”</td><td><b>Writable by anyone, no error.</b> Python has no packages-in-the-Java sense; the underscore means “internal — hands off.”</td></tr>
+    <tr><td><b>private</b></td><td><code>self.__pin</code></td><td>“Accessible only inside the class”</td><td>Plain <code>s.__pin</code> raises <b>AttributeError</b> — but the attribute is renamed (<i>name mangling</i>) to <code>s._Student__pin</code>, which <b>still works</b>. Discourages; does not forbid.</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="flag"><b>Honest framing (keep this all unit):</b> in Python these are
+    <b>conventions signaled by symbols, not keywords enforced by a compiler</b> as in
+    Java/C++. The rule is real — it is a rule <i>between programmers</i>. Enforced
+    protection must be built as <b>code inside the object</b> (getters/setters — next).</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.3 modifier table</b> · Python behavior verified live (see teacher notes, check B)</span><span>4 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · CONVENTION REALITY CHECK (PAUSE) ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">3 · Access control — predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> What does Python actually do?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div>
+<pre class="code">class Student:
+    def __init__(self):
+        self.name = <span class="s">"Ada"</span>
+        self._hp = 50
+        self.__pin = <span class="s">"1234"</span>
+
+s = Student()
+s.name = <span class="s">"Bo"</span>      <span class="c"># error?</span>
+s._hp = 9999     <span class="c"># error?</span>
+print(s.__pin)   <span class="c"># error?</span></pre>
+      <p class="small" style="margin-top:12px">Commit to all three answers before the reveal.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>s.name = "Bo"</b> → fine (public: open by design)</div>
+      <div class="varr reveal">·</div>
+      <div class="vf reveal good"><b>s._hp = 9999</b> → <b>fine too</b> — no error. The underscore talked to <i>you</i>, not to Python.</div>
+      <div class="varr reveal">·</div>
+      <div class="vf reveal bad"><b>print(s.__pin)</b> → <b>AttributeError</b> — no plain <code>__pin</code> exists…
+      <div class="reveal" style="margin-top:10px; font-size:22px">…but <code>print(s.<b>_Student__pin</b>)</code> prints <b>1234</b>, and
+      <code>s._Student__pin = -100</code> is accepted. <b>Renamed, not locked.</b></div></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note"><b>The takeaway sentence:</b> in Python, “private” means <i>you're not
+    supposed to</i> — not <i>you can't</i>. So where does real protection come from?
+    <b>Methods the class provides.</b> That's next.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.3</b> · verified outputs from live Python · <b>week_01 heist rows 7–9</b> (same lesson shape)</span><span>5 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · GETTERS & SETTERS ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">4 · Getter and setter methods</div>
+  <h2>Doors in the wall — the SG8 <code>Student</code> class</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div>
+<pre class="code"><span class="k">class</span> Student:
+    <span class="k">def</span> __init__(self, name, age):
+        self.__name = name
+        self.__age = 0          <span class="c"># safe default</span>
+        self.set_age(age)       <span class="c"># validate on the way in</span>
+
+    <span class="c"># setter — controlled write</span>
+    <span class="k">def</span> set_age(self, age):
+        <span class="k">if</span> age > 0:
+            self.__age = age
+
+    <span class="c"># getter — controlled read</span>
+    <span class="k">def</span> get_age(self):
+        <span class="k">return</span> self.__age</pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>setter → controlled modification</h3><p>The <b>only</b> write path.
+      Validation lives here: <code>if age > 0</code> — anything else is <b>ignored</b>.</p></div>
+      <div class="card"><h3>getter → controlled reading</h3><p><code>get_age()</code> returns the
+      value; outside code never touches <code>__age</code> directly.</p></div>
+      <div class="card"><h3>The state + behavior bundle</h3><p>The data (<code>__age</code>) and
+      its guard (<code>set_age</code>) live <b>together in one class</b> — that bundling is
+      half of encapsulation; the door is the other half.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.4</b> (Student class, verbatim structure)</span><span>6 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · VALIDATION (PAUSE) ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">5 · Validation through setters</div>
+  <h2><span class="pausechip">PREDICT</span> What prints?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code">s1 = Student(<span class="s">"Mary Grace"</span>, <span class="g">14</span>)
+print(s1.get_age())          <span class="c"># ?</span>
+
+s1.set_age(<span class="b">-100</span>)
+print(s1.get_age())          <span class="c"># ?</span>
+
+s1.set_age(<span class="g">15</span>)
+print(s1.get_age())          <span class="c"># ?</span></pre>
+      <p class="small" style="margin-top:12px">This is the SG8's own test sequence —
+      commit to three numbers first.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good">14 <span class="small">— the constructor validated on the way in</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>set_age(-100)</b> → <code>if -100 &gt; 0</code> is False →
+      <b>ignored</b>. The object refused nonsense without crashing.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">14 → then 15 <span class="small">— state stays valid; only legal writes land</span></div>
+      <div class="varr reveal">·</div>
+      <div class="flag reveal" style="font-size:21px"><b>Two validation styles — both legitimate:</b>
+      SG8's <code>set_age</code> <b>ignores</b> invalid values silently.
+      A stricter setter <b>rejects loudly</b>: <code>raise ValueError("age must be positive")</code>.
+      Same encapsulation; different policy. Activity 3 will ask for the loud version
+      (warning message) on <code>balance</code>.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.4 test sequence + code explanation</b> · outputs verified live</span><span>7 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · THE BRIDGE (major visual) ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">6 · The important bridge</div>
+  <h2>Same control. Cleaner interface.</h2>
+  <div class="bridge" style="margin-top:44px">
+    <div class="bcol">
+      <h4>Traditional interface</h4>
+      <p style="font-family:var(--mono); font-size:30px; line-height:1.8">
+        s.get_age()<br>
+        s.set_age(15)</p>
+      <p class="small" style="margin-top:12px">Explicit doors. Validation guaranteed.
+      (Every language has this pattern — it is not “wrong.”)</p>
+    </div>
+    <div class="bmid"><div class="a">⟶</div><div class="t">@property<br>same guard,<br>new look</div></div>
+    <div class="bcol" style="border:3px solid var(--teal)">
+      <h4 style="color:var(--teal)">Python property interface</h4>
+      <p style="font-family:var(--mono); font-size:30px; line-height:1.8">
+        s.age<br>
+        s.age = 15</p>
+      <p class="small" style="margin-top:12px">Looks like ordinary attribute access —
+      <b>runs the getter / setter underneath.</b> No parentheses.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:34px">
+    <div class="note" style="font-size:27px"><b>The sentence that must survive this slide:</b>
+    <code>@property</code> does <b>not</b> remove the encapsulation or the validation —
+    it <b>changes the interface</b> so that <i>controlled</i> access looks like ordinary
+    attribute access. The check still runs on every write.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 §1.4 → Learning resource 3</b> (“cleaner code… instead of methods”)</span><span>8 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · @PROPERTY ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">6 · @property mechanics</div>
+  <h2>What the decorators actually do</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div>
+<pre class="code"><span class="k">class</span> Rectangle:
+    <span class="k">def</span> __init__(self, width):
+        self.width = width   <span class="c"># → setter runs!</span>
+
+    <span class="d">@property</span>
+    <span class="k">def</span> width(self):         <span class="c"># getter</span>
+        <span class="k">return</span> self.__width
+
+    <span class="d">@width</span><span class="d">.setter</span>
+    <span class="k">def</span> width(self, w):      <span class="c"># setter</span>
+        <span class="k">if</span> w > 0:
+            self.__width = w</pre>
+      <p class="small" style="margin-top:12px">SG8 Activity 2 rebuilds exactly this
+      <code>Rectangle</code> pattern from the video resource.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3><code>@property</code> — the getter half</h3><p>Registers
+      <code>width</code> so that <i>reading</i> <code>r.width</code> calls your method.
+      “Access a method like a variable.”</p></div>
+      <div class="card"><h3><code>@width.setter</code> — the write half</h3><p>Registers the
+      <b>assignment</b> <code>r.width = …</code> to run your validating method. The two
+      decorators are a <b>matched pair sharing one name</b>.</p></div>
+      <div class="card"><h3>Scope discipline</h3><p>Only these two in Grade 9.
+      <code>@width.deleter</code> exists (optional extension).
+      <code>@staticmethod</code>/<code>@classmethod</code> belong to a later unit.</p></div>
+      <div class="card"><h3>Not magic — a shortcut</h3><p>A property <b>is</b> the
+      getter/setter pattern, rearranged. Nothing about encapsulation is lost.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 Learning resource 3 + Activity 2</b> (Rectangle.py)</span><span>9 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · PROPERTY REALITY CHECK (PAUSE) ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">6 · @property — predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> The read-only surprise</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">class</span> BankAccount:
+    <span class="k">def</span> __init__(self):
+        self.set_balance(<span class="g">100</span>)
+    <span class="k">def</span> set_balance(self, b):
+        self.__balance = b
+    <span class="d">@property</span>
+    <span class="k">def</span> balance(self):
+        <span class="k">return</span> self.__balance
+
+b = BankAccount()
+b.set_balance(<span class="g">5</span>)   <span class="c"># fine?</span>
+b.balance = <span class="b">999</span>    <span class="c"># fine?</span></pre>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>b.set_balance(5)</b> → works — the setter method is the write path</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>b.balance = 999</b> → <b>AttributeError!</b>
+      <div class="reveal" style="margin-top:8px; font-size:22px">A <code>@property</code> with no matching
+      <code>.setter</code> is <b>read-only</b>. The class author chose the doors —
+      and here there is exactly one way in.</div></div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Why this matters:</b> the property interface can make
+      an attribute <i>stricter</i> than a plain attribute, not looser. Control
+      can increase while the syntax gets cleaner.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: Python behavior verified live · property-without-setter = read-only</span><span>10 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · BANKACCOUNT APPLICATION ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">7 · Application — SG8 Activity 3</div>
+  <h2>BankAccount — the bank hired you</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.2fr; margin-top:22px">
+    <div class="card">
+      <h3>The requirements <span class="small">(SG8 Activity 3)</span></h3>
+      <ul class="ticks">
+        <li><b>private</b> <code>__account_number</code> and <code>__balance</code></li>
+        <li><b>public setter methods</b> for both</li>
+        <li>balance must not be negative → <b>ignore + warning</b></li>
+        <li><b>getters via <code>@property</code></b> for both</li>
+        <li>an object using all public methods</li>
+        <li>a <b>formatted</b> balance on screen</li>
+      </ul>
+      <div class="flag" style="margin-top:14px; font-size:21px"><b>Notice the mix:</b> writes go
+      through <i>traditional</i> <code>set_…()</code> methods; reads come from
+      <i>property</i> getters. Both interfaces coexist in one class —
+      that's the Activity's design choice.</div>
+    </div>
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">class</span> BankAccount:
+    <span class="k">def</span> __init__(self, account_number, balance=0):
+        self.__account_number = account_number
+        self.set_balance(balance)
+
+    <span class="k">def</span> set_account_number(self, account_number):
+        self.__account_number = account_number
+
+    <span class="k">def</span> set_balance(self, balance):
+        <span class="k">if</span> balance < 0:
+            print(<span class="s">"WARNING: balance cannot be negative."</span>)
+            <span class="k">return</span>              <span class="c"># ignore + warn</span>
+        self.__balance = balance
+
+    <span class="d">@property</span>
+    <span class="k">def</span> account_number(self):
+        <span class="k">return</span> self.__account_number
+
+    <span class="d">@property</span>
+    <span class="k">def</span> balance(self):
+        <span class="k">return</span> self.__balance</pre>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 Activity 3</b> (requirements verbatim) · pattern verified live</span><span>11 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · BANKACCOUNT RUN ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">7 · Application — the verified run</div>
+  <h2>What the bank actually sees</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px">acct = BankAccount(<span class="s">"SAV-0019"</span>, <span class="g">500</span>)
+
+acct.set_balance(<span class="b">-500</span>)
+<span class="c"># WARNING: balance cannot be negative.</span>
+print(acct.balance)        <span class="c"># 500 — kept</span>
+
+acct.set_balance(<span class="g">1250.75</span>)
+print(<span class="s">f"Account {acct.account_number}: "</span>
+      <span class="s">f"PHP {acct.balance:,.2f}"</span>)
+
+acct.set_balance(<span class="g">300</span>)
+print(<span class="s">f"PHP {acct.balance:,.2f}"</span>)   <span class="c"># 300.00</span></pre>
+      <p class="small" style="margin-top:12px">Reads use the <b>property</b>
+      (<code>acct.balance</code>, no parentheses); writes use the <b>setter methods</b>.
+      The format spec <code>:,.2f</code> gives the money formatting.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal">acct = BankAccount("SAV-0019", 500)</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad">set_balance(-500) → validation trips → <b>WARNING + ignored</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">balance stays <b>500</b> — the object remained valid</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">set_balance(1250.75) → accepted</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>Account SAV-0019: PHP 1,250.75</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">set_balance(300) → accepted → reads now show <b>PHP 300.00</b>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 Activity 3 SAMPLE OUTPUT intent</b> · transcript verified live</span><span>12 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · ROGUEEDU CONNECTION ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">8 · The same idea, running live</div>
+  <h2><span style="color:var(--teal)">“You decide. The engine acts.”</span></h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>In RogueEdu you already lived this</h3>
+      <ul class="ticks">
+        <li><b>Backpack</b> (Week 1): <code>take_damage(-100)</code> added <b>0</b> — a guard
+        method validating, exactly like <code>set_age</code></li>
+        <li><b>The engine</b>: your code returns an <i>intent</i>; the engine
+        <b>validates</b> (clamps hp, caps damage, converts illegal moves to waits) and
+        only then changes the world — loudly, in the log</li>
+        <li><b>Heist rows 7–9</b>: your <i>own</i> object stays yours — Python's
+        conventions don't re-check it. Same honesty here.</li>
+      </ul>
+    </div>
+    <div style="display:grid; gap:18px">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Demonstrated <span class="lab re">in the game</span></h3>
+        <p class="small">bundling of data+behavior · controlled interface (view = 4 questions) ·
+        validation on entry · guard methods · read-only access paths · loud reporting</p>
+      </div>
+      <div class="card" style="background:var(--paper2)">
+        <h3>Covered outside the game <span class="lab cw">conventional Python</span></h3>
+        <p class="small">the <code>_</code>/<code>__</code> spelling conventions ·
+        <code>get_…()/set_…()</code> naming · <code>@property</code> syntax · the BankAccount
+        application. RogueEdu's student-facing API uses methods and frozen action
+        objects, not properties — the game is the <i>laboratory</i>, this deck is the
+        <i>syntax lesson</i>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>student-lesson.md</b> · <b>heist-prediction-sheet.md</b> · engine: view.py / core.py / base_classes.py</span><span>13 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · PREDICTION ROUND ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">9 · Prediction round — commit before reveal</div>
+  <h2>Four quick predictions</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3><span class="pausechip">P1</span> The silent ignore</h3>
+      <p style="font-family:var(--mono); font-size:22px">s1.set_age(-100) → s1.get_age()=?</p>
+      <div class="reveal small" style="margin-top:10px">14 — the <code>if age > 0</code> guard
+      never fired; state unchanged.</div></div>
+    <div class="card"><h3><span class="pausechip">P2</span> The mangled back door</h3>
+      <p style="font-family:var(--mono); font-size:22px">s._Student__age = -100 → then s.get_age()=?</p>
+      <div class="reveal small" style="margin-top:10px">−100 — mangled access <i>skips the
+      setter</i>. The convention door was climbed. (This is why guards-in-methods beat
+      spelling.)</div></div>
+    <div class="card"><h3><span class="pausechip">P3</span> The read-only property</h3>
+      <p style="font-family:var(--mono); font-size:22px">acct.balance = 999 → ?</p>
+      <div class="reveal small" style="margin-top:10px">AttributeError — property getter with
+      no setter = read-only.</div></div>
+    <div class="card"><h3><span class="pausechip">P4</span> The engine's guard</h3>
+      <p style="font-family:var(--mono); font-size:22px">Villain with hp=999 → ?</p>
+      <div class="reveal small" style="margin-top:10px">Clamped to 200 + a loud SETUP WARNING —
+      validation on entry, RogueEdu edition.</div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Scoring idea (Heist rules apply):</b> a wrong prediction with the
+    right <i>authority story</i> (“engine side” vs “my object side” vs “language”)
+    scores higher than a lucky guess.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 examples</b> + verified Python outputs · <b>heist-prediction-sheet.md</b> (scoring spirit)</span><span>14 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · CURRICULUM ALIGNMENT ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">Curriculum alignment</div>
+  <h2>Study Guide 8 ↔ this deck ↔ RogueEdu</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th>SG8 requirement</th><th>Deck concept (slide)</th><th>RogueEdu experience</th></tr>
+    <tr><td>Access modifiers (public / protected / private) <span class="lab cw">§1.3</span></td>
+        <td>Convention table + reality check (4–5)</td>
+        <td>View privacy by convention; own-object honesty (Heist rows 7–9) <span class="lab re">partial</span></td></tr>
+    <tr><td>Getter/setter methods <span class="lab cw">§1.4</span></td>
+        <td>Student class doors (6)</td>
+        <td>Guard-method idea live: <code>take_damage</code>, clamps <span class="lab re">direct</span></td></tr>
+    <tr><td>Validation through setters <span class="lab cw">§1.4</span></td>
+        <td>Ignore vs raise policies (7)</td>
+        <td>Engine sanitizes/caps and warns loudly <span class="lab re">direct</span></td></tr>
+    <tr><td><code>@property</code> / <code>.setter</code> <span class="lab cw">res. 3, Act. 2</span></td>
+        <td>Bridge + mechanics + read-only (8–10)</td>
+        <td>Not used by the student-facing engine API — taught outside the game <span class="lab cw">—</span></td></tr>
+    <tr><td>Application of encapsulation <span class="lab cw">Act. 3</span></td>
+        <td>BankAccount (11–12)</td>
+        <td>Design thinking within an API = Week 6 proposal skill <span class="lab re">analogy</span></td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="flag" style="font-size:22px"><b>Labels used in this deck:</b>
+      <span class="lab cw">SG8 curriculum wording</span> — preserved for alignment ·
+      <span class="lab pr">Python reality</span> — verified live behavior ·
+      <span class="lab re">RogueEdu engine</span> — what the game actually shows.
+      <b>Known wording differences:</b> SG8's “accessible only inside the class” /
+      “within the same package” are Java-flavored; Python reality is
+      convention + name mangling (slide 4). SG8's own <code>set_age</code> ignores
+      silently, while Activity 3 asks for a warning — both styles shown on slide 7.
+      (Also noted for the teacher: SG8 §1.4 has a typo — “getters are
+      <code>get_name()</code> and <code>get_name()</code>.”)</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 DLC, outline, §1.3–1.4, Activities 1–3, key takeaways</b></span><span>15 / 16</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · KEY TAKEAWAYS ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">10 · Key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>1.</b> Encapsulation bundles data with
+      the behavior that guards it — and offers a controlled interface instead of open
+      attributes.</p></div>
+      <div class="card"><p style="font-size:27px"><b>2.</b> In Python, <code class="ucode">_</code> and
+      <code class="ucode">__</code> are <b>conventions</b> (the double underscore renames; nothing
+      is a true wall).</p></div>
+      <div class="card"><p style="font-size:27px"><b>3.</b> Getters/setters are the doors:
+      setters <b>validate</b>, getters <b>read</b> — the state stays valid.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>4.</b> <code>@property</code> keeps the
+      doors but hides the handles: controlled access that <i>looks like</i> plain
+      attributes — validation still runs on every write.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:27px"><b>5.</b> In RogueEdu you <i>are</i> the outside caller:
+        <b>“You decide. The engine acts.”</b> Same boundary, running live — and the
+        same honest limit: conventions guide people; code enforces rules.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Activity 3</h3>
+      <p class="small">Can you: choose the right convention for a given attribute (Activity 1)?
+      · explain why <code>set_balance(-500)</code> should not crash but also must not
+      apply? · predict what breaks if you delete the <code>if</code> from a setter?
+      · say what <code>@property</code> changes — and what it does <i>not</i> change?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG8 § Key takeaways</b> (annotated honestly) · <b>week_01 exit ticket</b> spirit</span><span>16 / 16</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 16</span>
+  <button id="next">→</button>
+  <button id="notes" title="toggle speaker cues">N</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg8-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.getElementById('notes').onclick = function(){
+    document.body.classList.toggle('show-cues');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg8-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>
