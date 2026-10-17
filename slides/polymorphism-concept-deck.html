@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polymorphism — Study Guide 11 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:20px; color:var(--muted); line-height:1.45}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  /* teaching labels */
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}     /* curriculum wording */
+  .pr{background:var(--teal); color:#fff}            /* python reality */
+  .re{background:var(--green); color:#fff}           /* roguedu engine */
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  /* layout blocks */
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  /* code */
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}   /* keyword */
+  pre.code .s{color:#e6c98a}   /* string */
+  pre.code .c{color:#8a8474; font-style:italic} /* comment */
+  pre.code .d{color:#f0a5a0}   /* decorator */
+  pre.code .g{color:#a7d78f}   /* good/valid */
+  pre.code .b{color:#f0a5a0}   /* bad/invalid */
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  /* vertical flow (dispatch diagrams) */
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  /* speaker cues — teacher-only, toggled with N, never printed */
+  .cue{display:none; margin-top:18px; border-left:5px solid var(--amber);
+       background:var(--amber-wash); border-radius:0 12px 12px 0;
+       padding:14px 22px; font-size:21px; line-height:1.45}
+  .cue b{color:var(--amber)}
+  body.show-cues .cue{display:block}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .cue{display:none !important}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 11 · Polymorphism · Grade 9 CS · 2 meetings (100 min)</div>
+  <h1>Polymorphism</h1>
+  <p class="sub" style="margin-top:22px; font-size:34px; color:var(--ink)">
+    <b>Many forms, one interface — how game engines and systems talk to thousands of
+    different objects using just one command.</b></p>
+  <p class="sub" style="margin-top:14px">PSHS Computer Science Curriculum | Content engineered in 2026 by Sir Roy alongside Hermes, Gemini &amp; ChatGPT</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> the word → the zoo loop → PREDICT: the billing array → duck typing → the RogueEdu engine loop</li>
+        <li><b>Meeting 2:</b> PREDICT: the engine trace → why engines scale → the missing-method trap → alignment → Shinobi rules</li>
+        <li><b>Along the way:</b> Activity 1 (enhanced billing) · Activity 2 (duck typing lab) · Activity 3 (game special moves)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Module objectives <span class="small">(SG11)</span></h3>
+      <ul class="ticks">
+        <li><b>Define</b> polymorphism in object-oriented programming</li>
+        <li><b>Explain</b> how it relates to inheritance and method overriding</li>
+        <li><b>Create</b> a simple program applying polymorphism in a real-life scenario</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> press <b>N</b> anywhere for these speaker cues (never
+  printed). Every output quoted in this deck was produced by live Python runs against SG11's
+  own examples and the RogueEdu engine — see slide 11 for the verified-behavior list and the
+  flagged wording differences.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 11 Polymorphism_V2 (Final).md</b> — header, objectives, outline</span><span>1 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · THE WORD ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Meeting 1 · 10 min · the word itself</div>
+  <h2>Poly = many · Morph = form</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>The core idea <span class="lab cw">SG11</span></h3>
+      <p>“Polymorphism allows the <b>same name to do different things</b> depending on what
+      you give it.” SG11's own analogy: the command is the same — <b>play</b> — but you play
+      a <i>song</i>, play a <i>movie</i>, play a <i>game</i>. One word, three behaviors.</p>
+      <p class="small" style="margin-top:12px">In Python: <b>different objects responding to
+      the exact same method call in their own unique way.</b></p>
+    </div>
+    <div>
+<pre class="code"><span class="c"># polymorphism even WITHOUT classes — len()</span>
+print(len(<span class="s">"Hi"</span>))         <span class="c"># 2  → counts CHARACTERS</span>
+print(len([<span class="g">1</span>, <span class="g">2</span>, <span class="g">3</span>]))   <span class="c"># 3  → counts ITEMS</span>
+
+<span class="c"># same function name, two behaviors,</span>
+<span class="c"># chosen by the OBJECT it operates on</span></pre>
+      <div class="note reveal" style="margin-top:16px; font-size:21px"><b>You have been using
+      polymorphism since Week 1</b> — every built-in that works “differently depending on the
+      object” is this same idea wearing a uniform. <span class="lab pr">verified: 2 and 3</span></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note"><b>SG11's definition, keep it exact:</b>
+    <span class="lab cw">“Polymorphism in Python allows the same method, function, or operator
+    to behave differently depending on the object it operates on.”</span> One way to achieve
+    it: <b>inheritance + method overriding</b> — the two units you just finished.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> SG11 leads with the Play analogy and built-in
+  <code>len()</code>/<code>max()</code> before classes — keep that ramp. Ask for one more
+  everyday overloaded word (“run”? “open”?) before touching code.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 § Introduction + §1.1</b> (Play analogy, len/max) · len() verified live</span><span>2 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · THE CURRICULUM VIEW ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Meeting 1 · 25 min · polymorphism through inheritance</div>
+  <h2>One loop, three animals</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">class</span> Dog(Animal):
+    <span class="k">def</span> make_sound(self):
+        print(self.name, <span class="s">"says Woof!"</span>)
+
+<span class="k">class</span> Cat(Animal):
+    <span class="k">def</span> make_sound(self):
+        print(self.name, <span class="s">"says Meow!"</span>)
+
+<span class="k">class</span> Lion(Animal):
+    <span class="k">def</span> make_sound(self):
+        print(self.name, <span class="s">"roars loudly."</span>)
+
+zoo = [Dog(<span class="s">"Bruno"</span>), Cat(<span class="s">"Kitty"</span>), Lion(<span class="s">"Simba"</span>)]
+<span class="k">for</span> animal <span class="k">in</span> zoo:
+    animal.make_sound()</pre>
+    </div>
+    <div class="vflow">
+      <div class="vf">the loop knows one thing:<br>“everything in here is an <b>animal</b>”</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Bruno says Woof!</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Kitty says Meow!</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Simba roars loudly.</b> <span class="lab pr">verified</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard">Three overrides, one method name, zero
+      <code>if</code> statements.</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>This is the SG10 zoo, finished:</b> overriding gave each child its
+    own <code>make_sound()</code>; polymorphism is what happens when the <b>loop</b> uses it.
+    <span class="lab cw">SG11: “Python chooses the right version based on the object's type.”</span></div>
+  </div>
+  <div class="cue"><b>Teacher cue — expected answers:</b> the three verified lines above, in
+  list order. Bridge from last unit: overriding built the differences; polymorphism is the
+  free lunch the loop gets because of them.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 §1.2</b> (polymorphism with inheritance) · <b>SG10 Example 1 + Activity 1</b> · output verified live</span><span>3 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · PREDICT 1 ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">Meeting 1 · PREDICT — the hospital billing array</div>
+  <h2><span class="pausechip">PREDICT 1</span> One loop, three bills</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div>
+<pre class="code">patients = [Patient(<span class="s">"Juan Dela Cruz"</span>, <span class="g">15000</span>),
+            SeniorPatient(<span class="s">"Lola M. Santos"</span>, <span class="g">15000</span>),
+            PhilHealthPatient(<span class="s">"Juanita Reyes"</span>, <span class="g">15000</span>)]
+
+<span class="k">for</span> p <span class="k">in</span> patients:
+    print(<span class="s">f"{p.get_name()}: "</span>
+          <span class="s">f"PHP {p.calculate_bill():,.2f}"</span>)</pre>
+      <p class="small" style="margin-top:12px">Three patient types, all billed at 15,000,
+      all through the <b>same two method calls</b>. Commit to all three printed lines —
+      exact pesos and centavos.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good">Juan Dela Cruz: <b>PHP 15,000.00</b> <span class="small">— full bill</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Lola M. Santos: <b>PHP 12,000.00</b> <span class="small">— 20% senior discount</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Juanita Reyes: <b>PHP 12,750.00</b> <span class="small">— 15% PhilHealth discount</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard">Your Formative Assessment 2 was this slide — you wrote the
+      overrides; the billing loop trusted them. <span class="lab pr">verified live</span></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Where you've seen this already:</b> SG11 Activity 1 asks you to
+    <b>extend</b> this exact system with <code>display_patient_type()</code> — override it in
+    each child (“Senior Citizen”, “PhilHealth Member”) and the same loop prints the right
+    label for every patient. <span class="lab cw">Activity 1 · 20 min · submitted</span></div>
+  </div>
+  <div class="cue"><b>Teacher cue — expected answers:</b> the three verified lines above.
+  Common misses: 15000.0 unformatted, or a senior bill of 3,000.00 (a 80%-of error — the
+  discount multiplies by 0.80, it does not become 0.80).</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG10 FA2</b> + <b>SG11 Activity 1</b> · all three lines verified live</span><span>4 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · DUCK TYPING ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Meeting 1 · 20 min · Python reality — duck typing</div>
+  <h2>Python never asks for your family tree</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.05fr; margin-top:26px">
+    <div class="card">
+      <h3>Two languages, two rules</h3>
+      <ul class="ticks">
+        <li><b>Java/C++:</b> the list must be declared
+        <code>Animal[]</code> — no family tree, no entry.</li>
+        <li><b>Python:</b> the loop calls <code>animal.make_sound()</code> and the only
+        question asked is <b>“does THIS object have a
+        <code>make_sound()</code>?”</b> If yes — it runs.</li>
+      </ul>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>“If it walks like a duck
+      and quacks like a duck, it's a duck.”</b> Behavior is the membership test — not the
+      classname. <span class="lab pr">Python reality</span></div>
+    </div>
+    <div>
+<pre class="code"><span class="k">class</span> Car:
+    <span class="k">def</span> move(self): print(<span class="s">"The car drives on the road."</span>)
+<span class="k">class</span> Boat:
+    <span class="k">def</span> move(self): print(<span class="s">"The boat sails on water."</span>)
+<span class="k">class</span> Drone:
+    <span class="k">def</span> move(self): print(<span class="s">"The drone flies in the sky."</span>)
+
+<span class="k">def</span> start_trip(vehicle):
+    vehicle.move()          <span class="c"># no type check. ever.</span>
+
+<span class="k">for</span> v <span class="k">in</span> [Car(), Boat(), Drone()]:
+    start_trip(v)</pre>
+      <p class="small" style="margin-top:10px">No shared parent. Three strangers that all
+      “quack” <code>move()</code> — one loop drives all three.
+      <span class="lab pr">verified live</span> <span class="lab cw">SG11 Activity 2</span></p>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> this is SG11 Activity 2's exact lab (Car/Boat/Drone +
+  <code>start_trip</code>), verified live: the three lines print in order. The deep cut for
+  fast finishers: a <code>GovernmentSubsidy</code> object with only
+  <code>get_name()</code>+<code>calculate_bill()</code> sails through the hospital billing
+  loop — verified: <code>DOH Subsidy: PHP 0.00</code>. Duck typing needs NO inheritance at
+  all; inheritance just guarantees the quack.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 § duck typing + Activity 2</b> (Car/Boat/Drone) · verified live</span><span>5 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · THE NIGHTMARE ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">The ultimate example — RogueEdu</div>
+  <h2>How would you move the enemies?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="c"># the nightmare version — a type check per breed</span>
+<span class="k">for</span> enemy <span class="k">in</span> enemies:
+    <span class="k">if</span> <span class="b">type(enemy) == Slime</span>:
+        enemy.chase_and_bite()
+    <span class="k">elif</span> <span class="b">type(enemy) == Shadow</span>:
+        enemy.strike_from_the_dark()
+    <span class="k">elif</span> <span class="b">type(enemy) == CowardGoblin</span>:
+        <span class="k">if</span> enemy.hp * 2 &lt; enemy.max_hp:
+            enemy.run_away()
+        <span class="k">else</span>:
+            enemy.chase_and_bite()
+    <span class="c"># …and every NEW monster adds an elif here</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="warn"><b>Why it's a nightmare:</b> the AI lives in the <b>loop</b>, not in
+      the monster. Every new villain means editing the engine — and every edit risks
+      breaking the breeds that already worked.</div>
+      <div class="card"><h3>The field report</h3>
+        <p class="small">Missions C-3 and C-4 added <b>two new monsters</b> — Shadow and
+        Coward Goblin. The engine's loop was not edited. Not once. That was only possible
+        because the monsters carry their own <code>act()</code>.</p></div>
+      <div class="note"><b>The fix is one line long</b> — next slide shows the engine's real
+      loop. <span class="lab re">core.py</span></div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> the nightmare sketch deliberately mirrors the real
+  behaviors (Slime's chase-and-bite, the goblin's wounded flee) so students recognize what
+  the type-check is re-implementing. Ask: “who moved the goblin when it fled in C-4?” —
+  they didn't write it in the loop; the monster answered the call.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: behaviors from <b>student_starter/classes.py</b> (C-3/C-4 missions) · anti-pattern illustrative</span><span>6 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · THE REAL ENGINE LOOP ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">RogueEdu's engine loop — the polymorphic truth</div>
+  <h2>One call site, every monster</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c"># engine/core.py — the villain phase (condensed, real)</span>
+<span class="k">for</span> villain <span class="k">in</span> self.villains:
+    <span class="k">if not</span> villain.is_alive():
+        <span class="k">continue</span>                <span class="c"># the Dead-Actor rule</span>
+
+    view = self._build_view()
+    action = <span class="g">villain.act(view)</span>   <span class="c"># ← THE polymorphic call</span>
+    <span class="c"># then the engine dispatches on the</span>
+    <span class="c"># RETURNED INTENT (Move/Attack/Wait)…</span></pre>
+      <p class="small" style="margin-top:12px"><code>self.villains</code> is a mixed list —
+      Slime, Shadow, Coward Goblin, whatever Week 8 adds. The engine calls
+      <code>act(view)</code> on <b>each object</b> and never asks which breed it is.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">What “doesn't know” means — precisely</h3>
+        <p class="small">The engine never type-checks the <b>entity</b>. It does inspect the
+        <b>returned intent</b> — <code>isinstance(action, MoveAction)</code> etc. — because
+        the referee must know which wish it is granting. Checking the <i>wish</i> is fine;
+        checking the <i>wisher</i> is the nightmare.</p></div>
+      <div class="card"><h3>You decide. The engine acts.</h3>
+        <p class="small">Each monster returns its own intent from its own
+        <code>act()</code>; the loop validates it, refuses illegal wishes loudly, and applies
+        the legal ones. Same call site since Week 1.</p></div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue — flagged:</b> the planning draft sketched the loop as
+  <code>for entity in self.entities: action.execute(engine)</code>. Neither exists in the
+  shipped engine (verified: zero matches in <code>core.py</code>) — the real iteration is
+  over <code>self.villains</code>, and actions are inert intents the ENGINE executes via
+  <code>isinstance</code> dispatch. The deck teaches the shipped truth. Hades, Fortnite and
+  friends use exactly this entity/act shape — the idea is real; the names above are not
+  this repo's.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>rogue_edu/engine/core.py</b> villain phase (real loop, condensed) · verified against source</span><span>7 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · PREDICT 2 ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Meeting 2 · PREDICT — the engine trace</div>
+  <h2><span class="pausechip">PREDICT 2</span> Same view, three monsters</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code">party = [Slime(5, 5), Shadow(5, 5),
+         CowardGoblin(5, 5)]
+
+<span class="c"># same read-only view for everyone:</span>
+<span class="c"># hero is 1 step east</span>
+
+<span class="k">for</span> villain <span class="k">in</span> party:
+    print(villain.act(view))</pre>
+      <p class="small" style="margin-top:12px"><b>Round 1:</b> all three at full health.
+      <b>Round 2:</b> same three monsters, all wounded to 4 hp. Six intents — commit to
+      all of them.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>Round 1 — healthy:</b> all three return
+      <span style="font-family:var(--mono)">AttackAction(dx=1, dy=0)</span> — the bite.
+      Three classes, one answer. <span class="lab pr">verified</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal">Round 2 — the same wound lands on all three…</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad">Slime: <span style="font-family:var(--mono)">AttackAction</span>
+      — keeps biting · Shadow: <span style="font-family:var(--mono)">AttackAction</span> —
+      keeps striking</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>CowardGoblin:
+      <span style="font-family:var(--mono)">MoveAction(dx=-1, dy=0)</span></b> — the ONLY
+      one that flees. Same wound, same call — its override answers differently.
+      <span class="lab pr">verified</span></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>That last line is the whole unit:</b> the loop did nothing
+    different — the <b>object</b> did. Polymorphism is not “many types in a list”; it is
+    “many <i>answers</i> to one call.”</div>
+  </div>
+  <div class="cue"><b>Teacher cue — flagged:</b> the planning draft's reveal said “Chase,
+  Ambush, Flee”. Verified reality: there is no ambush behavior in this engine — Shadow's
+  <code>act()</code> is Slime's chase-and-bite body, and at FULL hp all three bite. The
+  honest trace is the two-round table above: identical when healthy, split only when
+  wounded. Predict-first: most teams will say “all three flee” in round 2 — that wrong
+  answer is the lesson.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>student_starter/classes.py</b> patterns (C-3/C-4) · all six intents verified live</span><span>8 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · SCALABILITY ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">Why this makes software scalable</div>
+  <h2>Add a hundred monsters. Touch zero engine lines.</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>The proof already happened</h3>
+      <ul class="ticks">
+        <li><b>Mission C-3</b>: Shadow joined the board — a new class, pasted at the bottom
+        of <code>classes.py</code>, registered on one line.</li>
+        <li><b>Mission C-4</b>: Coward Goblin joined — again, no engine edit.</li>
+        <li>The turn loop, the collision math, the combat rules: <b>unchanged since before
+        either mission</b>.</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">The deal, in one sentence</h3>
+        <p class="small">The engine keeps calling <code>act()</code>; every new monster
+        answers for itself. New behavior ships as a <b>new class</b>, not as an edit to
+        working code.</p></div>
+      <div class="card"><h3>The same deal, human scale</h3>
+        <p class="small">SG11 Activity 3: Warrior, Mage, Archer each with
+        <code>special_move()</code>, and <code>perform_move(character)</code> that only says
+        <code>character.special_move()</code>. Add a Healer tomorrow — the loop never
+        hears about it. <span class="lab cw">Activity 3 · 15 min</span></p></div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> the strongest version of this slide is the repo
+  itself: <code>git log --oneline -- rogue_edu/engine/</code> shows the engine's last
+  commits predate both missions — the newest monsters arrived without touching it. Run it
+  live if the class has earned a git moment (Week 7 will make it official).</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 Activity 3</b> · C-3/C-4 mission history in this repo</span><span>9 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · PITFALL ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Meeting 2 · common pitfall — the missing method</div>
+  <h2>Duck typing fails loudly</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">from</span> engine.base_classes <span class="k">import</span> Wall
+
+w = Wall(<span class="s">"Rock"</span>, 0, 0)
+w.act(view)     <span class="c"># a Wall in the villains' role</span></pre>
+      <div class="warn reveal" style="margin-top:16px; font-size:22px">
+      <span style="font-family:var(--mono)">AttributeError: 'Wall' object has no attribute
+      'act'</span> — Python tried the call and the quack wasn't there.
+      <b>No inheritance, no override, no fallback.</b>
+      <span class="lab pr">verified</span></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The engine checks at the door too</h3>
+        <p class="small">Putting that Wall into the roster is refused on arrival:
+        <span style="font-family:var(--mono); font-size:18px">TypeError: add_villain expects
+        a Villain subclass, got Wall.</span> Duck typing trusts the call; the referee
+        still checks the roster. <span class="lab re">verified</span></p></div>
+      <div class="note"><b>The takeaway:</b> polymorphism moves the type check from
+      <i>before the loop</i> (Java's <code>Animal[]</code>) to <i>the moment of the
+      call</i> (Python's AttributeError). It is not “no rules” — it is
+      <b>rules at runtime</b>.</div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> both failures verified live. Link back to C-4: the
+  goblin whose override was named <code>get_action</code> silently never fled — the missing
+  method hid because the concrete parent still answered. A Wall can't hide: it has nothing
+  to inherit.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: engine behavior verified live (AttributeError + add_villain TypeError)</span><span>10 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · ALIGNMENT ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Curriculum alignment</div>
+  <h2>Study Guide 11 ↔ this deck ↔ Python ↔ RogueEdu</h2>
+  <table class="cmp" style="margin-top:20px; font-size:21px">
+    <tr><th>SG11 requirement</th><th>Deck slides</th><th>Python reality <span class="lab pr">verified</span></th><th>RogueEdu engine <span class="lab re">verified</span></th></tr>
+    <tr><td>Definition: “many forms”; same call, different behavior <span class="lab cw">Intro</span></td>
+        <td>1–2</td><td><code>len()</code> counts chars or items</td>
+        <td>one <code>act()</code> call site, many monsters</td></tr>
+    <tr><td>Polymorphism with inheritance (overrides) <span class="lab cw">§1.2, Act 1</span></td>
+        <td>3–4</td><td>zoo loop; billing loop → 12,000 / 12,750</td>
+        <td>Slime / Shadow / Coward Goblin share the loop</td></tr>
+    <tr><td>Duck typing — polymorphism WITHOUT inheritance <span class="lab cw">§1.3, Act 2</span></td>
+        <td>5</td><td>Car/Boat/Drone + <code>start_trip()</code></td>
+        <td>the view answers every monster the same way</td></tr>
+    <tr><td>Game-themed application <span class="lab cw">Act 3</span></td>
+        <td>9</td><td>add classes; the loop never edits</td>
+        <td>C-3/C-4 shipped new monsters; engine untouched</td></tr>
+    <tr><td>Failure mode: the missing method <span class="lab cw">res. 2</span></td>
+        <td>10</td><td><code>AttributeError</code> at call time</td>
+        <td><code>add_villain</code> refuses a Wall at the door</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:16px">
+    <div class="flag" style="font-size:19px"><b>Flagged, not fixed:</b> the planning sketch
+    of the engine loop (<code>self.entities</code> / <code>action.execute()</code>) matches
+    no shipped code — this deck teaches the real loop (slide 7, verified against
+    <code>core.py</code>). The draft's “Chase, Ambush, Flee” reveal overstated Shadow:
+    verified live, healthy monsters all bite; the flee only exists in the wounded Coward
+    Goblin (slide 8). SG11's Activity 2 and 3 wordings are kept where quoted.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> verified-behavior ledger, all from live runs:
+  <code>len()</code> = 2/3 · zoo lines (Woof/Meow/roars) · billing 15,000 / 12,000 /
+  12,750 · DOH Subsidy 0.00 through the billing loop · Car/Boat/Drone three lines ·
+  healthy trio → three AttackActions · wounded trio → two AttackActions + one flee
+  MoveAction · Wall AttributeError · add_villain TypeError.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 Intro, §1.1–1.3, Activities 1–3</b> · <b>rogue_edu engine</b></span><span>11 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · SUMMARY ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 2 · 2 min · summary &amp; shinobi rules</div>
+  <h2>If you remember four rules</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> Polymorphism treats different
+      objects <b>uniformly</b> through one shared method name.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> It <b>stands on inheritance and
+      overriding</b> — the differences were built in the last two units.</p></div>
+      <div class="card"><p style="font-size:26px"><b>3.</b> Python uses <b>duck typing</b>:
+      the method is assumed to exist and checked only at the moment of the call.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>4.</b> That is how engines and big
+      systems <b>scale</b> — new kinds of objects arrive as new classes, never as new
+      <code>if/else</code> chains in working code.</p></div>
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <p style="font-size:26px"><b>And in the village:</b> the loop says
+        <code>act(view)</code>; the slime bites, the shadow strikes, the goblin runs —
+        <b>“You decide. The engine acts.”</b></p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Activity 3</h3>
+      <p class="small">Can you: say what “many forms” refers to? · predict the three billing
+      lines from memory? · explain why the Car could join the Dog loop without inheriting? ·
+      name the exact error a Wall makes when asked to <code>act()</code>? · say which monster
+      flees when wounded — and which line of ITS code decided that?</p></div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> SG11's takeaways feed rules 1–4; the closing card is
+  the quarter's through-line. Next stop in the curriculum: abstraction (SG12) — the
+  “need-to-know principle” is polymorphism's fence, formalized.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG11 § Key takeaways</b> · <b>rogue_edu</b> through-line</span><span>12 / 12</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 12</span>
+  <button id="next">→</button>
+  <button id="notes" title="toggle speaker cues">N</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg11-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.getElementById('notes').onclick = function(){
+    document.body.classList.toggle('show-cues');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+    else if (e.key==='n'||e.key==='N') document.body.classList.toggle('show-cues');
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg11-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>
