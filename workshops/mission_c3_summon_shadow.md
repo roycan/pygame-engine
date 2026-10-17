@@ -230,3 +230,5 @@ Genin Summoner.**
 
 *(Teachers: the rescue card for this mission lives in the teacher pack. Unstick teams
 with the 90-second rule; the chakra check is the first responder.)*
+
+*Scroll forged in 2026 by Sir Roy from the PSHS curriculum. Village infrastructure and jutsus engineered alongside Hermes, Gemini, and ChatGPT.*
