@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abstraction &amp; Abstract Base Classes — Study Guide 12 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:20px; color:var(--muted); line-height:1.45}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  /* teaching labels */
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}     /* curriculum wording */
+  .pr{background:var(--teal); color:#fff}            /* python reality */
+  .re{background:var(--green); color:#fff}           /* roguedu engine */
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  /* layout blocks */
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  /* code */
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}   /* keyword */
+  pre.code .s{color:#e6c98a}   /* string */
+  pre.code .c{color:#8a8474; font-style:italic} /* comment */
+  pre.code .d{color:#f0a5a0}   /* decorator */
+  pre.code .g{color:#a7d78f}   /* good/valid */
+  pre.code .b{color:#f0a5a0}   /* bad/invalid */
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  /* vertical flow */
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  /* speaker cues — teacher-only, toggled with N, never printed */
+  .cue{display:none; margin-top:18px; border-left:5px solid var(--amber);
+       background:var(--amber-wash); border-radius:0 12px 12px 0;
+       padding:14px 22px; font-size:21px; line-height:1.45}
+  .cue b{color:var(--amber)}
+  body.show-cues .cue{display:block}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .cue{display:none !important}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 12 · Abstraction — The Need-to-Know Principle · Grade 9 CS · 2 meetings (100 min)</div>
+  <h1>Abstraction &amp;<br>Abstract Base Classes</h1>
+  <p class="sub" style="margin-top:22px; font-size:32px; color:var(--ink)">
+    <b>Decide what a thing must do. Leave how for later — and let Python enforce
+    the promise.</b></p>
+  <p class="sub" style="margin-top:14px">PSHS Computer Science Curriculum | Content engineered in 2026 by Sir Roy alongside Hermes, Gemini &amp; ChatGPT</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Session 1:</b> the need-to-know principle → abstraction you already use → the <code>abc</code> module → the rule and the contract</li>
+        <li><b>Session 2:</b> the RogueEdu hierarchy → PREDICT: the Ghost trap → takeaways</li>
+        <li><b>Pattern study:</b> <code>LabApparatus</code>, ABC, and the <code>@abstractmethod</code> “sticky note” <span class="lab cw">SG12</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Learning objective <span class="small">(SG12)</span></h3>
+      <p><b>Apply the principles of abstraction by analyzing complex real-world
+      systems</b> — and use Python's <code>abc</code> module to write the same
+      discipline into code.</p>
+      <p class="small" style="margin-top:12px">Curriculum standard PS3 T1 LS3 — Implement
+      Object-oriented Programming Concepts.</p>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> press <b>N</b> anywhere for these speaker cues (never
+  printed). Every TypeError quoted in this deck is Python 3.12+ wording, captured live on
+  the project venv — older tutorials online show an older sentence for the same crash
+  (slide 11 flags this). The engine hierarchy on slides 9–10 is quoted from
+  <code>rogue_edu/engine/base_classes.py</code>, not from memory.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 — Abstraction (The Need-to-Know Principle)</b> — header, objective, schedule</span><span>1 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · NEED TO KNOW ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Session 1 · 5 min · the principle</div>
+  <h2>The need-to-know principle</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>Press the button <span class="lab cw">SG12: coffee machine</span></h3>
+      <p>You press <b>“espresso”</b>. You do not need to know about the pump pressure,
+      the heating coil, or the grind size. The machine hides <b>how</b> behind a button
+      that says <b>what</b>.</p>
+      <p class="small" style="margin-top:12px">SG12's rule: at every layer, you need to
+      know <b>the interface</b> — and you need to know the layer below <b>only if you are
+      the one repairing it</b>.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Same principle, everywhere</h3>
+        <p class="small"><b>Game controller:</b> you know the buttons, not the Bluetooth
+        stack. <b>Smartphone:</b> you know the apps, not the radio firmware.
+        <b>Digital scale:</b> you read the number; the load cells stay inside.
+        <span class="lab cw">SG12 key concepts</span></p></div>
+      <div class="note"><b>The two words this unit nails down:</b>
+      <b>INTERFACE</b> — what a thing lets you do (the buttons) ·
+      <b>IMPLEMENTATION</b> — how it actually works (the gears). Abstraction is
+      <b>leading with the interface and hiding the implementation</b> until someone
+      needs to know.</div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> SG12's “Digital Scale Analysis” thinking activity
+  maps perfectly here: students list the scale's buttons (interface) versus its load cells
+  and firmware (implementation), then label which audience needs which. Two minutes, and
+  the vocabulary is planted for the code slides.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § Introduction + Key Concepts</b> (coffee machine, controllers, scale)</span><span>2 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · COMPLEXITY VS SIMPLICITY ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Session 1 · complexity vs. simplicity</div>
+  <h2>Hiding the gears so you can just drive</h2>
+  <div class="bridge" style="margin-top:40px">
+    <div class="bcol" style="border:3px solid var(--red)">
+      <h4 style="color:var(--red)">EVERY driver needs to know</h4>
+      <p style="font-family:var(--mono); font-size:26px; line-height:1.8">
+        steering wheel<br> pedals · mirrors<br> fuel gauge</p>
+      <p class="small" style="margin-top:12px">A handful of controls. Learnable in a
+      week. This is the <b>interface</b>.</p>
+    </div>
+    <div class="bmid"><div class="a">⟶</div><div class="t">the car hides<br>≈2,000 parts<br>until a mechanic<br>needs them</div></div>
+    <div class="bcol">
+      <h4>ONLY the mechanic needs to know</h4>
+      <p style="font-family:var(--mono); font-size:26px; line-height:1.8">
+        fuel injection<br> timing belt<br> differential</p>
+      <p class="small" style="margin-top:12px">Thousands of parts, revealed
+      <b>on a need-to-know basis</b>. This is the <b>implementation</b>.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:32px">
+    <div class="note" style="font-size:26px"><b>Abstraction is not hiding because the
+    details are secret</b> — it is hiding so that <b>2,000 parts never have to be in your
+    head at the same time</b>. Fewer things on screen → simpler thinking → fewer
+    mistakes.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> ask “how many moving parts does a car have?” —
+  answers range wildly; the point lands when you say it does not matter: the DRIVER's
+  count is three pedals, the MECHANIC's count is thousands, and both are correct for
+  their role. That sentence is the whole unit.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 Session 1</b> (complexity-vs-interface framing) · car analogy per RFC</span><span>3 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · YOU ALREADY USE IT ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">Session 1 · abstraction in code you already use</div>
+  <h2>You've been driving the car all along</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div>
+<pre class="code">print(<span class="s">"Hello!"</span>)
+print(len(<span class="s">"Hi"</span>))
+
+<span class="c"># both work. neither shows its gears.</span>
+<span class="c"># what TYPE of thing is print, anyway?</span>
+print(<span class="k">type</span>(print))
+print(<span class="k">type</span>(len))</pre>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><span style="font-family:var(--mono)">Hello!</span> — printed. Zero
+      knowledge of screens or fonts required.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><span style="font-family:var(--mono)">2</span> — counted. Zero knowledge
+      of memory allocation required.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><span style="font-family:var(--mono)">builtin_function_or_method</span>
+      — their gears are <b>C code, compiled inside Python itself</b>. You could not read
+      them if you tried. <span class="lab pr">verified</span></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note"><b>Same trick, one level up:</b> <code>deck2pdf slides/deck.html</code> —
+    the teacher's one-line slide-to-PDF command. Inside: a browser, a print pipeline, font
+    waits, page sizing. You command the <b>what</b>; the tool owns the <b>how</b>.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> live-demo <code>deck2pdf</code> here if the projector
+  terminal is free: <code>deck2pdf any-deck.html</code> → a PDF appears in seconds. Then
+  ask “what did you need to know to run that?” — one path in, one PDF out. That
+  Ignorance Is the abstraction working.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § “abstraction in code”</b> intent · type() checks verified live</span><span>4 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · INTERFACE VS IMPLEMENTATION ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Session 1 · the two words, formally</div>
+  <h2>Interface vs. Implementation</h2>
+  <table class="cmp" style="margin-top:28px">
+    <tr><th></th><th>INTERFACE — the “what”</th><th>IMPLEMENTATION — the “how”</th></tr>
+    <tr><td><b>Question it answers</b></td><td>What can I ask this thing to do?</td><td>How does it actually do it?</td></tr>
+    <tr><td><b>Who needs it</b></td><td>every <b>user</b> of the thing</td><td>only the <b>builder/repairer</b></td></tr>
+    <tr><td><b>In this deck</b></td><td><code>print()</code> prints · <code>len()</code> counts ·
+        <code>act(view)</code> decides a turn</td><td>C source code · the loop's internals ·
+        each monster's own three lines</td></tr>
+    <tr><td><b>Changes how often?</b></td><td>rarely — users depend on it</td><td>whenever a better way appears</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:25px"><b>The promise of abstraction:</b> the
+    implementation may change tomorrow — as long as the <b>interface stays put</b>, every
+    user keeps working. That is why the next slides make Python <b>enforce</b> an
+    interface.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> anchor with the car: the steering wheel's interface
+  survived a century of implementation changes — mechanical linkage → power steering →
+  electric. Drivers never retrained. Then promise: by slide 7 Python will enforce exactly
+  such a promise for us, with a crash if broken.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § interface-vs-complexity framing</b> · examples from this repo</span><span>5 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · THE abc MODULE ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">Session 1 · Python's <code>abc</code> module</div>
+  <h2>Writing the promise into the language</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div>
+<pre class="code"><span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod
+
+<span class="k">class</span> Animal(<span class="g">ABC</span>):          <span class="c"># inherits the rulebook</span>
+    <span class="d">@abstractmethod</span>
+    <span class="k">def</span> make_sound(self):
+        ...               <span class="c"># a “sticky note”, no body</span>
+
+<span class="c"># Animal is now a BLUEPRINT.</span>
+<span class="c"># It exists to be inherited from —</span>
+<span class="c"># not to be instantiated.</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3><code>ABC</code> — the base of rules</h3><p class="small">A class
+      that inherits from <code>ABC</code> may declare methods that have <b>no body</b> —
+      and Python then refuses to build objects from it.</p></div>
+      <div class="card"><h3><code>@abstractmethod</code> — the sticky note</h3><p class="small">Marks a
+      method as <b>“every child MUST write this.”</b> SG12's pattern study calls it a
+      sticky note on the blueprint — the <code>LabApparatus</code> example, next session.</p></div>
+      <div class="card"><h3>Why not just write <code>pass</code>?</h3><p class="small">A plain empty
+      method still lets users build half-finished objects. <code>@abstractmethod</code>
+      turns a polite note into an <b>enforced contract</b>.</p></div>
+    </div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> SG12's Activity 1 (“Spot the Error!”) shows three
+  snippets where only one is legal — keep that activity for Session 2's warm-up, it lands
+  after slides 7–8 have shown the crash. The ellipsis <code>...</code> in the sticky-note
+  body is legal Python; some guides write <code>pass</code> — identical meaning.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § pattern study</b> (LabApparatus, sticky note) · code verified live</span><span>6 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · THE RULE ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">Session 1 · the rule — verified live</div>
+  <h2><span class="pausechip">THE RULE</span> You cannot build a blueprint</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code">Animal()      <span class="c"># try to build from the blueprint</span></pre>
+      <div class="warn reveal" style="margin-top:18px; font-size:22px">
+      <span style="font-family:var(--mono)">TypeError: Can't instantiate abstract class
+      Animal without an implementation for abstract method 'make_sound'</span>
+      <span class="lab pr">verified — Python 3.14 wording</span></div>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal">The rule, plainly: <b>an abstract class is a plan, not a
+      thing.</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><code>Animal()</code> — building from a plan →
+      <b>TypeError before any code runs</b>.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">The crash is a <b>feature</b>: it fires the instant you
+      try, not halfway through a game.</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Wording warning:</b> older tutorials print this crash as
+    “…with abstract method 'make_sound'”. Same crash, older Python. If a student's
+    screenshot does not match this deck word-for-word, <b>the crash still means the same
+    thing</b>.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> run it live — the TypeError is the slide. Point out
+  the crash happens at the CONSTRUCTION line, before a single turn of the game: that is
+  “before the game even starts”, literally.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § the abc rule</b> · TypeError captured live on Python 3.14</span><span>7 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · THE CONTRACT ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Session 1 · the contract — verified live</div>
+  <h2>Sign it, or inherit the obligation</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">class</span> Puppy(Animal):
+    <span class="k">pass</span>          <span class="c"># inherited… the OBLIGATION</span>
+
+Puppy()
+
+<span class="c"># but sign the contract:</span>
+<span class="k">class</span> Dog(Animal):
+    <span class="k">def</span> make_sound(self):
+        <span class="k">return</span> <span class="s">"Woof"</span>
+
+Dog().make_sound()</pre>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal bad">Puppy() → <span style="font-family:var(--mono); font-size:19px">TypeError: Can't instantiate abstract class Puppy without an implementation for abstract method 'make_sound'</span> — a child that does not
+      implement the abstract method <b>is abstract itself</b>. The obligation is
+      inherited like everything else. <span class="lab pr">verified</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Dog signs the contract → instantiable →
+      <span style="font-family:var(--mono)">"Woof"</span>
+      <span class="lab pr">verified</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>The contract chain:</b> abstract methods pass down
+      generation after generation until SOMEONE writes a real body.</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Interface vs implementation, now enforced:</b> <code>Animal</code>
+    fixed the <b>interface</b> (“every animal can <code>make_sound()</code>”); each child
+    supplies its own <b>implementation</b>. The abstract base class is the interface,
+    written in code.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> the Puppy crash surprises students (“I didn't even
+  call anything!”) — construction IS the check. This is the exact shape of the engine
+  crash on slide 11; keep this slide's wording in reach when you get there.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § the contract</b> · Puppy/Dog behavior verified live</span><span>8 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · ROGUEEDU HIERARCHY ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">Session 2 · RogueEdu's core engine — the real code</div>
+  <h2>Your engine already speaks ABC</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c"># engine/base_classes.py — the real hierarchy</span>
+<span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod
+<span class="k">from</span> engine.actions <span class="k">import</span> Action
+
+<span class="k">class</span> GameObject(<span class="g">ABC</span>):
+    <span class="d">@abstractmethod</span>
+    <span class="k">def</span> symbol(self) -&gt; str: ...
+
+<span class="k">class</span> Character(GameObject):
+    <span class="k">def</span> symbol(self) -&gt; str:  <span class="c"># signs GameObject's part</span>
+        <span class="k">return</span> <span class="s">"🧍"</span>
+
+<span class="k">class</span> Villain(Character):
+    <span class="d">@abstractmethod</span>
+    <span class="k">def</span> act(self, view) -&gt; Action: ...</pre>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal guard"><b>GameObject(ABC)</b> — abstract:
+      <span style="font-family:var(--mono)">{symbol}</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Character</b> — implements
+      <code>symbol()</code> → abstract: <span style="font-family:var(--mono)">{ }</span>
+      (empty!)</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>Villain(Character)</b> — adds
+      <code>@abstractmethod act</code> → abstract:
+      <span style="font-family:var(--mono)">{act}</span>
+      <span class="lab pr">all verified via __abstractmethods__</span></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Read the chain like a contract ledger:</b> GameObject demands a
+    <b>symbol</b>; Character pays that debt and adds none; Villain is born debt-free and
+    immediately demands <b>act</b> from ITS children. Your monsters pay Villain's line.
+    <span class="lab re">base_classes.py</span></div>
+  </div>
+  <div class="cue"><b>Teacher cue — flagged:</b> the planning draft said the Villain base
+  class lives in <code>classes.py</code> — wrong file: <code>classes.py</code> is the
+  STUDENT file (it holds Slime, Shadow and friends); the base class lives in
+  <code>engine/base_classes.py</code>. The panel above is its real structure, checked
+  against <code>__abstractmethods__</code> live.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>rogue_edu/engine/base_classes.py</b> (structure verbatim) · __abstractmethods__ verified live</span><span>9 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · WHY THE ENGINE DEMANDS IT ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Session 2 · why the engine demands the contract</div>
+  <h2>The ABC is the engine's insurance policy</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The engine's one bet</h3>
+      <p style="font-family:var(--mono); font-size:24px; line-height:1.7">
+        action = <span class="g">villain.act(view)</span></p>
+      <p class="small" style="margin-top:10px">The turn loop calls <code>act()</code> on
+      every entry of a mixed list and <b>trusts the answer</b>. The ABC is what makes that
+      trust safe: Python guarantees every entry HAS an <code>act()</code>, or the game
+      never boots.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Crash at boot, not mid-game <span class="lab re">verified</span></h3>
+        <p class="small">Because the check fires at <b>construction</b>, a broken monster
+        dies at <code>create_game()</code> — in your terminal, with a readable error —
+        <b>before any player presses a key</b>.</p></div>
+      <div class="card"><h3>Only one signature required <span class="lab re">verified</span></h3>
+        <p class="small"><code>symbol()</code> is already paid (Character implements it), so
+        a Villain child that writes <b>only <code>act()</code></b> is instantiable — it
+        even inherits the generic 🧍 symbol until it overrides. <b>act() is the one
+        promise that matters.</b></p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="flag" style="font-size:21px"><b>Interface vs implementation, engine
+    edition:</b> the <b>interface</b> is <code>act(view)</code> — “every villain answers
+    for its turn”. The <b>implementation</b> is each monster's private three-liner. The
+    loop is married to the first and has never heard of the second.</div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> the Wisp proof (live): a Villain child with ONLY
+  <code>act()</code> instantiates fine and shows the default 🧍 symbol — proof that
+  Character already paid the symbol debt. Do not let students conclude “write act only”
+  as a style rule — the deck teaches symbol overrides from C-3; this slide is about what
+  is REQUIRED, not what is customary.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>engine/core.py</b> (the loop's trust) · Wisp/GameObject checks verified live</span><span>10 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · PREDICT: THE TRAP ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Session 2 · PREDICT — the Ghost trap</div>
+  <h2><span class="pausechip">PREDICT</span> The student and the Ghost</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">from</span> engine.base_classes <span class="k">import</span> Villain
+
+<span class="k">class</span> Ghost(Villain):
+    <span class="k">def</span> __init__(self, x, y):
+        super().__init__(<span class="s">"Ghost"</span>, x, y,
+                         hp=5, attack_power=1)
+
+<span class="c"># spooky… but one method is missing.</span>
+ghost = Ghost(<span class="g">1</span>, <span class="g">1</span>)</pre>
+      <p class="small" style="margin-top:12px">A student wants a spooky monster, writes a
+      proper <code>__init__</code>… and forgets <code>act()</code> completely. They run the
+      game. <b>What happens?</b> Commit before the reveal.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal">The game never starts. The terminal speaks first:</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><span style="font-family:var(--mono); font-size:21px">TypeError: Can't instantiate abstract class
+      Ghost without an implementation for abstract method 'act'</span>
+      <span class="lab pr">verified verbatim</span></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">No traceback jungle, no half-broken save file — <b>one
+      sentence, naming the class and the missing method</b>. Fix: give Ghost an
+      <code>act()</code> (or run the chakra check, which says exactly this as a
+      <code>[FAIL]</code> line).</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>The ABC turned a design mistake into a polite error message.</b>
+    Without the contract, the game would boot and crash MID-TURN the first time the loop
+    asked the Ghost to move — with every player already holding the controller.</div>
+  </div>
+  <div class="cue"><b>Teacher cue — flagged:</b> the planning draft's reveal read
+  “…with abstract method act”. That is OLDER-Python wording; this project's Python says
+  “…without an implementation for abstract method 'act'” (verified verbatim on the
+  project venv). Same crash; if a student's web search shows the old sentence, the meaning
+  transfers. The chakra check reports the same problem as a friendly
+  <code>[FAIL]</code> line — teach the doctor first, the raw crash second.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: Ghost trap verified verbatim on the project venv · chakra-check behavior from <b>check_my_class.py</b></span><span>11 / 12</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · TAKEAWAYS ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Session 2 · 2 min · key takeaways</div>
+  <h2>If you remember four rules</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> Abstraction = lead with the
+      <b>interface</b> (the what), hide the <b>implementation</b> (the how) until someone
+      needs to know.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> An <b>abstract base class</b>
+      (<code>ABC</code> + <code>@abstractmethod</code>) is a blueprint: it can be
+      inherited from, <b>never built from</b>.</p></div>
+      <div class="card"><p style="font-size:26px"><b>3.</b> The <b>contract is
+      inherited</b>: a child that does not implement every abstract method is abstract
+      itself — the debt passes down.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>4.</b> The engine bets its whole loop
+      on that contract: <code>villain.act(view)</code> is safe because the ABC
+      <b>crashes impostors at boot</b>, not mid-game.</p></div>
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <p style="font-size:26px"><b>And in the village:</b> <code>Villain</code> demands
+        <code>act(view)</code>; every monster signs it its own way —
+        <b>“You decide. The engine acts.”</b></p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before the pattern study</h3>
+      <p class="small">Can you: name the interface and the implementation of a coffee
+      machine? · explain why <code>Animal()</code> crashes but <code>Dog()</code> works? ·
+      say which class in the engine pays the <code>symbol()</code> debt? · predict the
+      exact crash when <code>act()</code> is forgotten? · say WHY that crash timing is a
+      kindness?</p></div>
+  </div>
+  <div class="cue"><b>Teacher cue:</b> SG12's takeaways center the need-to-know principle
+  and the abc contract — rules 1–3 carry them; rule 4 is the engine's stake. Next in the
+  series: the quarter's design proposal (Week 6) will ask students to DRAW an interface
+  before writing an implementation — this deck is the vocabulary for it.</div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG12 § takeaways intent</b> · engine contract verified live</span><span>12 / 12</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 12</span>
+  <button id="next">→</button>
+  <button id="notes" title="toggle speaker cues">N</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg12-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.getElementById('notes').onclick = function(){
+    document.body.classList.toggle('show-cues');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+    else if (e.key==='n'||e.key==='N') document.body.classList.toggle('show-cues');
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg12-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>
