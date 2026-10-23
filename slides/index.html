@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RogueEdu · OOP Concept Decks</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink);
+       padding:48px 16px 64px}
+  .wrap{max-width:880px; margin:0 auto}
+  .kicker{font-family:var(--mono); font-size:13px; letter-spacing:.18em;
+          text-transform:uppercase; color:#8fd3c7; margin-bottom:10px}
+  h1{color:var(--paper); font-size:clamp(30px, 6vw, 46px); line-height:1.05;
+     letter-spacing:-.01em; margin-bottom:8px}
+  .sub{color:#b5ae9d; font-size:16px; line-height:1.5; margin-bottom:28px; max-width:640px}
+  .deck{display:block; background:var(--paper); border:1px solid var(--line);
+        border-radius:14px; padding:20px 24px; margin-bottom:14px;
+        text-decoration:none; color:var(--ink);
+        transition:transform .12s ease, box-shadow .12s ease}
+  .deck:hover,.deck:focus-visible{transform:translateY(-2px);
+        box-shadow:0 10px 60px rgba(0,0,0,.5); outline:2px solid var(--teal)}
+  .deck h2{font-size:22px; margin-bottom:4px; display:flex; align-items:baseline;
+           justify-content:space-between; gap:12px}
+  .deck h2 .arrow{color:var(--teal); font-weight:700}
+  .deck p{font-size:15px; color:#3c382f; line-height:1.45}
+  .deck .file{font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:8px;
+              word-break:break-all}
+  footer{margin-top:30px; font-family:var(--mono); font-size:12px; color:#8a8474;
+         border-top:1px solid #4a453a; padding-top:14px; line-height:1.7}
+  footer code{font-family:var(--mono); background:#22201b; color:#e9e4d8;
+              padding:2px 8px; border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">RogueEdu · Grade 9 OOP</div>
+  <h1>Concept Decks</h1>
+  <p class="sub">Study decks for the RogueEdu engine. Each one is a single, fully
+     self-contained HTML file — no network, no install, works offline. Open a deck
+     and step through it in the browser.</p>
+
+  <a class="deck" href="abstraction-concept-deck.html">
+    <h2>Abstraction & Abstract Base Classes <span class="arrow">→</span></h2>
+    <p>Expose <em>what</em> something does, hide <em>how</em> it does it — the engine's contract for every hero.</p>
+    <div class="file">abstraction-concept-deck.html</div>
+  </a>
+
+  <a class="deck" href="encapsulation-concept-deck.html">
+    <h2>Encapsulation <span class="arrow">→</span></h2>
+    <p>State and the methods that guard it live together inside the class.</p>
+    <div class="file">encapsulation-concept-deck.html</div>
+  </a>
+
+  <a class="deck" href="inheritance-concept-deck.html">
+    <h2>Inheritance <span class="arrow">→</span></h2>
+    <p>Subclass <code>Hero</code> and <code>Villain</code> to reuse the engine's turn machinery.</p>
+    <div class="file">inheritance-concept-deck.html</div>
+  </a>
+
+  <a class="deck" href="method-overriding-concept-deck.html">
+    <h2>Method Overriding <span class="arrow">→</span></h2>
+    <p>Write your own version of a method the superclass already defines.</p>
+    <div class="file">method-overriding-concept-deck.html</div>
+  </a>
+
+  <a class="deck" href="polymorphism-concept-deck.html">
+    <h2>Polymorphism <span class="arrow">→</span></h2>
+    <p>One call site, many behaviors — the engine steps every actor the same way.</p>
+    <div class="file">polymorphism-concept-deck.html</div>
+  </a>
+
+  <footer>
+    Auto-deployed to GitHub Pages from this repo's <code>slides/</code> folder by
+    <code>.github/workflows/pages.yml</code> — add a deck, push to <code>main</code>,
+    it appears here. The class arcade itself lives on Render.
+  </footer>
+</div>
+</body>
+</html>

@@ -17,3 +17,6 @@ plans/
 
 # deck2pdf exports are teacher-local byproducts, never shipped or tracked
 slides/*.pdf
+
+# Windows NTFS stream artifacts from downloaded files (never tracked)
+*:Zone.Identifier
