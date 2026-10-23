@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inheritance — Study Guide 9 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2; --violet:#4b4470; --violet-wash:#e9e6f2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  .sess{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--violet);
+        color:#fff; border-radius:999px; padding:5px 16px; margin-right:12px; letter-spacing:.06em}
+  h1{font-size:100px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:58px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:22px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:20px 26px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .d{color:#f0a5a0}
+  pre.code .g{color:#a7d78f}
+  pre.code .b{color:#f0a5a0}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:14px 22px; text-align:center; font-size:25px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:32px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .tree{display:flex; flex-direction:column; align-items:center; gap:2px}
+  .tnode{background:#fffdf8; border:2px solid var(--ink); border-radius:12px;
+         padding:12px 34px; font-size:26px; text-align:center; min-width:280px}
+  .tnode small{display:block; font-size:18px; color:var(--muted); font-family:var(--mono)}
+  .tnode.child{border-color:var(--teal)}
+  .tlink{width:2px; height:22px; background:var(--ink)}
+  .tsplit{width:2px; height:22px; background:var(--ink); align-self:center}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  table.cmp{width:100%; border-collapse:collapse; font-size:23px}
+  table.cmp th{font-family:var(--mono); font-size:17px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:11px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ============ SLIDE 1 · TITLE ============ -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 9 · Inheritance · Grade 9 CS · 2 meetings (100 min) + 1 ILA (30 min) + Graded FA (40 min)</div>
+  <h1>Inheritance</h1>
+  <p class="sub" style="margin-top:20px; font-size:34px; color:var(--ink)">
+    <b>One class passes its attributes and methods down to another — so you never
+    write the same code twice.</b></p>
+  <p class="sub" style="margin-top:14px">PSHS Computer Science Curriculum | Content engineered in 2026 by Sir Roy alongside Hermes, Gemini &amp; ChatGPT</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Session 1 · Meeting 1 (50 min):</b> what inheritance is → parent &amp; child classes → the Animal family → your first RogueEdu family</li>
+        <li><b>Session 2 · Meeting 2 (50 min):</b> family vocabulary → super() chains → types of inheritance → benefits → ILA briefing</li>
+        <li><b>Session 3 · ILA (30 min):</b> Activity 2 — diagram &amp; experiment lab</li>
+        <li><b>Session 4 · Graded FA (40 min):</b> Library Management System (encapsulation + inheritance)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Learning competency <span class="small">(SG9)</span></h3>
+      <p>Demonstrate inheritance through the creation of <b>parent and child classes</b> —
+      and explain why the child gets the parent's features for free.</p>
+      <p class="small" style="margin-top:12px">Carried over from SG8: encapsulation
+      (controlled access, validation) stays in play — the graded assessment uses
+      <b>both</b>.</p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 9 Inheritance_V2 (Final).md</b> — header, outline, module objectives</span><span>1 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 2 · FROM SG8 TO SG9 ============ -->
+<section class="slide" id="s2">
+  <div class="kicker">Session 1 · Meeting 1 · from last week to this week</div>
+  <h2>From lockers to family trees</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>Last week (SG8): encapsulation</h3>
+      <p>“Keep your valuables in a <b>locker</b> so only the right people can open it.”
+      Data + behavior bundled, access controlled: <code>get_age()</code>,
+      <code>set_age()</code>, <code>@property</code>.</p>
+    </div>
+    <div class="card">
+      <h3>This week (SG9): inheritance</h3>
+      <p>“A <b>family tree</b>. Parents pass down traits — eye color, height, talents.”
+      One class passes attributes and methods down to another.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note"><b>The problem inheritance solves:</b> an <code>Animal</code> has a name and can
+    <code>eat()</code> and <code>sleep()</code>. A <code>Dog</code>? A <code>Bird</code>? A <code>Cat</code>?
+    Without inheritance you <b>copy-paste the same name/eat/sleep code into every class</b>
+    — four classes, three copies of identical code, and a bug means four fixes.
+    Inheritance: write it <b>once</b> in <code>Animal</code>; let the children receive it.</div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="flag" style="font-size:22px"><b>You already live in an inheritance tree:</b>
+    in RogueEdu, <code>BraveKnight</code>, <code>Slime</code>, and <code>Elder</code> are all
+    <i>children</i> of engine parents (<code>Hero</code>, <code>Villain</code>, <code>NPC</code>).
+    You've been <b>writing child classes since Day 1</b> — this week you learn what
+    you've been doing.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 § Introduction</b> (locker → family tree) · <b>student-lesson.md</b> (Week 1)</span><span>2 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 3 · WHAT IS INHERITANCE (DIAGRAM) ============ -->
+<section class="slide" id="s3">
+  <div class="kicker">Session 1 · SG9 §1.1 · what is inheritance in OOP?</div>
+  <h2>The child gets the parent's features — without rewriting them</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.1fr; margin-top:26px">
+    <div class="tree">
+      <div class="tnode"><b>Animal</b><small>attribute: name · methods: eat(), sleep()</small></div>
+      <div class="tlink"></div><div class="tsplit"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; width:100%; padding:0 60px">
+        <div class="tnode child">Dog<small>adds: nothing yet — just inherits</small></div>
+        <div class="tnode child">Cat<small>adds: nothing yet — just inherits</small></div>
+      </div>
+      <p class="small" style="margin-top:18px">arrow of ancestry points <b>up</b>:
+      Dog <b>is an</b> Animal</p>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Definition <span class="lab cw">SG9 §1.1</span></h3>
+        <p style="font-size:27px"><b>Inheritance is when one class (the child) gets features
+        from another class (the parent)</b> — attributes and methods it can use, so you
+        don't have to write them again.</p>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr; gap:16px; margin-top:18px">
+        <div class="note"><b>What Dog and Cat receive:</b> the <code>name</code> attribute and
+        the <code>eat()</code> / <code>sleep()</code> methods. Written once, in <code>Animal</code>.</div>
+        <div class="flag" style="font-size:22px"><b>Video resource (SG9):</b> “Fundamentals of OOP”
+        — watch <b>5:30–7:10</b>. Heads-up: the video says <b>superclass</b> instead of parent
+        and <b>subclass</b> instead of child. Same idea, different words (slide 7).</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.1</b> (Animal → Dog, Animal → Dog/Cat diagrams)</span><span>3 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 4 · EXAMPLE 1 CODE ============ -->
+<section class="slide" id="s4">
+  <div class="kicker">Session 1 · SG9 §1.2 · Example 1 (verbatim)</div>
+  <h2>Two children, zero new code</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:22px">
+    <div>
+<pre class="code"><span class="c"># Create the parent class</span>
+<span class="k">class</span> Animal:
+    <span class="k">def</span> __init__(self, name):
+        self.name = name
+    <span class="k">def</span> eat(self):
+        print(self.name, <span class="s">"is eating."</span>)
+    <span class="k">def</span> sleep(self):
+        print(self.name, <span class="s">"is sleeping."</span>)
+
+<span class="c"># Create the child classes</span>
+<span class="k">class</span> Dog(Animal):
+    <span class="k">pass</span>    <span class="c"># no new methods</span>
+
+<span class="k">class</span> Cat(Animal):
+    <span class="k">pass</span>    <span class="c"># no new methods</span>
+
+dog1 = Dog(<span class="s">"Bruno"</span>)
+cat1 = Cat(<span class="s">"Kitty"</span>)
+dog1.eat()   <span class="c"># Bruno is eating.</span>
+dog1.sleep() <span class="c"># Bruno is sleeping.</span>
+cat1.eat()   <span class="c"># Kitty is eating.</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><h3>What Python does — step by step</h3>
+        <p class="small"><b>1.</b> <code>class Dog(Animal)</code> — the name in parentheses names the
+        <b>parent</b>. &nbsp;<b>2.</b> <code>pass</code> = “add nothing; inherit everything.”
+        &nbsp;<b>3.</b> <code>Dog("Bruno")</code> — Dog has no <code>__init__</code>, so Python
+        <b>uses Animal's constructor</b> and stores "Bruno" in <code>name</code>.
+        &nbsp;<b>4.</b> <code>dog1.eat()</code> — Dog has no <code>eat()</code>, so Python
+        <b>looks up the family line</b> and finds Animal's.</p></div>
+      <div class="card"><h3>What Python does — where it looks</h3>
+        <p class="small">Attribute lookup walks <b>child → parent</b> and stops at the first hit:
+        <code>dog1.eat</code> → not in Dog → found in <b>Animal</b> → runs there.
+        One copy of the code, shared by every child.</p></div>
+      <div class="note"><b>Verified:</b> this exact program runs and prints
+      <code>Bruno is eating.</code> / <code>Kitty is sleeping.</code> — the SG9 output is real.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.2 Example 1</b> (code verbatim, output verified live)</span><span>4 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 5 · PREDICT: IS-A ============ -->
+<section class="slide" id="s5">
+  <div class="kicker">Session 1 · predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> What is a Dog, really?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">class</span> Animal:
+    <span class="k">def</span> __init__(self, name):
+        self.name = name
+    <span class="k">def</span> eat(self): ...
+
+<span class="k">class</span> Dog(Animal):
+    <span class="k">pass</span>
+
+dog1 = Dog(<span class="s">"Bruno"</span>)
+print(<span class="d">isinstance</span>(dog1, Animal))</pre>
+      <p class="small" style="margin-top:12px"><code>isinstance(x, C)</code> answers the question
+      “was <code>x</code> built from class <code>C</code> (or one of its children)?” — it
+      replies <code>True</code> or <code>False</code>.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal"><b>Your prediction:</b> True or False?</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>True.</b> A Dog <b>is an</b> Animal —
+      every Dog object is also a fully valid Animal object.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:22px"><b>Why this matters (preview of Week 4):</b>
+      code written to work with <i>Animals</i> can work with <i>Dogs</i>, <i>Cats</i>, and any
+      future child — nobody has to change the old code. In RogueEdu, the engine's loop
+      works on <b>Villains</b> — your new child classes ride it for free.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.1</b> (“both Dog and Cat inherit the features”) · isinstance verified live</span><span>5 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 6 · MISSION BRIDGE ============ -->
+<section class="slide" id="s6">
+  <div class="kicker">Session 1 · mission transition</div>
+  <h2>Now see it in <span style="color:var(--green)">the village</span></h2>
+  <div class="grid" style="grid-template-columns:1fr 1.15fr; margin-top:24px">
+    <div class="card">
+      <h3>Before the missions: <span class="small">already done</span></h3>
+      <p class="small"><b>Mission Zero</b> put the project on your PC
+      (<code>mkdir -p ~/RogueEdu</code> → <code>git clone …</code> → <code>code .</code>).
+      Last week's scroll (D-3 → C-2) woke the game and ran your first controlled
+      experiment. <b>We will not repeat those steps here.</b></p>
+      <h3 style="margin-top:16px">After today's session: <span class="lab re">recommended new mission</span></h3>
+      <p class="small">⚠ <b>Gap, honestly flagged:</b> no existing mission has you
+      <i>write a child class</i> yet. Recommended companion (teacher creates the file):
+      <b>“Mission 1 — The Goblin Dynasty”</b> (draft in your mission map handout):
+      add <code>Goblin(Villain)</code> and a one-line <code>GoblinKing(Goblin)</code> to
+      <code>classes.py</code>, register them, watch them ride the engine's loop.</p>
+    </div>
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">class</span> Goblin(<span class="g">Villain</span>):          <span class="c"># child of an ENGINE parent</span>
+    <span class="k">def</span> __init__(self, x, y):
+        <span class="k">super</span>().__init__(<span class="s">"Goblin"</span>, x, y,
+                         hp=8, attack_power=3)
+    <span class="k">def</span> act(self, view):
+        dx, dy = view.get_direction_toward_hero(self)
+        <span class="k">return</span> AttackAction(dx, dy)
+    <span class="k">def</span> symbol(self): <span class="k">return</span> <span class="s">"👺"</span>
+
+<span class="k">class</span> GoblinKing(Goblin):      <span class="c"># child of YOUR child</span>
+    <span class="k">def</span> __init__(self, x, y):
+        <span class="k">super</span>().__init__(x, y)  <span class="c"># reuse it all</span>
+        self.name = <span class="s">"Goblin King"</span>
+    <span class="k">def</span> symbol(self): <span class="k">return</span> <span class="s">"👑"</span></pre>
+      <p class="small" style="margin-top:10px">✅ Verified live: the King has
+      <code>name</code>, <code>hp 8</code>, <code>isinstance(king, Villain) == True</code>,
+      and its inherited <code>act()</code> returns <code>AttackAction(dx=1, dy=0)</code>.
+      <b>The engine loop never changed — you decide, the engine acts.</b></p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>rogue_edu/engine/base_classes.py</b> (Villain) · Mission Zero (clone steps) · GoblinKing verified live</span><span>6 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 7 · TERMINOLOGY ============ -->
+<section class="slide" id="s7">
+  <div class="kicker">Session 2 · Meeting 2 · SG9 §1.2 · family vocabulary</div>
+  <h2>One relationship, three sets of words</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th>Relationship</th><th>Colloquial</th><th>Java / Python</th><th>C++ / C#</th></tr>
+    <tr><td><b>The class things come FROM</b></td><td><b>parent class</b></td><td><b>superclass</b> — Python uses <code>super()</code> to reach it</td><td><b>base class</b></td></tr>
+    <tr><td><b>The class that INHERITS</b></td><td><b>child class</b> (can add its own features)</td><td><b>subclass</b></td><td><b>derived class</b></td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="note"><b>Translate on sight:</b> Animal <b>→</b> Dog means Dog is the child /
+    subclass / derived class; Animal is the parent / superclass / base class. The exam
+    may use any of the three pairs — they are the same relationship.</div>
+    <div class="flag" style="font-size:22px"><b>Video heads-up (SG9 resource 1):</b> the
+    OOP video's org chart calls them superclass/subclass too. <b>Activity 1 (3 min,
+    notebook):</b> In the video, what is the <b>Programmer</b> class's parent? If you added
+    an <b>Intern</b> role, where would it sit — and why? (Teacher answer: Intern is a
+    role like the others → child of the same Employee-type parent; it inherits the
+    shared features and adds nothing yet.)</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.2</b> terminology paragraphs + Activity 1 (verbatim)</span><span>7 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 8 · EXAMPLE 2 CODE ============ -->
+<section class="slide" id="s8">
+  <div class="kicker">Session 2 · SG9 §1.2 · Example 2 (verbatim)</div>
+  <h2>Three generations: Person → Employee → Manager</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:20px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">class</span> Person:
+    <span class="k">def</span> __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+<span class="k">class</span> Employee(Person):
+    <span class="k">def</span> __init__(self, name, age, job_title, salary):
+        <span class="k">super</span>().__init__(name, age)   <span class="c"># parent handles 2</span>
+        self.job_title = job_title     <span class="c"># I handle my own</span>
+        self.salary = salary
+
+<span class="k">class</span> Manager(Employee):
+    <span class="k">def</span> __init__(self, name, age, job_title, salary, department):
+        <span class="k">super</span>().__init__(name, age, job_title, salary)
+        self.department = department
+
+m = Manager(<span class="s">"Alice"</span>, <span class="g">35</span>, <span class="s">"Project Manager"</span>, <span class="g">80000</span>, <span class="s">"IT"</span>)
+print(m.name, m.age, m.job_title, m.salary, m.department)</pre>
+      <p class="small" style="margin-top:10px">✅ Verified output:
+      <code>Alice 35 Project Manager 80000 IT</code> — a Manager instance
+      <b>owns attributes from every level of its ancestry</b>.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal"><b>Manager("Alice", 35, …, "IT")</b> — 5 facts arrive</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard">Manager keeps <b>department</b>, hands 4 up:
+      <code>super().__init__(…)</code></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard">Employee keeps <b>job_title, salary</b>, hands 2 up:
+      <code>super().__init__(name, age)</code></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Person stores <b>name, age</b> — done. The object now
+      owns all five.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Why the chain matters:</b> nobody re-wrote
+      <code>self.name = name</code> in three classes. Each class handles only what is
+      <b>new</b> — that's SG9's anti-duplication point.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.2 Example 2</b> (code + explanation, output verified live)</span><span>8 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 9 · PREDICT: CRASH LAB ============ -->
+<section class="slide" id="s9">
+  <div class="kicker">Session 2 · predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> Delete the super() line — what breaks?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code"><span class="k">class</span> Goblin(Villain):
+    <span class="k">def</span> __init__(self, x, y):
+        <span class="b">pass</span>   <span class="c"># super().__init__ was HERE</span>
+    <span class="k">def</span> act(self, view): ...
+    <span class="k">def</span> symbol(self): <span class="k">return</span> <span class="s">"👺"</span>
+
+g = Goblin(<span class="g">1</span>, <span class="g">1</span>)
+print(g.name)   <span class="c"># ?</span></pre>
+      <p class="small" style="margin-top:12px">The engine will ask for <code>g.name</code>
+      the moment it registers or draws the Goblin.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal"><b>Options:</b> (a) prints nothing &nbsp;(b) prints a default
+      name &nbsp;(c) AttributeError</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>(c) AttributeError:</b> <code>'Goblin' object has no
+      attribute 'name'</code></div>
+      <div class="varr reveal">↓</div>
+      <div class="note reveal" style="font-size:22px"><b>Why:</b> the <code>__init__</code> that
+      <i>creates</i> <code>name</code> and <code>hp</code> lives in the parent. Skip
+      <code>super().__init__(…)</code> and the parent's setup <b>never runs</b> — the crash is
+      just the first place Python notices. <b>super() is how the parent's setup gets
+      done, not a ritual.</b></div>
+      <div class="varr reveal">·</div>
+      <div class="flag reveal" style="font-size:21px"><b>Mission 2 tie-in (recommended):</b>
+      the crash lab — break it on purpose, read the error, put the line back. Verified:
+      the AttributeError is exactly this.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.2</b> (super() explanation) · crash verified live against the engine's Villain</span><span>9 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 10 · TYPES ============ -->
+<section class="slide" id="s10">
+  <div class="kicker">Session 2 · SG9 §1.3 · types of inheritance</div>
+  <h2>Five names — three to master now</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr); margin-top:26px">
+    <div class="card" style="border-top:8px solid var(--teal)">
+      <h3>1 · Single <span class="lab pr">master</span></h3>
+      <p class="small">one parent → one child.<br><b>SG9 Ex1:</b> Animal → Dog<br>
+      <b>RogueEdu:</b> Villain → your Slime</p>
+    </div>
+    <div class="card" style="border-top:8px solid var(--teal)">
+      <h3>2 · Multilevel <span class="lab pr">master</span></h3>
+      <p class="small">a child becomes a parent.<br><b>SG9 Ex2:</b> Person → Employee → Manager<br>
+      <b>RogueEdu:</b> Villain → Goblin → GoblinKing</p>
+    </div>
+    <div class="card" style="border-top:8px solid var(--teal)">
+      <h3>3 · Hierarchical <span class="lab pr">master</span></h3>
+      <p class="small">one parent → several children.<br><b>SG9:</b> Animal → Dog, Cat<br>
+      <b>RogueEdu:</b> Villain → Slime, Coward, …every student monster</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:22px">
+    <div class="card" style="background:var(--paper2)">
+      <h3>4 · Multiple &nbsp;5 · Hybrid <span class="lab cw">recognize only</span></h3>
+      <p class="small"><b>Multiple:</b> one child, more than one parent.
+      <b>Hybrid:</b> a combination of types, in large systems.
+      <b>SG9 instruction:</b> focus on the three above; these two are vocabulary —
+      the graded assessment and Activity 2 use single, multilevel, hierarchical.</p>
+    </div>
+    <div class="flag" style="font-size:22px"><b>ILA (Activity 2, 20 min):</b> for the single,
+    multilevel and hierarchical examples in <b>Learning resource 2</b>
+    (GeeksforGeeks “Types of Python inheritance”): draw the class diagram
+    (attributes + methods + arrows), then <b>run and modify</b> the code — add
+    getter/setter methods, change values, add objects. Be ready to explain.
+    <b>Do it in your ILA period; it feeds the graded assessment.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.3</b> (five types, focus-three instruction, Learning resource 2, Activity 2)</span><span>10 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 11 · TYPES MAPPED TO WHAT THEY KNOW ============ -->
+<section class="slide" id="s11">
+  <div class="kicker">Session 2 · the three types, in things you have already touched</div>
+  <h2>You have met all three — by another name</h2>
+  <table class="cmp" style="margin-top:26px">
+    <tr><th>Type</th><th>SG9 example</th><th>In RogueEdu / your week</th><th>PREDICT: how many <code>act()</code> writes?</th></tr>
+    <tr><td><b>Single</b></td><td>Animal → Dog</td><td>Villain → your Slime</td><td class="reveal">one — the child's, or the parent's if it doesn't write one</td></tr>
+    <tr><td><b>Multilevel</b></td><td>Person → Employee → Manager</td><td>Villain → Goblin → GoblinKing (King writes <i>zero</i>)</td><td class="reveal">one — Goblin's; the King inherits it down the chain</td></tr>
+    <tr><td><b>Hierarchical</b></td><td>Animal → Dog, Cat</td><td>Villain → <i>every student's monster</i>, one shared engine loop</td><td class="reveal">one per child — yet the engine calls them all the same way</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Teacher answer key for the predict column:</b> the point is that
+    the <b>count of writes</b> stays small while the <b>count of behaviors</b> grows —
+    reuse in action. (Hierarchical preview: the engine's one loop is Week 4's
+    polymorphism — name it, don't teach it yet.)</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.3 examples</b> · engine: base_classes.py + core.py (villain loop)</span><span>11 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 12 · BENEFITS ============ -->
+<section class="slide" id="s12">
+  <div class="kicker">Session 2 · SG9 §1.4 · why inheritance at all</div>
+  <h2>Three payoffs — one rule of thumb</h2>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr); margin-top:26px">
+    <div class="card"><h3>1 · Code reusability</h3>
+      <p class="small"><b>“Write once, use many times.”</b> The parent's attributes and
+      methods arrive in every child automatically — shorter, cleaner programs.</p></div>
+    <div class="card"><h3>2 · Models real hierarchies</h3>
+      <p class="small">Animal → Dog &nbsp;·&nbsp; Person → Employee &nbsp;·&nbsp; Vehicle → Car.
+      A dog <b>is an</b> animal — the code relationship matches the real one, so programs
+      stay readable.</p></div>
+    <div class="card"><h3>3 · Easy maintenance</h3>
+      <p class="small">Update the <b>parent</b> → <b>all child classes automatically get the
+      update</b>. (SG9's example: split <code>name</code> into first/last inside
+      <code>Person</code> — every child inherits the change.)</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note"><b>Rule of thumb to say aloud:</b> inheritance buys you
+    <b>“fix it once, everywhere wins.”</b> Ask the class: in the Person→Employee→Manager
+    chain, how many files change if <code>Person.__init__</code> changes? <b>One.</b>
+    <span class="reveal">…and how many classes receive the update? <b>All of them.</b></span></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 §1.4</b> (three numbered benefits, verbatim points)</span><span>12 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 13 · ILA / ACTIVITY 2 ============ -->
+<section class="slide" id="s13">
+  <div class="kicker">Session 3 · ILA · 30 minutes · Activity 2</div>
+  <h2>Diagram it, run it, change it</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The lab (SG9 Activity 2 · non-graded)</h3>
+      <ul class="ticks">
+        <li><b>Part A — diagram (≈10 min):</b> for the <b>single</b>, <b>multilevel</b> and
+        <b>hierarchical</b> code examples in Learning resource 2, draw the class
+        diagram: attributes, methods, inheritance arrows.</li>
+        <li><b>Part B — experiment (≈10 min):</b> run the examples, then modify: add
+        getter/setter methods, change object values, add new objects, adjust outputs.
+        Observe what changes.</li>
+        <li><b>Part C — ready to explain:</b> be prepared to share one modification and
+        what it proved.</li>
+      </ul>
+      <p class="small" style="margin-top:10px">Submission not required — but this is direct
+      rehearsal for FA1's rubric (inheritance + validation + objects).</p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--violet)">
+      <h3>Mission map for the week</h3>
+      <ul class="ticks">
+        <li><b>Before Session 1:</b> Mission Zero (done — one-time setup)</li>
+        <li><b>After Session 1:</b> <b>Mission 1 (recommended draft): Goblin Dynasty</b> —
+        write <code>Goblin(Villain)</code> + one-line <code>GoblinKing(Goblin)</code>,
+        register both, play. <i>Gap flagged: no such mission exists yet.</i></li>
+        <li><b>After Session 2:</b> <b>Mission 2 (recommended draft): Crash Lab</b> — delete
+        <code>super()</code>, read the AttributeError, restore, verify 3 PASS with the doctor.</li>
+        <li><b>ILA today:</b> Activity 2 (above)</li>
+        <li><b>Before Session 4:</b> re-read the Heist Lab clamps — FA1 reuses validation</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 Activity 2</b> (verbatim tasks) · gap analysis vs classroom_onboarding/ missions</span><span>13 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 14 · FA1 LMS WALKTHROUGH ============ -->
+<section class="slide" id="s15a">
+  <div class="kicker">Session 4 · graded formative assessment · 40 min · SG9 §FA1</div>
+  <h2>Library Management System — parent + two children + validation</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.15fr; margin-top:20px">
+    <div class="card">
+      <h3>The scenario <span class="lab cw">SG9 FA1</span></h3>
+      <ul class="ticks">
+        <li>All library materials share: <b>title</b>, <b>author</b> → parent
+        <code>Publication</code></li>
+        <li><code>Book</code> adds <b>number_of_pages</b> (child of Publication)</li>
+        <li><code>Magazine</code> adds <b>issue_number</b> (child of Publication)</li>
+        <li>Two objects of <b>each</b> class; display basic info for all, details for
+        Books/Magazines</li>
+        <li><b>Validation:</b> pages/issue must be positive — e.g.
+        <i>“The number of pages must be positive”</i> (SG8's setter skill, reused!)</li>
+      </ul>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>This is the
+      encapsulation + inheritance combination:</b> <code>super().__init__</code> for the
+      shared attributes, <b>validating setters</b> for the new numeric ones.</div>
+    </div>
+    <div>
+<pre class="code" style="font-size:20px"><span class="k">class</span> Publication:
+    <span class="k">def</span> __init__(self, title, author):
+        self.title = title
+        self.author = author
+    <span class="k">def</span> display_info(self):
+        print(<span class="s">f"{self.title} by {self.author}"</span>)
+
+<span class="k">class</span> Book(Publication):
+    <span class="k">def</span> __init__(self, title, author, pages):
+        <span class="k">super</span>().__init__(title, author)
+        self.set_pages(pages)          <span class="c"># SG8 lives here</span>
+    <span class="k">def</span> set_pages(self, p):
+        <span class="k">if</span> p > 0: self.number_of_pages = p
+        <span class="k">else</span>: print(<span class="s">"The number of pages must be positive"</span>)
+
+<span class="k">class</span> Magazine(Publication):
+    <span class="k">def</span> __init__(self, title, author, issue):
+        <span class="k">super</span>().__init__(title, author)
+        self.set_issue(issue)          <span class="c"># same pattern</span>
+    <span class="k">def</span> set_issue(self, i):
+        <span class="k">if</span> i > 0: self.issue_number = i
+        <span class="k">else</span>: print(<span class="s">"The issue number must be positive"</span>)</pre>
+      <p class="small" style="margin-top:10px">✅ Teaching pattern verified live: display works,
+      <code>set_pages(-5)</code> prints the message and preserves state.</p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 FA1</b> scenario + class diagram + validation requirement (pattern verified live)</span><span>14 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 15 · FA1 ADMIN + RUBRIC ============ -->
+<section class="slide" id="s15">
+  <div class="kicker">Session 4 · FA1 · what good looks like (20 points)</div>
+  <h2>The rubric, before you code</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>Where the 20 points live <span class="lab cw">SG9 rubric</span></h3>
+      <table class="cmp" style="font-size:21px">
+        <tr><th>Criteria</th><th>Pts</th><th>Full-credit signal</th></tr>
+        <tr><td>Functionality / correctness</td><td><b>10</b></td><td>classes match the diagram; inheritance properly applied; objects of each class work</td></tr>
+        <tr><td>Efficiency &amp; logic</td><td>3</td><td>inherits instead of duplicating; clean flow</td></tr>
+        <tr><td>Good coding practice</td><td>3</td><td>indentation, meaningful names, comments</td></tr>
+        <tr><td>Debugging &amp; error handling</td><td>2</td><td>finds &amp; fixes errors; simple handling</td></tr>
+        <tr><td>Portfolio + documentation</td><td>2</td><td>saved to portfolio; instructions/screenshots</td></tr>
+        <tr><td>Creativity (bonus)</td><td>+2</td><td>meaningful enhancements beyond requirements</td></tr>
+      </table>
+    </div>
+    <div style="display:grid; gap:16px">
+      <div class="flag" style="font-size:21px"><b>Submission:</b> upload to the Khub bin ·
+      file name per your teacher's format · 40 minutes · graded (counts).</div>
+      <div class="note" style="font-size:22px"><b>Predict the rubric:</b> which choice loses
+      <i>efficiency</i> points even if the program runs? <span class="reveal">
+      → copying <code>title/author</code> into Book and Magazine instead of calling
+      <code>super().__init__()</code> — “one method is duplicated instead of reused” is
+      literally an 8/10 and 2/3 descriptor.</span></div>
+      <div class="note" style="font-size:22px"><b>Rescue/checkpoint:</b> if your code raises
+      AttributeError on <code>title</code>, that's the slide-9 crash — parent setup never ran.
+      Check <code>super().__init__()</code> first, every time.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 FA1 rubric</b> (20 pts, six criteria, verbatim descriptors)</span><span>15 / 16</span></div>
+</section>
+
+<!-- ============ SLIDE 16 · TAKEAWAYS ============ -->
+<section class="slide" id="s16">
+  <div class="kicker">Key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:32px">
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> Inheritance: a child class gets a
+      parent's attributes and methods — write them <b>once</b>.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> parent = superclass = base ·
+      child = subclass = derived. <code>class Dog(Animal)</code> — parent in parentheses.</p></div>
+      <div class="card"><p style="font-size:26px"><b>3.</b> <code>pass</code> children already
+      work: Dog("Bruno") can <code>eat()</code> because Python looks up the family line.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:26px"><b>4.</b> <code>super().__init__(…)</code> lets
+      each class handle only what's <b>new</b> — skip it and the parent's setup never
+      runs (AttributeError).</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:26px"><b>5.</b> Single, multilevel, hierarchical — you've now
+        built all three. And in RogueEdu, the law still holds:
+        <b>“You decide. The engine acts.”</b></p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="card"><h3>Checkpoint — before the graded FA</h3>
+      <p class="small">Can you: define inheritance in one sentence? · name the parent of
+      <code>Manager</code> <i>and</i> its grandparent? · write
+      <code>class Magazine(Publication)</code> with a validating setter? · explain what breaks
+      without <code>super().__init__()</code>? · say where GoblinKing's <code>act()</code> comes from?
+      If yes → Session 4. If no → re-run Mission 2's crash lab first.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG9 § Key takeaways</b> + module objectives 1–4</span><span>16 / 16</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 16</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function shown(s){ return s.querySelectorAll('.reveal.shown').length; }
+  function total(s){ return s.querySelectorAll('.reveal').length; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg9-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shown(s) < total(s)){ s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown'); return; }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shown(s) > 0){ var rs = s.querySelectorAll('.reveal.shown'); rs[rs.length-1].classList.remove('shown'); return; }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg9-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>
