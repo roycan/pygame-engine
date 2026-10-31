@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Software Development Life Cycle — Study Guide 15 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .b{color:#f0a5a0}
+  pre.code .g{color:#a7d78f}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 15 · Fundamentals of the SDLC · Grade 9 CS · 2 meetings (100 min) + ILA</div>
+  <h1>The Software Development Life Cycle</h1>
+  <p class="sub" style="margin-top:20px; font-size:34px; color:var(--ink)">
+    <b>From Idea to Application — the journey your blueprint already started.</b></p>
+  <p class="sub" style="margin-top:14px">You planned, interrogated, and sketched. Today, software developers hand you the names.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> recall the Hungry Grove mission → name what you did
+        (<b>Planning · Requirements Analysis · Design</b>) → meet the project documents
+        (TOR · SRS · Design Document) and all seven SDLC activities</li>
+        <li><b>Meeting 2:</b> why different projects need different rhythms → the
+        <b>nine SDLC models</b> → choose and justify one for the Cookie App</li>
+        <li><b>Next mission:</b> the official Cookie simulation — feeding your SG 16
+        project proposal</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission S-1</span></h3>
+        <p class="small">The Gamekeeper's letter, the vague words, the clarification
+        questions, the board mockup — your Mission Record holds the first three SDLC
+        phases. This deck gives your work its formal names.</p>
+      </div>
+      <div class="card">
+        <h3>Learning objectives <span class="small">(SG15)</span></h3>
+        <p class="small">Understand the phases and benefits of the SDLC · compare nine
+        SDLC models and match one to a project's nature · distinguish the phases (what
+        every project does) from the models (how a project organizes them).</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 15 — Fundamentals of the SDLC</b> (intro, objectives, §1.2, annexes) · companion: <b>workshops/mission_s1_*</b></span><span>1 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · RECALL I: THE LETTER ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Recall · Mission S-1, Phase 0</div>
+  <h2>The Gamekeeper wrote to you</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div class="card" style="background:var(--paper2)">
+      <p style="font-size:24px; line-height:1.6; font-style:italic">"Since the grove
+      slime's bite grew sharper — one bite now costs <b>6 hp</b>, and five bites end a
+      25-hp hero — new players still wander into its reach blind. The game should teach
+      caution <b>before</b> the first fight, not punish wandering after it.
+      Make the Slime's territory feel <b>dangerous but fair</b>, and put the warning
+      <b>somewhere players will actually see it</b>. …Show me a blueprint first — the
+      plan, the requirements, and a design mockup. Coding comes later."
+      <span style="font-style:normal">— The Gamekeeper</span></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What your squad did with it</h3>
+        <ul class="ticks">
+          <li>Underlined the <b>vague words</b> — "dangerous but fair", "somewhere players
+          will actually see it"</li>
+          <li>Filled <b>§1</b> of the Mission Record: problem, users, purpose, scope,
+          constraints, deliverables</li>
+          <li>Wrote <b>clarification questions</b> instead of guessing</li>
+        </ul></div>
+      <div class="note" style="font-size:22px"><b>One verified fact before we start:</b> those
+      numbers are your squad's game — after G-2's approved merge the Slime bites for 6
+      (hp 14), so a 25-hp hero survives <b>five</b> bites. A fresh clone of the official
+      repository still ships the gentle starter Slime (hp 10, bite 3). <b>Know which game
+      you are talking about.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_s1_shinobi_blueprint.md</b> Phase 0 (letter verbatim) · stats verified vs G-2 merge + canonical starter</span><span>2 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · RECALL II: THE RECORD ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Recall · Mission S-1, Phases 1–3</div>
+  <h2>Your Mission Record, box by box</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr 1fr; margin-top:30px">
+    <div class="card"><h3>§1 · Initial Project Plan</h3>
+      <p class="small">Problem · users/stakeholders · purpose · <b>scope</b> (existing
+      pieces only — the engine is frozen) · constraints (stat ranges, chakra check
+      without warnings) · deliverables.</p></div>
+    <div class="card"><h3>§2 · Software Requirements</h3>
+      <p class="small">The distilled requirement — <i>"a clear warning about the danger
+      before entering the Slime's attack range"</i> — functional requirements, a user
+      story, validation requirements, and the ⚠ <b>clarification questions</b> the vague
+      words forced you to write.</p></div>
+    <div class="card"><h3>§3 · Design Document</h3>
+      <p class="small">The interface mockup: the 10×10 board with your proposed change,
+      and the dialogue overlay sketch — speaker, warning text, press-any-key. Plus the
+      consistency pass: every requirement visible, nothing extra.</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3>§4 · the unresolved question</h3>
+      <p class="small">The assumption only the Gamekeeper could confirm — and what would
+      change in your design if he answered differently.</p></div>
+    <div class="card"><h3>§5 · the prediction</h3>
+      <p class="small">Which G-2 skills implement your blueprint, in what order — and the
+      approach your squad would choose: finalize everything first, or build a small piece
+      and adjust?</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:24px"><b>The reveal this deck exists for:</b>
+    <span style="font-size:28px">you have <b>already performed</b> the first three phases
+    of the Software Development Life Cycle.</span> Today we learn what software developers
+    call them — and why they matter.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_s1_record.md</b> (§1–§5 verbatim structure)</span><span>3 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · THE NAMES ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">The naming ceremony</div>
+  <h2>What developers call what you did</h2>
+  <div class="grid" style="grid-template-columns:1fr 110px 1fr 110px 1fr; margin-top:34px; align-items:stretch">
+    <div class="card" style="text-align:center">
+      <p class="small" style="font-family:var(--mono); color:var(--muted)">you filled §1 —<br>problem · users · scope · constraints</p>
+      <p style="font-size:40px; font-weight:700; color:var(--teal); margin-top:14px">PLANNING</p>
+      <p class="small" style="margin-top:10px">Why are we building, for whom, and within
+      what limits? Deliverable: a <b>Terms of Reference / Initial Project Plan</b>.</p>
+    </div>
+    <div class="bmid" style="display:flex; flex-direction:column; align-items:center; justify-content:center">
+      <div class="a" style="font-size:44px">⟶</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <p class="small" style="font-family:var(--mono); color:var(--muted)">you distilled §2 —<br>the warning requirement · questions · validations</p>
+      <p style="font-size:40px; font-weight:700; color:var(--teal); margin-top:14px">REQUIREMENTS ANALYSIS</p>
+      <p class="small" style="margin-top:10px">What must the system do? Deliverable: an
+      <b>SRS — Software Requirements Specification</b>.</p>
+    </div>
+    <div class="bmid" style="display:flex; flex-direction:column; align-items:center; justify-content:center">
+      <div class="a" style="font-size:44px">⟶</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <p class="small" style="font-family:var(--mono); color:var(--muted)">you drew §3 —<br>the board and the dialogue overlay</p>
+      <p style="font-size:40px; font-weight:700; color:var(--teal); margin-top:14px">DESIGN</p>
+      <p class="small" style="margin-top:10px">How will the solution be organized and
+      presented? Deliverable: a <b>Design Document</b> (wireframes, flowcharts, class
+      diagrams).</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:24px"><b>Keep the wall you built in S-1:</b>
+    requirements describe <b>the problem</b>; design decides <b>the solution</b>. In
+    formal language: the SRS states <i>what</i> the system must do; the Design Document
+    states <i>how</i> it will be done. Mixing them is how projects promise things nobody
+    designed.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 § phase table rows 1–3 + Annex A/B/C titles</b> · mapped to <b>mission_s1_record.md §1–§3</b></span><span>4 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · PLANNING FORMALIZED ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Phase 1 · Planning</div>
+  <h2>Why are we building this, for whom, and within what limits?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The phase <span class="lab cw">SG15</span></h3>
+      <p class="small">Initial discussion of the basic requirements, terms, and conditions
+      of the project with stakeholders or the client. Typical deliverable: a
+      <b>Terms of Reference / Initial Project Plan</b> — description, purpose and
+      objectives, scope, key players/users/stakeholders, key features, timeline, key
+      deliverables.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Your version <span class="lab re">S-1 §1</span></h3>
+        <p class="small">The Hungry Grove Plan box: problem, users, purpose, scope
+        ("existing pieces only"), constraints, deliverables. Same skeleton — one page
+        instead of a full annex.</p>
+      </div>
+      <div class="card"><h3>The official example <span class="lab cw">Cookie App · Annex A</span></h3>
+        <p class="small">A campus cookie sale wants an ordering system: browse flavors and
+        prices, customize with toppings and quantities, review the total, checkout — while
+        the owner sees orders, delivery status, and end-of-day totals. <b>Campus-only, no
+        real payments.</b> Its Annex A is the full-size TOR you will complete in the
+        simulation.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 phase table row 1 + Annex A</b> · <b>mission_s1_record §1</b></span><span>5 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · REQUIREMENTS FORMALIZED ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">Phase 2 · Requirements Analysis</div>
+  <h2>What must the system actually do?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The phase <span class="lab cw">SG15</span></h3>
+      <p class="small">Understand user needs and system goals. Typical deliverable: an
+      <b>SRS</b> — user stories, validation requirements, security considerations, a risk
+      mitigation plan. The SRS states <b>what</b>, never <b>how</b>.</p>
+      <div class="flag" style="margin-top:14px; font-size:21px"><b>Your sharpest tool, from
+      S-1:</b> vague requirements ("dangerous but fair") are not annoyance — they are
+      <b>the client's unfinished thinking</b>. The developer's move is the clarification
+      question, not the guess.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Your version <span class="lab re">S-1 §2</span></h3>
+        <p class="small">The warning requirement (problem-shaped, solution-neutral), a user
+        story, validation requirements (ranges, chakra check without warnings, warning
+        before the first bite) — and your two questions to the Gamekeeper.</p>
+      </div>
+      <div class="card"><h3>The official example <span class="lab cw">Cookie App · Annex B</span></h3>
+        <p class="small">Buyer and owner <b>user stories</b> ("As a buyer, I want to view
+        flavors and prices…"), validation sections (quantities must be positive integers;
+        totals must match prices + extras + delivery), owner stories (update offerings,
+        track daily sales).</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 phase table row 2 + Annex B</b> · <b>mission_s1_record §2</b></span><span>6 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · DESIGN FORMALIZED ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">Phase 3 · Design</div>
+  <h2>How will the solution be organized and presented?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Three deliverables you already know <span class="lab cw">SG15 · Annex C</span></h3>
+      <ul class="ticks">
+        <li><b>Wireframe</b> — the proposed interface layout. Your §3 board sketch +
+        dialogue overlay: a real wireframe, drawn to the real interface</li>
+        <li><b>Flowchart</b> — the process and decision sequence (what happens when —
+        and in what order)</li>
+        <li><b>Class diagram</b> — the proposed object-oriented structure. You drew these
+        last quarter; in a blueprint, one inheritance arrow can say enough</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Your version <span class="lab re">S-1 §3</span></h3>
+        <p class="small">You produced a genuine wireframe: the 10×10 board with existing
+        pieces at their true coordinates, your proposed change marked, and the dialogue
+        overlay sketched with the warning text. Plus the consistency pass —
+        <b>every requirement visible, nothing extra</b>.</p>
+      </div>
+      <div class="card"><h3>Tools — choose, don't learn</h3>
+        <p class="small"><b>Canva</b> (you have accounts) · <b>paper and pencil</b>
+        (always acceptable) · <b>draw.io</b> (if you want technical precision). The SG's
+        own examples are AI-generated images — the tool never matters as much as
+        <b>what the mockup proves</b>.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 phase table row 3 + Annex C</b> · <b>mission_s1_record §3</b> (board + overlay sketch)</span><span>7 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · PREDICT REQUIREMENT OR DESIGN ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Phases 1–3 — predict before you classify</div>
+  <h2><span class="pausechip">PREDICT</span> Requirement — or design?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <p style="font-size:24px; line-height:2">
+      A · "The player must be warned before entering the Slime's attack range."<br><br>
+      B · "Place an Elder near tile (7,7) whose dialogue warns about the bite."<br><br>
+      C · "The warning must be seen before the first bite, and the chakra check must
+      pass without warnings."</p>
+      <p class="small" style="margin-top:14px">The S-1 test applies: <b>would the sentence
+      still make sense if we solved it with a wall instead of an NPC?</b></p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>A — REQUIREMENT.</b> Player-facing truth. No solution
+      in sight: any piece that warns in time satisfies it.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>B — DESIGN (wearing a disguise).</b> It has already
+      chosen the piece, the place, and the words. Fine in §3 — a straitjacket in §2,
+      because it kills every other solution before the squad thinks.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>C — REQUIREMENT + validation.</b> A statement of what
+      must be true, plus how we will know. The SRS holds both.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Why the wall matters:</b> put design
+      into requirements and every alternative dies unread. Put requirements into design
+      and nobody knows what to test. S-1's Law 1, formalized.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_s1 Law 1 + solution-neutrality test</b> · classification examples from the verified Stats PR</span><span>8 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · THE SEVEN ACTIVITIES ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">The whole journey</div>
+  <h2>Seven activities — one of them you've only just named</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card" style="padding:26px 34px">
+      <p style="font-family:var(--mono); font-size:24px; line-height:2; color:#3c382f">
+      <span class="chip" style="background:var(--teal-wash)">1 · Planning ✓</span> →
+      <span class="chip" style="background:var(--teal-wash)">2 · Requirements Analysis ✓</span> →
+      <span class="chip" style="background:var(--teal-wash)">3 · Design ✓</span> →
+      <span class="chip">4 · Implementation</span> →
+      <span class="chip">5 · Testing</span> →
+      <span class="chip">6 · Deployment</span> →
+      <span class="chip">7 · Maintenance</span></p>
+      <p class="small" style="margin-top:14px">✓ = performed for real in Mission S-1 ·
+      plain = ahead of you. SG 15's table lists six rows — its row 6 <b>combines
+      Deployment and Maintenance</b>; they are two distinct activities, and the SG itself
+      defers deeper study of testing, deployment, and maintenance to <b>CS4</b>.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>What each is for — one line each</h3>
+      <ul class="ticks">
+        <li><b>Planning:</b> why, for whom, within what scope?</li>
+        <li><b>Requirements Analysis:</b> what must the system do?</li>
+        <li><b>Design:</b> how will it be organized and presented?</li>
+        <li><b>Implementation:</b> building the solution</li>
+      </ul></div>
+    <div class="card"><h3>…and the far half</h3>
+      <ul class="ticks">
+        <li><b>Testing:</b> checking it satisfies the requirements</li>
+        <li><b>Deployment:</b> making it available to its users</li>
+        <li><b>Maintenance:</b> fixing, updating, improving — for as long as it lives</li>
+      </ul></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="warn" style="font-size:22px"><b>Two honest warnings:</b> the SDLC
+    <b>supports quality — it does not guarantee bug-free software</b>. And the phases are
+    <b>not universally rigid or one-directional</b>: how strictly you walk them, and how
+    often you loop back, depends on the model you choose — which is Meeting 2.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 phase table</b> (row 6 = Deployment/Maintenance combined — flagged) + Summary/Key takeaways</span><span>9 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · THE DOCUMENTS MAP ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">The project documents</div>
+  <h2>Three annexes — the official size of what you sketched</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th>SDLC phase</th><th>Document (SG 15 annex)</th><th>Your Mission Record</th></tr>
+    <tr><td><b>Planning</b></td><td><b>Annex A · Initial Project Plan / Terms of Reference</b> — description, purpose, scope, stakeholders, features, timeline, deliverables</td><td>§1 — the same skeleton, one page</td></tr>
+    <tr><td><b>Requirements Analysis</b></td><td><b>Annex B · Software Requirements Specification</b> — user stories, validation requirements, security considerations, risk plan</td><td>§2 — requirement, story, validations, questions</td></tr>
+    <tr><td><b>Design</b></td><td><b>Annex C · Design Document Specification</b> — wireframes, flowcharts, class diagrams, chosen SDLC model</td><td>§3 — board + overlay mockup</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:23px"><b>What happens next in SG 15:</b> Activity 1
+    hands you the <b>Cookie Ordering App's</b> Annexes A–C with blanks to fill, and asks
+    for <b>three markdown files in your repository</b> — submitted via LMS, graded with
+    the Annex D rubric (20 points). <b>Your Mission Record was the rehearsal; the
+    simulation is the performance.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 Activity 1 + Annexes A–D</b> · mapped to <b>mission_s1_record.md</b></span><span>10 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · TWO PROJECTS, TWO JOBS ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Two projects — keep them straight</div>
+  <h2>The grove you lived — the cookie shop you will simulate</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">Hungry Grove <span class="lab re">lived it</span></h3>
+      <p class="small"><b>RogueEdu starter game · Mission S-1.</b> The Gamekeeper's letter,
+      the vague words, the board mockup — <b>your experience</b>. We keep returning to it
+      because you can still <i>mentally run</i> that game: the 10×10 grid, the slime at
+      (7,7), the dialogue overlay.</p>
+      <p class="small" style="margin-top:10px">Role in this deck: <b>recall anchor</b> for
+      phases 1–3, and later the familiar project for connecting implementation, testing,
+      review, and integration.</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Cookie Ordering App <span class="lab cw">the official simulation</span></h3>
+      <p class="small"><b>SG 15's Activity 1.</b> Campus-only cookie shop: buyers browse,
+      customize, and order; the owner views orders, delivery status, and end-of-day
+      totals. <b>No real payments — COD or GCash on site.</b> Its Annexes A–C are the
+      <b>principal worked example</b> for TOR ↔ SRS ↔ Design Document, and for choosing
+      the SDLC model.</p>
+      <p class="small" style="margin-top:10px">Role: the graded simulation, and the bridge
+      to your SG 16 project proposal.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn" style="font-size:22px"><b>Do not blend them:</b> the Hungry Grove
+    blueprint is <i>your squad's lived example</i>; the Cookie App is <i>the official
+    simulation you will submit</i>. Different projects, different deliverables, same
+    phases.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 Activity 1 + Annex A</b> · <b>mission_s1</b> (Hungry Grove)</span><span>11 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · MEETING 1 TAKEAWAYS ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 1 — key takeaways</div>
+  <h2>If you remember four sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> You already <b>performed</b>
+      Planning, Requirements Analysis, and Design — the deck only handed you the names and
+      the deliverables: TOR, SRS, Design Document.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> <b>Requirements describe the
+      problem; Design decides the solution.</b> The wall from S-1's Law 1 — it is the
+      whole discipline's wall too.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>3.</b> <b>Seven activities</b> carry a
+      product from idea to end of life — and the SDLC <b>supports quality without
+      guaranteeing bug-free software</b>.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:26px"><b>4.</b> Two projects, two jobs: <b>Hungry Grove</b> to
+        recall, <b>Cookie App</b> to simulate. Vague requirements deserve questions, not
+        guesses.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Meeting 2</h3>
+      <p class="small">Can you: name the deliverable of each of the first three phases? ·
+      say which Mission Record box is an SRS? · state the difference between what a
+      requirement and a design decision look like? · say what the SDLC does — and what it
+      does <i>not</i> promise?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 Summary/Key takeaways</b> (annotated honestly)</span><span>12 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · MEETING 2 BRIDGE ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 2 · SDLC models</div>
+  <h1 style="font-size:92px">Same phases.<br>Different rhythms.</h1>
+  <p class="sub" style="margin-top:24px; font-size:32px; color:var(--ink)">
+    <b>Different projects organize the same phases in different ways.</b></p>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Recall your own debate <span class="lab re">S-1 Phase 4</span></h3>
+      <p class="small">"Finalize the entire blueprint before coding — or build one small
+      piece, playtest it, and improve?" Your squad chose and justified. <b>That choice was
+      a model choice</b> — before you knew the word.</p>
+    </div>
+    <div class="card">
+      <h3>The distinction that matters</h3>
+      <p class="small"><b>Phases</b> = what every project does (planning → … →
+      maintenance). <b>Models</b> = how a project organizes those phases — how rigid, how
+      often you loop back, when the client sees something. SG 15's own line: <i>"how
+      rigid or how often these phases are done or followed depends on the SDLC model
+      used."</i></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:23px"><b>Coming:</b> nine models — Waterfall,
+    V-Model, Agile, Iterative, Incremental, Spiral, Big Bang, DevOps, RUP — each with
+    what it is, when it fits, and its honest risk. Then you choose one for the Cookie
+    Ordering App and <b>justify it</b>, exactly as Activity 1 asks.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2 model readings + §Key concepts</b> ("how rigid… depends on the SDLC model used")</span><span>13 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · WATERFALL ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">Model 1 of 9</div>
+  <h2>Waterfall — walk the stairs, in order</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small">A <b>linear, step-by-step approach</b>: each phase must be completed
+      before the next begins. Plan everything → requirements → design → build → test →
+      deliver. Going back is expensive, so you try not to.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>Fits when:</b>
+      requirements are <b>clear and unlikely to change</b> — SG 15's own quiz example: a
+      school club-proposal system with stable rules. Also: fixed contracts, regulated
+      domains.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You know this feeling <span class="lab re">S-1</span></h3>
+        <p class="small">"Finalize the entire blueprint before coding" — the first half of
+        the Phase 4 debate <b>is</b> the Waterfall instinct: sign the blueprint, then
+        build exactly it.</p>
+      </div>
+      <div class="warn" style="font-size:21px"><b>The honest risk:</b> for an
+      <b>unpredictable</b> project, late changes are costly and users wait months before
+      saying "this isn't what we meant." SG 15's quiz asks exactly why Waterfall is risky
+      there — now you can answer.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2 nine-model summary + Annex E quiz items</b></span><span>14 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · V-MODEL ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">Model 2 of 9</div>
+  <h2>V-Model — every step plans its own test</h2>
+  <svg viewBox="0 0 1500 440" style="width:100%; margin-top:24px" aria-hidden="true">
+    <path d="M 150 60 L 750 400 L 1350 60" stroke="#0e7268" stroke-width="8" fill="none"/>
+    <circle cx="150" cy="60" r="16" fill="#0e7268"/><circle cx="450" cy="170" r="16" fill="#0e7268"/>
+    <circle cx="750" cy="400" r="16" fill="#0e7268"/><circle cx="1050" cy="170" r="16" fill="#0e7268"/>
+    <circle cx="1350" cy="60" r="16" fill="#0e7268"/>
+    <line x1="150" y1="34" x2="1350" y2="34" stroke="#96591a" stroke-width="4" stroke-dasharray="10 8"/>
+    <line x1="470" y1="150" x2="1030" y2="150" stroke="#96591a" stroke-width="4" stroke-dasharray="10 8"/>
+    <line x1="780" y1="414" x2="1020" y2="414" stroke="#96591a" stroke-width="4" stroke-dasharray="10 8"/>
+    <text x="70"  y="24"  font-family="monospace" font-size="28" fill="#23211c">Requirements</text>
+    <text x="1140" y="24" font-family="monospace" font-size="26" fill="#96591a">↔ acceptance tests</text>
+    <text x="480" y="135" font-family="monospace" font-size="28" fill="#23211c">Design</text>
+    <text x="680" y="135" font-family="monospace" font-size="26" fill="#96591a">↔ integration tests</text>
+    <text x="700" y="390" font-family="monospace" font-size="28" fill="#23211c">Coding</text>
+    <text x="1030" y="420" font-family="monospace" font-size="26" fill="#96591a">↔ unit tests</text>
+    <text x="180" y="120" font-family="monospace" font-size="24" fill="#6f6a5c">acceptance criteria written here</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:18px">
+    <div class="card"><h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small"><b>Verification and Validation:</b> extends Waterfall by
+      <b>pairing each development phase with a corresponding testing phase</b>. While you
+      design, you also write the tests that will check that design.</p></div>
+    <div class="card"><h3>When it fits</h3>
+      <p class="small">Requirements are stable <b>and</b> quality must be demonstrable —
+      the mistake you can catch before building. <b>Honest note:</b> like Waterfall, the V
+      is rigid — it inherits the same "changes are expensive" risk.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (V-Model, Verification and Validation)</span><span>15 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · AGILE ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">Model 3 of 9</div>
+  <h2>Agile — small deliveries, constant conversation</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small">An <b>iterative, flexible approach</b> that delivers software in
+      <b>short cycles (sprints)</b> with <b>continuous customer feedback</b>. Each sprint
+      produces something usable; the client's reaction steers the next sprint.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>Fits when:</b>
+      requirements are expected to <b>change or reveal themselves</b> — products with
+      real users whose feedback matters more than the original plan.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--amber)">
+        <h3 style="color:var(--amber)">Not a short Waterfall</h3>
+        <p class="small">"Do Waterfall, but in little chunks" is <b>not Agile</b>. Agile is
+        a different posture: expect change instead of resisting it, talk to users
+        constantly instead of freezing requirements, re-plan every cycle instead of
+        defending a signed blueprint.</p>
+      </div>
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You know this feeling <span class="lab re">S-1</span></h3>
+        <p class="small">"Build one small piece, playtest it with players, improve" — the
+        second half of the Phase 4 debate <b>is</b> the Agile instinct.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (Agile) · correction per approved brief: Agile ≠ short Waterfall</span><span>16 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · ITERATIVE & INCREMENTAL ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">Models 4 and 5 of 9 — siblings, not twins</div>
+  <h2>Iterative &amp; Incremental — distinct, and often combined</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Iterative <span class="lab cw">SG15</span></h3>
+      <p class="small">Develop through <b>repeated cycles, refining requirements and
+      design with each iteration</b>. You revisit your earlier decisions on purpose.
+      <b>Fits when requirements are not fully clear at the start.</b></p>
+      <p class="small" style="margin-top:10px"><i>Picture: the same drawing redrawn —
+      each version truer.</i></p>
+    </div>
+    <div class="card">
+      <h3>Incremental <span class="lab cw">SG15</span></h3>
+      <p class="small">Build the software in <b>smaller, functional parts (increments)</b>
+      delivered over time — each increment is usable on its own. <i>Picture: the game
+      gets one new monster per week; every week it plays.</i></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:23px"><b>Distinct but combinable:</b> a team can
+    refine its understanding <i>iteratively</i> while shipping pieces
+    <i>incrementally</i> — Agile itself blends both with feedback. <b>Read your SG's
+    model summary carefully:</b> a line about "minimal planning, coding begins
+    immediately" has drifted into the Iterative bullet there — that describes
+    <b>Big Bang</b> (next-but-one), not Iterative. Flagged, not silently fixed.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (both models; contamination flagged per audit) · correction per approved brief</span><span>17 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · SPIRAL ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">Model 6 of 9</div>
+  <h2>Spiral — every loop passes through risk</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small"><b>Iterative development combined with explicit risk analysis in
+      repeated cycles ("spirals").</b> Each loop: decide objectives → identify the risks →
+      handle them (often a prototype) → build and evaluate → plan the next loop.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>Fits when:</b> the
+      project is large, expensive, or uncertain enough that <b>knowing your biggest risk
+      matters more than moving fast</b> — each spiral exists to shrink the scariest
+      unknown first.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The spiral's signature</h3><p class="small">Waterfall asks
+      "what's next?" Agile asks "what did the user say?" <b>Spiral asks "what could sink
+      us — and did we face it this loop?"</b> That question is the model.</p></div>
+      <div class="card"><h3>Village picture</h3><p class="small">A squad that builds a
+      prototype of the slime AI <i>first</i>, because "players might find it boring" is
+      the scariest unknown — tests it with real players, then commits — just ran one
+      spiral.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (Spiral: iterative + risk analysis) · risk-first emphasis per approved brief</span><span>18 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · BIG BANG ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">Model 7 of 9</div>
+  <h2>Big Bang — code first, think maybe</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small"><b>Minimal planning; development begins almost immediately</b>, and
+      the process is spontaneous and unstructured — named after the theory of the
+      universe's abrupt start.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>Where it genuinely
+      fits:</b> trying things out, experimentations, side projects, throwaway prototypes
+      — small, low-stakes, one-person efforts where <i>discovery</i> is the point.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--red)">
+        <h3 style="color:var(--red)">The honest risk <span class="lab cw">SG15 quiz territory</span></h3>
+        <p class="small">No requirements to test against, no design to check, no plan to
+        revert to. For a <b>real, graded, multi-person product</b>, Big Bang is how
+        squads ship broken games and call it "iteration". It is a legitimate choice for
+        <b>small and disposable</b> — and a disaster for anything you must defend.</p>
+      </div>
+      <div class="card"><h3>The confession you already own</h3>
+        <p class="small">Every programmer has Big Banged something — a quick script, a
+        throwaway idea. The skill is knowing <b>when Big Bang is a choice and when it is
+        an excuse</b>. Mission S-1's answer: anything with a client and a grade gets a
+        blueprint.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (Big Bang: minimal planning, experimentation/prototyping) · risk framing per approved brief</span><span>19 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · DEVOPS ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">Model 8 of 9</div>
+  <h2>DevOps — a culture that never stops shipping</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small"><b>Integrates development and operations</b> — the people who build
+      and the people who run — emphasizing <b>automation, continuous integration, and
+      continuous delivery (CI/CD)</b>. Not a phase list: a <b>working culture</b> where
+      "done" means "running for users", improved by tiny, frequent, automated releases.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>You have touched its
+      edge already:</b> RogueEdu's Render deploy — push to main, the class arcade
+      redeploys itself — is exactly the automation DevOps formalizes.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--amber)">
+        <h3 style="color:var(--amber)">Not just a sequence of phases</h3>
+        <p class="small">You cannot "do DevOps" by walking phases in order. It is a
+        <b>standing collaboration</b> between building and running — with automation
+        doing the repetitive parts — that loops <i>continuously</i> instead of ending at
+        "delivered".</p>
+      </div>
+      <div class="card"><h3>When it fits</h3><p class="small">Products that are
+      <b>always live and always changing</b> — web services, games with updates, anything
+      where waiting a month between releases loses users. The village arcade updates in
+      minutes, not terms.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (DevOps: integration, automation, CI/CD) · culture-not-sequence correction per approved brief · Render example from DEPLOYING.md</span><span>20 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · RUP ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">Model 9 of 9</div>
+  <h2>RUP — four named stages of a structured journey</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What it is <span class="lab cw">SG15</span></h3>
+      <p class="small">The <b>Rational Unified Process</b>: a structured framework
+      combining <b>iterative and incremental</b> development across four phases —
+      <b>Inception → Elaboration → Construction → Transition</b>.</p>
+      <div class="note" style="margin-top:14px; font-size:21px"><b>Fits when:</b> a team
+      wants the flexibility of iteration <i>inside</i> a formal structure with clear
+      stage gates — heavier than Agile, more forgiving than Waterfall.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3>Inception</h3><p class="small">"Is this idea worth it?" —
+      scope, stakeholders, the go/no-go. <span class="small">≈ your S-1 Planning
+      box.</span></p></div>
+      <div class="card"><h3>Elaboration</h3><p class="small">"What exactly are we building,
+      and what's risky?" — requirements solidify, architecture is proven.</p></div>
+      <div class="card"><h3>Construction</h3><p class="small">"Build it in increments" —
+      the longest phase, iteratively.</p></div>
+      <div class="card"><h3>Transition</h3><p class="small">"Put it in users' hands" —
+      beta, deployment, training, handover.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 §1.2</b> (RUP: iterative + incremental across four phases) · four-phase mapping per approved brief</span><span>21 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · PREDICT COOKIE MODEL ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">Choose and justify</div>
+  <h2><span class="pausechip">PREDICT</span> Which model fits the Cookie Ordering App?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The brief you must argue from <span class="lab cw">Annex A + B</span></h3>
+      <ul class="ticks">
+        <li><b>Requirements:</b> browse, customize, cart, checkout — already written and
+        fairly stable</li>
+        <li><b>Scope:</b> campus-only, no real payments, COD/GCash on site</li>
+        <li><b>Timeline:</b> one month of development + two more weeks</li>
+        <li><b>Team:</b> students; <b>users:</b> the school community + one owner</li>
+      </ul>
+      <p class="small" style="margin-top:12px">Activity 1 asks for the model
+      <b>and the justification, anchored on the TOR and the SRS</b> — an opinion without
+      evidence is a guess.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal">First, gather evidence from the annexes: are the requirements
+      stable? Is the deadline fixed? Is feedback from real buyers likely?</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal">Then argue: e.g. <b>"requirements are clear and unlikely to
+      change + a fixed one-month timeline → Waterfall"</b> — or <b>"deliver in increments:
+      first browse+cart, then checkout → Incremental"</b>.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>The grade is in the justification:</b> model choice +
+      description + why THIS project suits it. Two squads may defend different models —
+      the stronger argument, not the "right" label, earns the points.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 Activity 1 + Annex C (SDLC Model section)</b> · choose-and-justify framing</span><span>22 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · MISCONCEPTIONS ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">Check yourself — five model traps</div>
+  <h2>True or false?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:24px"><b>1.</b> "Agile is just Waterfall done
+      in small pieces." → <b>FALSE.</b> Agile expects change and re-plans every sprint;
+      Waterfall freezes early. Different posture, not different size.</p></div>
+      <div class="card"><p style="font-size:24px"><b>2.</b> "DevOps is a sequence of
+      phases you follow." → <b>FALSE.</b> It is a <b>culture and practice</b> — building
+      and operations joined by automation and continuous delivery.</p></div>
+      <div class="card"><p style="font-size:24px"><b>3.</b> "Iterative and Incremental are
+      the same thing." → <b>FALSE.</b> Iterative <i>refines</i> through cycles;
+      Incremental <i>delivers</i> usable parts. Distinct — and often combined.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:24px"><b>4.</b> "Big Bang is fine for our
+      graded project." → <b>RISKY.</b> Legitimate for small, disposable experiments —
+      a disaster when a client and a grade are waiting for a defensible result.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:24px"><b>5.</b> "Following an SDLC model guarantees bug-free
+        software." → <b>FALSE.</b> The SDLC <b>supports quality</b> — structure, tracking,
+        review — but bugs survive every model. Testing exists <i>because</i> no model is a
+        force field.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: corrections per approved brief · SG15 §1.2 model summaries</span><span>23 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · CURRICULUM ALIGNMENT ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Curriculum alignment</div>
+  <h2>SG 15 ↔ this deck ↔ your experience</h2>
+  <table class="cmp" style="margin-top:22px; font-size:22px">
+    <tr><th>SG 15 item</th><th>Deck slides</th><th>Where you lived it</th></tr>
+    <tr><td>SDLC phases + benefits <span class="lab cw">§ table, summary</span></td>
+        <td>3–4, 9</td><td>Mission S-1 phases 1–3 <span class="lab re">direct</span></td></tr>
+    <tr><td>Planning / Requirements / Design — Annexes A, B, C <span class="lab cw">§1.2 + Activity 1</span></td>
+        <td>5–7, 10</td><td>Mission Record §1–§3 <span class="lab re">direct</span></td></tr>
+    <tr><td>Nine SDLC models + model selection with justification <span class="lab cw">§1.2 + Annex C</span></td>
+        <td>13–22</td><td>S-1 Phase 4 approach debate <span class="lab re">seeded</span></td></tr>
+    <tr><td>Implementation / Testing / Deployment / Maintenance <span class="lab cw">rows 4–6</span></td>
+        <td>9, 22–23 (Hungry Grove cycle)</td><td>Implementation/testing/review lived in G-1–G-2; deployment/maintenance <span class="lab cw">deferred to CS4</span></td></tr>
+    <tr><td>VS Code indicators ILA / Annex E quiz</td><td>quiz items echoed on slide 23</td><td>teacher-scheduled</td></tr>
+    <tr><td>Data visualization (mentioned in SG 14's shared objective)</td><td>—</td><td>outside SG 15's scope — tracked separately</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <div class="flag" style="font-size:21px"><b>SG 15 wording, flagged for the CS team (deck teaches the corrected versions):</b>
+    the phase table combines <b>Deployment/Maintenance</b> in one row (we teach seven
+    activities) · the <b>Iterative bullet</b> carries a drifted Big Bang line (slide 17) ·
+    the Cookie App's <b>security requirements exceed its scope</b> (encrypting payments for
+    a COD-only app — a real requirements inconsistency to learn from) · the <b>delivery
+    fee</b> appears only in a validation formula, never in the TOR or stories · the TOR
+    timeline lists "Deployment and Testing" in reversed order.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 full document</b> · flags per audit (flagged, not silently fixed)</span><span>24 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · KEY TAKEAWAYS ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> You already <b>performed</b>
+      Planning, Requirements Analysis, and Design in Mission S-1 — the names were the only
+      thing missing.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> <b>Requirements say what;
+      Design says how</b> — and the TOR, SRS, and Design Document are their official
+      deliverables (Annexes A, B, C).</p></div>
+      <div class="card"><p style="font-size:26px"><b>3.</b> <b>Seven activities</b> carry a
+      product from idea to end of life — the SDLC supports quality but
+      <b>promises nothing about bugs</b>.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>4.</b> <b>Phases are what; models are
+      how</b> — nine ways to organize the same phases, from Waterfall's stairs to DevOps'
+      endless loop. Match the rhythm to the project, and justify it.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:26px"><b>5.</b> <b>Your next mission is official:</b> the
+        Cookie Ordering App simulation — three markdown annex files in your repository,
+        graded with Annex D — and its result feeds your <b>SG 16 project proposal</b>.
+        Your Mission Record was the rehearsal.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Activity 1</h3>
+      <p class="small">Can you: name the deliverable of each phase? · say which annex is
+      an SRS? · give one honest difference between Iterative and Incremental? · explain
+      why DevOps is not a phase list? · argue a model choice for the Cookie App with
+      evidence from its TOR?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG15 Summary/Key takeaways</b> (annotated honestly) · <b>mission_s1</b> throughout</span><span>25 / 25</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 25</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg15-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg15-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Shinobi's Project Playbook — Study Guide 16 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #tl td:nth-child(5), #tl td:nth-child(6){white-space:nowrap}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 16 · Project Management (Project Proposal) · Grade 9 CS · 2 meetings (100 min) + ILA</div>
+  <h1>The Shinobi's Project Playbook</h1>
+  <p class="sub" style="margin-top:18px; font-size:34px; color:var(--ink)">
+    <b>Planning, Leading, and Delivering a Mission.</b></p>
+  <p class="sub" style="margin-top:14px">A promising project is not just an interesting idea. It is an idea supported by a realistic plan and a team prepared to deliver it.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>Where this unit goes — and the schedule</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> 20-pt SDLC quiz (recap) → project management concepts →
+        <b>begin your real project proposal draft</b></li>
+        <li><b>ILA (30 min):</b> finalize the proposal — milestones, resources, learning
+        plan</li>
+        <li><b>Meeting 2:</b> oral presentation and critique</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission P-1</span></h3>
+        <p class="small">Project Safari: 32 tokens of wonderful ideas, 12 tokens of
+        budget, one protected core, three milestones, three leads. <b>This deck names
+        what you did — then turns your own idea into a defensible proposal.</b></p>
+      </div>
+      <div class="card">
+        <h3>Learning competency <span class="small">(SG16)</span></h3>
+        <p class="small">A cross-disciplinary proposal applying OOP, integrating relevant
+        libraries, using collaboration tools — run with project-management and
+        self-regulated learning skills.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 16 — Project Management (Project Proposal)</b> (outline, Activity 1, Annexes A–C, rubrics) · companion: <b>workshops/mission_p1_*</b></span><span>1 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · RECALL P-1 ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Recall · Mission P-1, Project Safari</div>
+  <h2>What happened to Project Safari?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The numbers, as they happened</h3>
+      <p style="font-family:var(--mono); font-size:23px; line-height:1.9">
+      proposed features: <b>32 effort tokens</b><br>
+      squad budget: <b>12 effort tokens</b><br>
+      cut, in writing: <b>20 tokens</b><br>
+      value center kept: <span style="color:#a7d78f">predator–prey dynamics</span><br>
+      milestones: <b>3</b> · leads: <b>3 different shinobi</b><br>
+      skills planned: <b>one per shinobi</b> · risks: <b>≥ 1</b></p>
+      <p class="small" style="margin-top:12px">Effort tokens are <b>relative estimates of
+      work</b> — bigger number means more work. They are not money, not hours, not a
+      grade.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The decisions your squad made</h3>
+        <ul class="ticks">
+          <li><b>MoSCoW</b> — Must / Should / Could / Won't, marked on every feature</li>
+          <li><b>Exclusions written down</b> — a cut is a decision, not an omission</li>
+          <li><b>The core protected</b> — a cut that removed the predator–prey dynamics
+          was a different project, not a cheaper one</li>
+          <li><b>Leads rotated</b> — Walking Wild · The Living Grove · The Showcase</li>
+        </ul></div>
+      <div class="note" style="font-size:22px"><b>And one honest boundary:</b> the paper
+      token board was a <b>thinking tool</b>. It is not a substitute for the digital
+      project-management tools this unit expects you to grow into (slide 18).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_p1_feature_menu.md</b> (32 = 2+3+3+2+2+3+2+2+3+2+4+4) · <b>mission_p1 card §B–§E</b></span><span>2 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · PREDICT ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Recall · predict before you read</div>
+  <h2><span class="pausechip">PREDICT</span> Ambitions exceed resources. What happens next?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The permanent situation</h3>
+      <p style="font-size:24px; line-height:1.9">Every real software team lives what your
+      squad lived in Project Safari: <b>more good ideas than time, people, and
+      skill.</b> The menu will always total more than the budget.<br><br>
+      So what are a team's choices — and which choice is <b>project management</b>?</p>
+      <p class="small" style="margin-top:14px">Pick the answer you believe, then defend
+      it in one sentence:</p>
+      <p class="small" style="font-family:var(--mono); margin-top:8px">a) work harder and keep everything<br>
+      b) cut scope deliberately and say what is excluded<br>
+      c) promise everything and decide later<br>
+      d) quietly drop features without telling anyone</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal bad"><b>a) "Work harder"</b> — effort is real, but it is not a
+      plan. The menu was 32; you had 12. Effort does not create tokens.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>c) and d)</b> — promising everything, or silently
+      dropping features, destroys the one thing a team runs on: <b>trustworthy
+      commitments.</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>b) Cut deliberately — and say so.</b> That is project
+      management: organizing people, scope, time, resources, risks, and work so the
+      team delivers something <b>valuable</b> — and can prove it planned to.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_p1</b> (MoSCoW + exclusions) · SG16 §1.2 (PM turns SDLC phases into coordinated, achievable work)</span><span>3 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · WHAT IS PM ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">Meeting 1 · What is Project Management?</div>
+  <h2>From project idea to coordinated, achievable work</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The definition <span class="lab cw">SG16</span></h3>
+      <p class="small">Project management <b>transforms the SDLC phases into actionable
+      steps</b>. It keeps every stage aligned with users' needs, and it runs on four
+      standing activities:</p>
+      <ul class="ticks">
+        <li><b>Plan</b> — decide the scope, the order, and who leads</li>
+        <li><b>Monitor</b> — watch the work against the plan (evidence, not memory)</li>
+        <li><b>Adapt</b> — when reality disagrees, change the plan deliberately</li>
+        <li><b>Communicate</b> — keep the squad, the client, and the teacher honest</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Your Project Safari card <span class="lab re">was this</span></h3>
+        <p class="small">The MoSCoW marks were <b>planning</b> · the token check was
+        <b>monitoring</b> · the Gamekeeper's food-patch ambush (Version C) forced
+        <b>adapting</b> · the pitch sentence was <b>communication</b>. You have already
+        done all four.</p>
+      </div>
+      <div class="card"><h3>What PM is not</h3>
+        <p class="small">Not a guarantee of success · not bureaucracy for its own sake ·
+        not "one boss tells everyone what to do". It is <b>systematic thinking, effective
+        communication, and creative collaboration</b> — SG 16's own words.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 §1.1</b> ("transforms the SDLC phases into actionable steps… systematic thinking, effective communication, creative collaboration")</span><span>4 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · THE PM TRIANGLE ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Meeting 1 · The Project Management Triangle</div>
+  <h2>Three corners you juggle — one center you protect</h2>
+  <svg viewBox="0 0 1500 560" style="width:62%; margin:10px auto 0; display:block" aria-hidden="true">
+    <path d="M 750 60 L 260 480 L 1240 480 Z" stroke="#0e7268" stroke-width="9" fill="#e2efeb" opacity="0.9"/>
+    <circle cx="750" cy="60" r="15" fill="#0e7268"/>
+    <circle cx="260" cy="480" r="15" fill="#0e7268"/>
+    <circle cx="1240" cy="480" r="15" fill="#0e7268"/>
+    <circle cx="750" cy="330" r="58" fill="#fffdf8" stroke="#96591a" stroke-width="6"/>
+    <text x="750" y="322" text-anchor="middle" font-family="monospace" font-size="30" font-weight="bold" fill="#96591a">QUALITY</text>
+    <text x="750" y="362" text-anchor="middle" font-family="monospace" font-size="30" font-weight="bold" fill="#96591a">VALUE</text>
+    <text x="750" y="30" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#23211c">TIME</text>
+    <text x="180" y="530" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#23211c">SCOPE</text>
+    <text x="1320" y="530" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#23211c">COST / RESOURCES</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:6px">
+    <div class="note" style="font-size:22px"><b>How the corners talk:</b> fix time and
+    resources, and only <b>scope</b> can move — Project Safari's lesson. Demand more
+    scope, and something must give: more time, more resources, or quality. <b>Changing
+    one corner always moves another.</b></div>
+    <div class="warn" style="font-size:22px"><b>The accuracy line:</b> meeting deadline,
+    budget, and scope does <b>not automatically mean success</b> — a project can hit all
+    three corners and still be useless. <b>Quality and value live at the center</b>, and
+    the center is what the corners must protect.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 §1.1</b> (triangle: deadline, resources/budget, scope) · traditional form: scope–time–cost (PMI) · quality center per approved brief</span><span>5 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · MOSCOW ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">Meeting 1 · Prioritizing scope</div>
+  <h2>MoSCoW — four marks that turn wishes into decisions</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3><span class="chip" style="background:var(--teal); color:#fff">M</span> Must have</h3>
+        <p class="small">The mission fails without it. In Project Safari: the chase rules —
+        no chase, no predator–prey dynamics.</p></div>
+      <div class="card"><h3><span class="chip">S</span> Should have</h3>
+        <p class="small">Important and planned — you fund it if the budget allows.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3><span class="chip">C</span> Could have</h3>
+        <p class="small">Nice, cheap, optional — funded only with leftover tokens.</p></div>
+      <div class="card"><h3><span class="chip" style="background:var(--red-wash)">W</span> Won't have <i>for now</i></h3>
+        <p class="small"><b>Excluded — in writing, with a reason.</b> The most professional
+        mark on the list: it tells the client what to stop expecting.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:23px"><b>The sentence that makes MoSCoW project
+    management (not wish-listing):</b> writing a feature into <b>Won't</b> is a
+    <b>deliberate, recorded decision</b> — it tells the client what to stop expecting and
+    protects the Musts from silent decay. <span class="lab re">P-1</span> Your exclusion
+    lines were graded evidence, not apologies.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: MoSCoW prioritization · <b>mission_p1</b> Phase 1 (verified loop)</span><span>6 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · WATERFALL & AGILE (PM) ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">Meeting 1 · Two familiar project-management approaches</div>
+  <h2>Waterfall and Agile — and the nine models behind them</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>Waterfall <span class="lab cw">as PM approach</span></h3>
+      <p class="small"><b>More upfront planning, largely sequential progression.</b> The
+      plan is signed, then the team walks the stages in order. Fits stable requirements
+      and fixed contracts — SG 15's linear model, wearing a manager's hat.</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Agile <span class="lab cw">as PM approach</span></h3>
+      <p class="small"><b>Shorter cycles, feedback, collaboration, adaptation.</b> Grounded
+      in values and principles (Agile Manifesto): individuals and interactions, working
+      software, customer collaboration, responding to change. <b>Agile is not "no
+      planning"</b> and not "coding quickly" — it plans <i>constantly, in small
+      increments</i>.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:22px"><b>How they relate to SG 15 — precisely:</b>
+    SG 15 taught <b>nine SDLC models</b> (Waterfall, V-Model, Agile, Iterative,
+    Incremental, Spiral, Big Bang, DevOps, RUP). SG 16 highlights <b>Waterfall and
+    Agile</b> because they are the two most familiar <i>project-management</i> approaches
+    — but they are <b>not the only ways</b> to organize a project. The nine-model menu
+    from SG 15 still stands, and many teams blend them (Agile itself is iterative
+    <i>and</i> incremental).</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 §1.1</b> (two common methodologies) · relationship to SG15 nine models clarified per approved brief · Agile Manifesto principles</span><span>7 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · FROM SDLC TO PROPOSAL ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Meeting 1 · From SDLC to Project Proposal</div>
+  <h2>Everything you have done was training for this document</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="card" style="padding:24px 34px">
+      <p style="font-family:var(--mono); font-size:23px; line-height:2; color:#3c382f">
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">S-1: you planned, distilled, sketched</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">SG 15: you named the phases and the annexes</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">P-1: you negotiated scope and led milestones</span> →
+      <span class="chip" style="background:var(--teal-wash)">SG 16: write the real proposal — for YOUR project</span></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Initial Project Proposal <span class="lab cw">SG16 Annex B — now</span></h3>
+      <p class="small">Title · description (with OOP classes) · goals &amp; objectives ·
+      target users · timeline with ≥3 milestones and rotating leads. Prepared this week,
+      presented to the class. <b>The approval gate.</b></p>
+    </div>
+    <div class="card">
+      <h3>Full Project Plan <span class="lab cw">after approval — mid-quarter</span></h3>
+      <p class="small">The same project, documented completely: SG 15 <b>Annex A</b>
+      (TOR) · <b>Annex B</b> (SRS) · <b>Annex C</b> (Design Document) + SG 16 <b>Annex C
+      timeline</b>. Graded out of 40. <b>Used as templates for YOUR app — not the Cookie
+      App.</b></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:22px"><b>The distinction students trip on:</b> the
+    proposal is a <b>reasoned commitment</b> ("we can deliver this, here is the plan and
+    the evidence"). The full plan is the <b>complete documentation</b> of that commitment.
+    Proposal first, plan second — and the SG 15 annexes are your formats, not your
+    project.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Activity 1 + intro</b> ("refer to the previous study guide…") · proposal→plan clarification per approved brief</span><span>8 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · IDENTIFY THE PROBLEM ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">Meeting 1 · Developing the proposal — the problem</div>
+  <h2>Start with a problem, not with an application</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The four words your proposal needs first</h3>
+      <ul class="ticks">
+        <li><b>Problem</b> — what is wrong, for whom, right now?</li>
+        <li><b>Context</b> — where and when does the problem appear?</li>
+        <li><b>Need</b> — why does it matter to someone?</li>
+        <li><b>Users &amp; beneficiaries</b> — who uses the app, and who gains even if
+        they never touch it?</li>
+      </ul>
+      <div class="flag" style="margin-top:14px; font-size:21px"><b>The honest test:</b> if
+      you cannot name a person whose situation improves, you do not have a problem — you
+      have a <b>wish</b>. Wishes make toys; problems make projects.</div>
+    </div>
+    <div class="vflow">
+      <div class="vf bad">"I want to make a game because games are cool."</div>
+      <div class="varr">↓</div>
+      <div class="vf">"New players of our starter game lose their hero without ever
+      understanding the danger."</div>
+      <div class="varr">↓</div>
+      <div class="vf good">Users: <b>the players</b> · Beneficiary: <b>the Biology
+      Department</b>, whose lesson finally lands in-game.</div>
+      <div class="varr">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Mission S-1's letter worked
+      because it was a real problem, stated by a real stakeholder.</b> Your proposal
+      needs that same spine: a problem someone would pay (or grade) to solve.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex B (problem identification — "real-world or school-based problem with clear context and justification", rubric criterion 2)</b></span><span>9 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · CROSS-DISCIPLINARY ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Meeting 1 · Cross-disciplinary integration</div>
+  <h2>A subject name attached is not integration</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="note" style="font-size:23px"><b>Integration means all three:</b> the other
+    discipline <b>contributes</b> something real (rules, data, questions) → it shapes a
+    <b>problem</b> worth solving → <b>computing</b> is how you investigate or solve it.
+    A label slapped on a menu is decoration.</div>
+  </div>
+  <table class="cmp" style="margin-top:20px; font-size:21px">
+    <tr><th>Pairing</th><th>What the other discipline contributes</th><th>The problem it creates / addresses</th><th>What computing does</th></tr>
+    <tr><td><b>CS + Biology</b></td><td>Predator–prey rules, population change, reproduction, balance</td><td>Why do animal populations rise and crash?</td><td>Simulate the ecosystem and visualize the dynamics</td></tr>
+    <tr><td><b>CS + Math</b></td><td>Probability, geometry, statistics</td><td>"Is this dice game fair?" — unanswerable by feel</td><td>Run thousands of simulated rolls and chart the distribution</td></tr>
+    <tr><td><b>CS + Physics</b></td><td>Solar-output formulas, angles, irradiance</td><td>Which roof angle harvests the most energy here?</td><td>Calculate and compare panels before buying anything</td></tr>
+    <tr><td><b>CS + Environmental Science</b></td><td>River metrics: pH, turbidity, temperature</td><td>Is the water quality changing over the season?</td><td>Turn readings into a dashboard trends can be read from</td></tr>
+    <tr><td><b>CS + Arts</b></td><td>Composition, story, visual rhythm</td><td>Static art cannot respond to its audience</td><td>Generative or interactive art that reacts to the viewer</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <div class="small">Project Safari was <b>CS + Biology</b>: Biology supplied the
+    population rules; the simulation made them visible. SG 16 Annex A lists more pairs —
+    and suggests talking to the other subject's teacher about a real tie-up.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex A (sample projects + subject integrations)</b> · three-part integration test per approved brief</span><span>10 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · GOALS & SMART ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Meeting 1 · Goals and SMART objectives</div>
+  <h2>The dream — and the contract</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Goal vs objective <span class="lab cw">SG16 Annex B</span></h3>
+      <p class="small"><b>Goal:</b> the broad outcome you intend — the direction.
+      <b>Objectives:</b> the specific, measurable results that prove you are walking that
+      direction. Annex B asks for the goal paragraph <b>followed by numbered
+      objectives</b>.</p>
+      <p class="small" style="margin-top:12px"><b>SMART:</b> <b>S</b>pecific ·
+      <b>M</b>easurable · <b>A</b>chievable · <b>R</b>elevant · <b>T</b>ime-bound —
+      the five questions a skeptical reviewer asks your objective.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf bad">WEAK: "Our ecosystem simulation will be good and teach players
+      about nature."</div>
+      <div class="varr">↓ apply SMART</div>
+      <div class="vf reveal good">STRONG: "By the end of Milestone 2, the simulation runs
+      <b>50 turns</b> with the predator hunting enabled, and the live chart shows at
+      least <b>one full prey rise-and-fall cycle</b>."</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Why bother:</b> the weak version
+      can be claimed by anyone without building anything. The strong version either
+      happened or didn't — <b>and your squad can say which, with evidence.</b> The
+      40-pt Project Plan rubric grades goals on exactly this SMART quality.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex B (Goals → Objectives) + Annex C 40-pt rubric (SMART criteria)</b></span><span>11 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · PROPOSED SOLUTION ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 1 · Proposed solution and project description</div>
+  <h2>Annex B's big field — purpose, features, classes, users</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c"># Project Safari — proposed classes (design, not code)</span>
+
+<span class="k">class</span> Animal:            <span class="c"># shared body of every creature</span>
+    position (x, y) · energy · age
+    move(direction) · act(view)
+
+<span class="k">class</span> <span class="g">Predator</span>(Animal):  <span class="c"># IS-A Animal</span>
+    hunt()          <span class="c"># chase the nearest prey</span>
+
+<span class="k">class</span> <span class="g">Prey</span>(Animal):      <span class="c"># IS-A Animal</span>
+    flee() · reproduce()
+
+<span class="k">class</span> Ecosystem:
+    grid · turn() · populations
+    <span class="c"># places animals, advances days,</span>
+    <span class="c"># records the numbers the charts read</span></pre>
+      <p class="small" style="margin-top:12px">Every piece traces to a requirement, and
+      every class names its <b>attributes and methods</b> — exactly what SG 16 Annex B's
+      NOTE demands in the description.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The description must identify</h3>
+        <ul class="ticks">
+          <li><b>System purpose</b> — what the app is for</li>
+          <li><b>Features</b> — what it does (your Musts and Shoulds)</li>
+          <li><b>System components</b> — the classes, attributes, methods, and how they
+          interact (the NOTE in Annex B)</li>
+          <li><b>Expected outputs</b> — what appears: charts, boards, messages</li>
+          <li><b>Target users</b> — named, not "everyone"</li>
+        </ul></div>
+      <div class="note" style="font-size:21px"><b>Three honest notes:</b> these classes are
+      <b>proposed design elements</b> — described in words, not a full class diagram, and
+      not yet written. And they should feel familiar: <code>act(view)</code> on a grid is
+      the pattern you have lived since your first RogueEdu villain. <b>Old knowledge,
+      new document.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex B NOTE</b> ("clearly described the elements (classes), their attributes and methods and how they will interact") · OOP reuse, not reteaching</span><span>12 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · TOOLS & LIBRARIES ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 1 · Tools, libraries, and technical feasibility</div>
+  <h2>Name your candidates — then earn them</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>Candidates worth knowing exist</h3>
+      <ul class="ticks">
+        <li><b>matplotlib</b> — charts and data visualization <span class="small">(Project
+        Safari's population graphs)</span></li>
+        <li><b>pygame</b> — interactive 2D graphics and game loops</li>
+        <li><b>NumPy</b> — numerical computation on lists of numbers</li>
+        <li><b>Flask</b> — web applications <span class="small">(RogueEdu runs on
+        it)</span></li>
+      </ul>
+      <p class="small" style="margin-top:10px">None is mandatory; none fits every project.
+      Naming a candidate that serves <b>your</b> requirement is the skill.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Four levels of honesty about a library</h3>
+        <ol class="ticks" style="list-style:none; padding-left:0">
+          <li><b>1 · It exists</b> — you have heard the name</li>
+          <li><b>2 · You know its purpose</b> — what problems it solves</li>
+          <li><b>3 · You can use it</b> — you have made it do something</li>
+          <li><b>4 · You have evidence it works for YOUR project</b> — a small experiment
+          already ran</li>
+        </ol>
+      </div>
+      <div class="note" style="font-size:21px"><b>Be level-honest in the proposal:</b> level
+      1–2 is allowed at proposal time. Levels 3–4 are earned during the project — and
+      <b>SG 17 (Frameworks and Libraries) is where levels 3–4 are taught properly.</b>
+      Claiming level 4 on day one is the Same Trap as the 99 that lied.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 DLC</b> ("integrates relevant libraries") · four-level distinction per approved brief · SG 17 = Frameworks and Libraries Integration</span><span>13 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · SRL ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">Meeting 1 · The Shinobi Skill Scroll — self-regulated learning</div>
+  <h2>A competency with your name on it — plan it like a mission</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>The five lines every shinobi writes</h3>
+      <ul class="ticks">
+        <li><b>What I already know</b> — honest starting point</li>
+        <li><b>What I need to learn</b> — the gap, named precisely</li>
+        <li><b>How I will learn it</b> — the strategy</li>
+        <li><b>Which resource</b> — named, findable, real</li>
+        <li><b>Evidence of competence</b> — an artifact someone can check</li>
+      </ul>
+      <p class="small" style="margin-top:10px">SG 16 calls this <b>self-regulated
+      learning</b> — a named desired competency. Your P-1 card already had one line of
+      it; the proposal makes it official.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf">Need: <b>"draw the population chart"</b> — matplotlib</div>
+      <div class="varr">↓</div>
+      <div class="vf reveal">Strategy: <b>read the official pyplot tutorial, then follow
+      one beginner example end-to-end.</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal">Practice: <b>reproduce the tutorial chart with my own small
+      data set</b> — not by copying the tutorial's numbers.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Evidence: <b>a working chart of MY ecosystem data, with
+      two sentences explaining what it shows.</b></div>
+      <div class="varr reveal">·</div>
+      <div class="warn reveal" style="font-size:21px"><b>The trap:</b> watching a tutorial
+      is <b>not</b> mastery — it is watching. The evidence line is what separates
+      learning from watching.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 DLC</b> (self-regulated learning strategies) · <b>mission_p1 card §E</b> (skill line) · Annex B gap flagged on slide 26</span><span>14 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · RISKS ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">Meeting 1 · Project risks and mitigation</div>
+  <h2>Naming trouble early is a project-management superpower</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div>
+      <table class="cmp" style="font-size:21px">
+        <tr><th>Risk</th><th>Possible impact</th><th>Mitigation</th></tr>
+        <tr><td>Dataset unavailable</td><td>Development delayed</td><td>Identify an alternative dataset <b>early</b></td></tr>
+        <tr><td>Feature too difficult</td><td>Milestone delayed</td><td>Build a smaller prototype first</td></tr>
+        <tr><td>Team member unavailable</td><td>Work distribution affected</td><td>Document progress; share responsibilities</td></tr>
+        <tr><td>Library unfamiliar</td><td>Integration problems</td><td>Run a small feasibility experiment</td></tr>
+      </table>
+      <p class="small" style="margin-top:12px">A risk is not failure — it is a failure you
+      <b>met in advance</b>. Mitigation = the plan you make while everything is still
+      calm.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Rank risks like a shinobi</h3>
+        <p class="small">Two questions, honestly answered:
+        <b>How likely?</b> (rare → almost certain) and
+        <b>how bad if it happens?</b> (annoying → mission-ending).
+        The ones that are <b>likely AND bad</b> get mitigations written this week — the
+        rest go on the watch list.</p></div>
+      <div class="note" style="font-size:21px"><b>From Project Safari:</b> "breeding
+      numbers might explode and crash the board — test limits in milestone 1." That line
+      was a risk with a mitigation, written before any code existed. <b>You have already
+      done this.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_p1 card §E + SG16 §1.2 (risk awareness)</b> · likelihood × impact at Grade-9 level</span><span>15 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · MILESTONES & LEADERSHIP ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">Meeting 1 · Milestones and leadership</div>
+  <h2>The relay — three milestones, three different leads</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="card" style="padding:22px 34px">
+      <p style="font-family:var(--mono); font-size:22px; line-height:1.9; color:#3c382f">
+      <b>Task</b> = one piece of work · <b>Milestone</b> = a dated checkpoint bundling
+      tasks · <b>Deliverable</b> = what the milestone hands over ·
+      <b>Team lead</b> = coordinates <i>and is accountable</i> — <b>not</b> the only
+      worker.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr 1fr; margin-top:22px">
+    <div class="card" style="border-top:6px solid var(--teal)">
+      <h3>M1 · Planning &amp; design</h3>
+      <p class="small">requirements, wireframe, class sketch<br>
+      <b>Lead: Shinobi A</b> — coordinates, runs the consistency pass</p>
+      <p class="chip" style="margin-top:8px">deliverable: the blueprint set</p>
+    </div>
+    <div class="card" style="border-top:6px solid var(--amber)">
+      <h3>M2 · Working prototype</h3>
+      <p class="small">core feature runs; population behavior visible<br>
+      <b>Lead: Shinobi B</b> — coordinates builds and the chakra checks</p>
+      <p class="chip" style="margin-top:8px">deliverable: the playable prototype</p>
+    </div>
+    <div class="card" style="border-top:6px solid var(--green)">
+      <h3>M3 · Final demonstration</h3>
+      <p class="small">charts, evidence, the presentation<br>
+      <b>Lead: Shinobi C</b> — coordinates testing and the demo</p>
+      <p class="chip" style="margin-top:8px">deliverable: the demo + evidence pack</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:22px"><b>The rules that make the relay fair</b>
+    <span class="lab cw">SG16</span>: <b>at least three milestones per quarter</b> ·
+    <b>one lead per milestone</b> · <b>every member leads at least one milestone every
+    quarter</b>. The lead coordinates and answers for the deliverable — the squad does
+    the work. <b>Customize these milestones for YOUR project;</b> the names here are an
+    example, not a template.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Activity 1 + Annex B/C</b> · <b>mission_p1</b> relay (verified structure)</span><span>16 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · THE TIMELINE ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">Meeting 1 · The project timeline (SG 16 Annex C)</div>
+  <h2>The relay, written where the village can see it</h2>
+  <table class="cmp" id="tl" style="margin-top:22px; font-size:21px">
+    <tr><th>Milestone / phase</th><th>Key activities</th><th>Responsible</th><th>Deliverable</th><th>Start</th><th>End</th><th>Remarks</th></tr>
+    <tr><td><b>M1 · Blueprint &amp; core</b></td><td>finalize requirements; wireframe; chase rule works</td><td>Shinobi A (lead) + all</td><td>blueprint set + playable core</td><td>Wk 1</td><td>Wk 2</td><td>chakra check green</td></tr>
+    <tr><td><b>M2 · Living Grove</b></td><td>selected mechanic; population behavior; playtests</td><td>Shinobi B (lead) + all</td><td>playable prototype v2</td><td>Wk 3</td><td>Wk 4</td><td>overlaps M1's testing</td></tr>
+    <tr><td><b>M3 · Showcase</b></td><td>charts; evidence pack; presentation dry-run</td><td>Shinobi C (lead) + all</td><td>demo + evidence</td><td>Wk 5</td><td>Wk 6</td><td>squad presents together</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:22px">
+    <div class="card"><h3>Seven columns, seven honest answers</h3>
+      <p class="small">What · who · what hand-over · when it starts · when it ends · and
+      the <b>Remarks column</b> — where you write what actually happened. A timeline
+      nobody updates is a wish with dates.</p></div>
+    <div class="card"><h3>Overlapping is normal</h3>
+      <p class="small">M2 can begin while M1's testing finishes — milestones <b>overlap
+      and iterate</b>; they do not have to march in a perfect line. Your dates will
+      differ from every other squad's — <b>identical timelines are a red flag, not
+      neatness.</b></p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex C timeline template</b> (all seven columns verbatim) · illustrative rows per approved brief</span><span>17 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · COLLABORATING & MONITORING ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">Meeting 1 · Collaborating and monitoring progress</div>
+  <h2>Paper tokens taught the thinking — now give the plan a home</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Start here: Google Sheets</h3>
+      <p class="small">You already have school accounts. One shared sheet = the Annex C
+      timeline, alive: <b>milestone, lead, activities, deliverable, start, end,
+      remarks</b> — updated weekly, visible to the whole squad and the sensei. <b>The
+      recommended starting tool.</b></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3>Grow into: GitHub Projects</h3><p class="small">Your squad
+      already has a repo — the <b>Projects</b> tab adds boards, tables, and a roadmap
+      that connect to your branches and PRs. Natural once the proposal is approved.</p></div>
+      <div class="card"><h3>Always available: paper Kanban</h3><p class="small">Three
+      columns on manila paper — <b>To do · In mission · Delivered</b> — with sticky notes
+      per task. Zero accounts, zero logins, always visible.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="warn" style="font-size:22px"><b>The boundary, repeated because it
+    matters:</b> P-1's paper token challenge taught you to <b>think</b> in priorities and
+    trade-offs. It is <b>not a substitute</b> for a live tracking tool — SG 16 expects
+    you to adopt one as the real project runs. <b>No new accounts today</b>; the move to
+    a tool happens when your proposal is approved.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 DLC</b> (tools beyond the prescribed) · Sheets/GitHub Projects docs · <b>mission_p1 prep §F</b></span><span>18 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · READY? ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">ILA · Is your proposal ready?</div>
+  <h2>The readiness checklist — against SG 16 Annex B</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The template's own fields</h3>
+      <ul class="ticks">
+        <li><b>Title, section, members, date, duration</b> — filled, real names</li>
+        <li><b>Description</b> — the need, the features, the <b>classes with attributes
+        and methods</b>, the target users</li>
+        <li><b>Goal + numbered objectives</b> — the goal paragraph, then objectives that
+        survive the SMART questions</li>
+        <li><b>Timeline</b> — at least three milestones, one lead each, every member
+        leading one</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3>The two supplementary fields <span class="lab cw">squad-decided</span></h3>
+        <p class="small"><b>Integration:</b> which discipline, what it contributes.
+        <b>Learning plan:</b> each shinobi's skill line from the Skill Scroll. <i>The
+        official template has no boxes for these — your teacher decides where they live.
+        (Slide 26.)</i></p></div>
+      <div class="card"><h3>The final read-aloud test</h3>
+        <p class="small">One squadmate reads the description slowly; the others listen as
+        strangers: <b>"Do we know what to build? Do we know who it is for? Do we know how
+        we will prove it works?"</b> Three yeses — or revise.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex B template fields</b> · supplementary fields flagged (slide 26, item D–E)</span><span>19 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · HOW TO PRESENT ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">Meeting 2 · Presenting the proposal</div>
+  <h2>The nine moves, in the Annex's own order</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="card" style="padding:24px 34px">
+      <p style="font-family:var(--mono); font-size:22px; line-height:2; color:#3c382f">
+      1 · <span class="chip">title + overview</span> →
+      2 · <span class="chip">problem + justification</span> →
+      3 · <span class="chip">goal + objectives</span> →
+      4 · <span class="chip">target users</span> →
+      5 · <span class="chip">solution + technical design</span> →
+      6 · <span class="chip">cross-disciplinary integration</span> →
+      7 · <span class="chip">timeline + milestones</span> →
+      8 · <span class="chip">team roles + collaboration</span> →
+      9 · <span class="chip">resources + constraints</span></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Presenter rules</h3>
+      <ul class="ticks">
+        <li><b>Every member speaks</b> — the oral rubric scores delivery
+        <i>per member</i></li>
+        <li><b>Follow the proposal's order</b> — the presentation is the document, spoken</li>
+        <li><b>Claims stay tied to evidence</b> — say what proves each claim</li>
+      </ul></div>
+    <div class="card"><h3>Nothing extra</h3>
+      <p class="small">The sequence above IS the requirement list. Adding slide shows,
+      trailers, or features you did not propose wastes the minutes your timeline needs —
+      and invites questions about things you haven't planned.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Activity 1 (oral presentation) + Annex B fields</b> · "avoid adding unnecessary content beyond the requirements" per brief</span><span>20 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · DEFENDING DECISIONS ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">Meeting 2 · Defending your decisions</div>
+  <h2>Questions are not attacks — they are free testing</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Seven questions you should expect</h3>
+      <ul class="ticks">
+        <li>Why did you choose <b>this problem</b>?</li>
+        <li><b>Who benefits</b> — and how, specifically?</li>
+        <li>Why is the project <b>feasible</b> for your squad?</li>
+        <li>Why <b>these features</b> — and why not others?</li>
+        <li>What happens if a <b>milestone is delayed</b>?</li>
+        <li>What if a <b>library doesn't work out</b>?</li>
+        <li>Why is your solution <b>better than a simpler one</b>?</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The answering pattern</h3>
+        <p class="small"><b>Claim → evidence → consequence.</b>
+        "We cut the map editor <i>(claim)</i> because it cost 4 of our 12 tokens
+        <i>(evidence)</i>; keeping the chase rules protects the Biology lesson
+        <i>(consequence)</i>." Every answer has three parts.</p></div>
+      <div class="card"><h3>The patterns to refuse</h3>
+        <p class="small">Defensive answers ("it will work, trust us"), invisible answers
+        ("we'll figure it out"), and blame ("the engine is limiting"). <b>G-2 taught the
+        alternative:</b> the quoted WARN earned more respect than any confident claim.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 §1.2 (code reviews, constructive feedback)</b> · answering pattern from <b>mission_g2</b> Phase 3</span><span>21 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · THE ASSESSMENT RUBRICS ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">Meeting 2 · Know your rubrics — four scores, four jobs</div>
+  <h2>Four different assessments — never blend them</h2>
+  <table class="cmp" style="margin-top:22px; font-size:21px">
+    <tr><th>Assessment</th><th>Points</th><th>What it grades</th><th>When</th></tr>
+    <tr><td><b>SDLC quiz</b> <span class="lab cw">SG15 → SG16 opening</span></td><td><b>20</b></td><td>SDLC phases and models (recap)</td><td>start of SG 16 — separate assessment</td></tr>
+    <tr><td><b>Project Proposal</b></td><td><b>20</b> (10 × 2)</td><td>title/overview · problem · objectives · solution (OOP) · users · features · timeline · roles · resources · documentation quality</td><td>this week — the draft you begin now</td></tr>
+    <tr><td><b>Oral presentation</b></td><td><b>5</b> (2+2+1)</td><td>content mastery · organization &amp; flow · delivery per member</td><td>meeting 2</td></tr>
+    <tr><td><b>Full Project Plan</b></td><td><b>40</b> (5·4 + 7.5·2)</td><td>description/rationale · SMART goals · timeline · deliverables · SRD (7.5) · DDS (7.5) · collaboration</td><td>after approval — mid-quarter</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="note" style="font-size:21px"><b>Scoring sense:</b> rubric items score
+    <b>2 = clear and complete</b>, 1 = present but thin, 0 = missing (the 40-pt rubric
+    uses Exemplary/Proficient/Developing/Beginning bands). <b>Four separate grades:</b>
+    the quiz is not the proposal, the proposal is not the plan — and a strong plan cannot
+    rescue a proposal that was never approved.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Annex B rubrics (20-pt, 5-pt) + Annex C (40-pt Project Plan rubric, scoring guide)</b> · quiz: SG 15 Annex E → SG 16 opening (40% of the study-guide grade)</span><span>22 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · PEER CRITIQUE ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">Meeting 2 · Peer critique</div>
+  <h2>Be each other's Arena-Master</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Six questions a peer reviewer asks</h3>
+      <ul class="ticks">
+        <li>Is the <b>problem</b> clear?</li>
+        <li>Are the <b>objectives measurable</b>?</li>
+        <li>Is the project <b>feasible</b> for one quarter?</li>
+        <li>Are the <b>deliverables identifiable</b>?</li>
+        <li>Are <b>responsibilities and milestones realistic</b>?</li>
+        <li>Does the <b>interdisciplinary connection make sense</b>?</li>
+      </ul>
+      <p class="small" style="margin-top:10px">Each question gets an answer with one
+      quoted line from the reviewed proposal — evidence, like every review you have
+      given.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You have trained for this <span class="lab re">G-2</span></h3>
+        <p class="small">In Mission G-2 you reviewed real diffs and rejected a lying claim
+        with quoted evidence. Proposal critique is the same discipline — the diff is the
+        document, the WARN is the vague objective, the stamp is your approval.</p>
+      </div>
+      <div class="card"><h3>The reviewer's vow</h3>
+        <p class="small">Specific over general · aimed at the work, not the person ·
+        paired with a suggested improvement. <b>"Make it better" is not feedback —
+        "objective 2 has no time bound; add 'by week 4'" is.</b></p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 §1.3</b> (critiquing proposals) · review discipline from <b>mission_g2</b></span><span>23 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · APPROVAL TO PLAN ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Meeting 2 · From approval to full project plan</div>
+  <h2>The gate, and the bigger document behind it</h2>
+  <div class="grid" style="grid-template-columns:1fr 70px 1fr; margin-top:26px; align-items:stretch">
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Initial Project Proposal <span class="lab cw">SG16 Annex B</span></h3>
+      <p class="small">Your draft this week → ILA finalization → oral presentation →
+      <b>approval</b>. Title, description with classes, goals + SMART objectives, users,
+      timeline with rotating leads.</p>
+    </div>
+    <div class="bmid" style="display:flex; flex-direction:column; align-items:center; justify-content:center">
+      <div class="a" style="font-size:44px">⟶</div>
+      <div class="t" style="font-family:var(--mono); font-size:16px; color:var(--muted); text-align:center; margin-top:6px">APPROVAL<br>(the gate)</div>
+    </div>
+    <div class="card">
+      <h3>Full Project Plan <span class="lab cw">mid-quarter · 40 pts</span></h3>
+      <p class="small"><b>For YOUR OWN approved application</b>, using the annex formats
+      as templates: <b>SG 15 Annex A</b> (Terms of Reference) · <b>SG 15 Annex B</b>
+      (SRS) · <b>SG 15 Annex C</b> (Design Document) · <b>SG 16 Annex C</b> (detailed
+      timeline: activities, leads, dates).</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn" style="font-size:22px"><b>The confusion to refuse:</b> you are
+    <b>not</b> resubmitting the Cookie Ordering App documents from SG 15 — those were the
+    simulation. The annex <b>formats</b> are templates; the content is <b>your own
+    approved project</b>. Submission is expected around the <b>middle of the quarter</b>,
+    on the teacher's schedule.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 Activity 1 + intro</b> ("refer to the previous study guide on the required documentation") · clarification per approved brief</span><span>24 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · FINAL MISSION REVIEW ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Final mission review</div>
+  <h2>What your playbook now contains</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>The plan you can defend</h3>
+      <ul class="ticks">
+        <li>a <b>real problem</b> with named users and beneficiaries</li>
+        <li><b>meaningful objectives</b> that survive SMART</li>
+        <li><b>feasible scope</b> — with exclusions written down</li>
+        <li><b>cross-disciplinary integration</b> that contributes, not decorates</li>
+        <li><b>OOP design</b> — classes, attributes, methods, interactions</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The team that can deliver it</h3>
+      <ul class="ticks">
+        <li>candidate <b>tools and libraries</b>, honestly leveled</li>
+        <li><b>learning plans</b> with real evidence per shinobi</li>
+        <li><b>milestones and rotating leadership</b> — everyone leads</li>
+        <li><b>resources, constraints, and risks</b> — named early, mitigated early</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:26px"><b>The closing message, one last time:</b>
+    a promising project is not just an interesting idea. It is an idea supported by a
+    <b>realistic plan</b> and a team <b>prepared to deliver it</b>.</div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">Next: SG 17 — Frameworks and Libraries Integration</h3>
+      <p class="small">The libraries you named at levels 1–2 (matplotlib, pygame, NumPy,
+      Flask…) become tools you can <b>actually use</b>. Your approved proposal tells you
+      <i>which ones your project needs</i> — SG 17 teaches you to wield them.</p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG16 objectives + closing</b> · SG 17 preview per curriculum sequence</span><span>25 / 26</span></div>
+</section>
+
+<!-- ================= SLIDE 26 · TEACHER APPENDIX ================= -->
+<section class="slide" id="s26">
+  <div class="kicker">Teacher appendix · SG 16 accuracy flags + references <span class="lab cw">not for class presentation</span></div>
+  <h2 style="font-size:48px">Curriculum flags — flagged, not silently fixed</h2>
+  <table class="cmp" style="margin-top:18px; font-size:19px">
+    <tr><th>#</th><th>Flag</th><th>Deck's handling / recommendation</th></tr>
+    <tr><td>A</td><td><b>PM Triangle</b> described as deadline + budget + scope = success</td><td>Slide 5 adds the quality/value center and trade-off reality; corners move each other</td></tr>
+    <tr><td>B</td><td><b>"Two common methodologies" (Waterfall, Agile)</b></td><td>Slide 7 connects them to SG 15's nine SDLC models; "not the only approaches" is stated</td></tr>
+    <tr><td>C</td><td><b>Milestone leadership</b>: ≥3 milestones/quarter, every member leads</td><td>Slide 16; squads of four need a fourth milestone or a documented double lead (sensei approval)</td></tr>
+    <tr><td>D</td><td><b>Self-regulated learning</b> has no field in the Annex B template</td><td>Recommend a teacher-approved supplementary learning-plan field — official template unmodified (slide 19)</td></tr>
+    <tr><td>E</td><td><b>Cross-disciplinary integration</b> also lacks a dedicated Annex B field</td><td>Same recommendation — one teacher-approved Integration line (slide 19)</td></tr>
+    <tr><td>F</td><td><b>Libraries</b>: SG 16 expects proposals to name them; SG 17 teaches them</td><td>Slide 13's four honesty levels: name candidates now, master in SG 17</td></tr>
+    <tr><td>G</td><td><b>Three rubrics</b> (20 proposal / 5 oral / 40 plan) must stay distinct</td><td>Slide 22 preserves exact criteria and points; also the separate 20-pt SDLC quiz</td></tr>
+    <tr><td>H</td><td><b>Acronym drift:</b> SG 15 says SRS; SG 16's 40-pt rubric says SRD</td><td>Flagged for the CS team; deck says "SRS (called SRD in the SG 16 rubric)" where relevant</td></tr>
+    <tr><td>I</td><td><b>Oral presentation logistics:</b> 45–50 min for ~33 squads with per-member delivery ≈ 80 s/squad — unrealistic as one sequence</td><td>Teacher decision required: parallel stations / representative pitches / gallery walk (see P-1 prep §G). Not assumed approved.</td></tr>
+  </table>
+  <p class="small" style="margin-top:16px"><b>References:</b>
+  Agile Manifesto principles — agilemanifesto.org/principles.html ·
+  PMI — Project Management Triangle / triple constraint ·
+  Google Sheets docs — support.google.com/docs ·
+  GitHub Projects docs — docs.github.com/en/issues/planning-and-tracking-with-projects ·
+  SG 15 + SG 16 official documents · workshops/mission_p1_*, mission_s1_* ·
+  slides/sdlc-concept-deck.html. Tool behaviors (Sheets sharing, GitHub Projects
+  boards) should be re-verified against current documentation each school year.</p>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">teacher-facing reference — do not present in class</span><span>26 / 26</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 26</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg16-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg16-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>

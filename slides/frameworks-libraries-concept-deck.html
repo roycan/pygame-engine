@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Shinobi's Tool Scroll — SG 17 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:100px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .out{color:#b8e6c8}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 17 · Frameworks and Libraries Integration · Grade 9 CS · 2 meetings × 50 min</div>
+  <h1>The Shinobi's Tool Scroll</h1>
+  <p class="sub" style="margin-top:18px; font-size:34px; color:var(--ink)">
+    <b>Frameworks, Libraries, and the Professional Python Workflow.</b></p>
+  <p class="sub" style="margin-top:14px">The professional shinobi does not carry every tool — they know where the toolbox is, how to fetch from it, and how to prove the tool works.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>Two meetings, two questions</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1 — Why use existing code?</b> The LEGO question, then the two
+        face-offs: typing and performance.</li>
+        <li><b>Meeting 2 — How do we integrate responsibly?</b> The workspace
+        (<code>.venv</code>), the package manager (pip), and the Data Visualizer.</li>
+        <li><b>The hands-on Data Visualizer (35 min) is Mission L-1</b> — the scroll you
+        will run. This deck prepares the understanding; the scroll runs the work.</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">What you must be able to do <span class="lab cw">SG17</span></h3>
+        <p class="small">Install a library with a package manager · import and use it for
+        a real task · compare custom vs library code honestly · recognize a dependency
+        conflict.</p>
+      </div>
+      <div class="card">
+        <h3>From SG 16, you already promised this</h3>
+        <p class="small">Your proposal named candidate libraries <i>by honesty level</i>.
+        This unit is where "I know it exists" becomes "I made it work, and here is the
+        evidence."</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 — Frameworks and Libraries Integration</b> (Activities 1–3, §3–4) · companion workshop: <b>mission_l1_*</b></span><span>1 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · RECALL SG16 ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Meeting 1 · From project proposal to working software</div>
+  <h2>You already named your tools. Now you must wield one.</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The four honesty levels <span class="lab cw">SG16 deck</span></h3>
+      <ol class="ticks" style="list-style:none; padding-left:0">
+        <li><b>1 · It exists</b> — you have heard the name</li>
+        <li><b>2 · You know its purpose</b> — what problems it solves</li>
+        <li><b>3 · You can use it</b> — you have made it do something</li>
+        <li><b>4 · Evidence it works for YOUR project</b> — a small experiment ran</li>
+      </ol>
+      <p class="small" style="margin-top:10px">In Project Safari you were allowed to stop
+      at levels 1–2. Proposals name candidates; software runs them.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">This unit is the level 3→4 event</h3>
+        <p class="small">Meeting 1: <b>why</b> professionals reach for existing code —
+        with a math race as evidence. Meeting 2: <b>how</b> to install and integrate a
+        library the professional way — workspace, package manager, verification.</p>
+      </div>
+      <div class="note" style="font-size:22px"><b>Keep the scale honest:</b> "I watched a
+      video about matplotlib" is still level 1. By the end of Mission L-1 you will hold
+      a saved graph that <i>you</i> generated — that is level 3, pushing level 4.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 16 proposal work</b> (relevant libraries) · SG 17 DLC · <b>mission_l1</b> four-level ladder</span><span>2 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · LEGO ANALOGY ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Meeting 1 · The question of this meeting</div>
+  <h2>Two ways to build a space station</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>1 · Custom — melt your own bricks</h3>
+      <p class="small">Take raw plastic, melt it, mold every brick, wait for it to cool…
+      then finally start building. Total control, total effort — and every bug in every
+      brick is yours.</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">2 · Library — buy the NASA Space Kit</h3>
+      <p class="small">Thrusters, solar panels, the complex parts: <b>already built and
+      tested by someone else.</b> Your job is to learn how to <b>snap them
+      together</b> — and to know which part does what.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:30px">
+    <div class="note" style="font-size:25px"><b>The question Meeting 1 answers:</b> when
+    should a developer use pre-built code — and what do they still have to do
+    themselves? <span class="lab cw">SG17</span> uses this exact LEGO picture; the rest
+    of the meeting is the proof, not the slogan.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §1 Overview</b> (Lego Space Station analogy)</span><span>3 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · TERMINOLOGY ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">Meeting 1 · The language of reusable code</div>
+  <h2>Four words, one ladder</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px; gap:14px">
+    <div class="card" style="padding:20px 30px"><h3 style="margin-bottom:4px">Module — one file</h3>
+      <p class="small">One <code>.py</code> file with functions inside. <code>math</code> is one you will meet today.</p></div>
+    <div class="card" style="padding:20px 30px"><h3 style="margin-bottom:4px">Package / library — a kit of files</h3>
+      <p class="small">Many modules bundled, installable, versioned. <b>matplotlib</b> is one; "library" and "package" are used interchangeably at this scale.</p></div>
+    <div class="card" style="padding:20px 30px"><h3 style="margin-bottom:4px">Framework — a kit that runs the show</h3>
+      <p class="small"><b>Flask</b> (the engine under RogueEdu) doesn't wait to be called — it calls <i>your</i> code when a request arrives. More on the next slides.</p></div>
+    <div class="card" style="padding:20px 30px; border:3px solid var(--teal)"><h3 style="margin-bottom:4px; color:var(--teal)">Package manager — the delivery truck</h3>
+      <p class="small"><b>pip</b> fetches kits from an online store (for Python: <b>PyPI</b>) and installs them into your project. You never download zip files by hand.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §3.1–3.2</b> (package managers, libraries) · terminology ladder per approved brief</span><span>4 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · PACKAGE MANAGERS ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Meeting 1 · Every language has its tool supplier</div>
+  <h2>Different trucks, same delivery idea</h2>
+  <table class="cmp" style="margin-top:30px">
+    <tr><th>Language</th><th>Package manager</th><th>The store it fetches from</th></tr>
+    <tr><td><b>Python</b> <span class="lab pr">ours</span></td><td><b>pip</b></td><td>PyPI — the Python Package Index</td></tr>
+    <tr><td><b>JavaScript</b></td><td>npm</td><td>npm registry</td></tr>
+    <tr><td><b>Java</b></td><td>Maven</td><td>Maven Central</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card"><h3>What stays the same</h3>
+      <p class="small">Name a kit → fetch it → install it into the project → import and
+      use it. Learn the <i>workflow</i> once and every language's tool feels familiar —
+      that is why SG 17 calls this a professional skill, not a Python trick.</p></div>
+    <div class="card"><h3>What changes</h3>
+      <p class="small">The command names, the store, and the file formats. In CS 3, the
+      truck is <code>pip</code> — and this unit's hands-on mission uses exactly one
+      delivery: <code>matplotlib</code>.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §3.1</b> (pip / npm / Maven table, verbatim trio)</span><span>5 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · LIBRARY VS FRAMEWORK ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">Meeting 1 · Library or framework?</div>
+  <h2>Who calls whom?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card" style="text-align:center">
+      <h3>Library — you call it</h3>
+      <svg viewBox="0 0 600 150" style="width:90%; margin:6px auto" aria-hidden="true">
+        <rect x="20" y="30" width="200" height="90" rx="10" fill="#fffdf8" stroke="#0e7268" stroke-width="4"/>
+        <text x="120" y="82" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c">your code</text>
+        <line x1="230" y1="75" x2="370" y2="75" stroke="#0e7268" stroke-width="6" marker-end="url(#a1)"/>
+        <defs><marker id="a1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#0e7268"/></marker></defs>
+        <rect x="380" y="30" width="200" height="90" rx="10" fill="#e2efeb" stroke="#0e7268" stroke-width="4"/>
+        <text x="480" y="82" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c">matplotlib</text>
+      </svg>
+      <p class="small">Your program decides <i>when</i>: <code>plt.plot(...)</code> runs
+      because <b>you</b> wrote it on that line. A tool you pick up and put down.</p>
+    </div>
+    <div class="card" style="text-align:center; border:3px solid var(--amber)">
+      <h3>Framework — it calls you</h3>
+      <svg viewBox="0 0 600 150" style="width:90%; margin:6px auto" aria-hidden="true">
+        <rect x="20" y="30" width="200" height="90" rx="10" fill="#f4ead6" stroke="#96591a" stroke-width="4"/>
+        <text x="120" y="82" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c">Flask</text>
+        <line x1="230" y1="75" x2="370" y2="75" stroke="#96591a" stroke-width="6" marker-end="url(#a2)"/>
+        <defs><marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#96591a"/></marker></defs>
+        <rect x="380" y="30" width="200" height="90" rx="10" fill="#fffdf8" stroke="#96591a" stroke-width="4"/>
+        <text x="480" y="82" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c">your route</text>
+      </svg>
+      <p class="small">A request arrives — <b>Flask</b> runs your function. You built the
+      room; the framework decides when it is used.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:23px"><b>You have lived this difference:</b> in
+    RogueEdu you write <code>act()</code> — and the <b>engine</b> calls it every turn.
+    <i>"You decide. The engine acts."</i> That is framework thinking. matplotlib, in
+    Mission L-1, is the other kind: your line of code summons it.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17</b> (Flask as framework example) · call-direction test per approved brief</span><span>6 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · BUILT-IN VS DOWNLOADED ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">Meeting 1 · Built-in tools vs downloaded tools</div>
+  <h2>Not all libraries need a truck</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Standard library — ships with Python</h3>
+      <p class="small"><code>import math</code> — done. <b>math</b> is already on your
+      machine inside Python itself: square roots, floors, trigonometry. No store, no
+      install, no workspace decisions. Battery included.</p>
+      <p class="small" style="margin-top:10px">Also lives here: <code>random</code>,
+      <code>json</code>, <code>datetime</code> — the everyday toolkit.</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Third-party library — fetched from PyPI</h3>
+      <p class="small"><b>matplotlib</b> is not inside Python. Someone wrote it, packaged
+      it, and published it; <b>pip</b> must fetch and install it into a project before
+      <code>import matplotlib</code> works. Meeting 2 is entirely about doing that
+      correctly.</p>
+      <p class="small" style="margin-top:10px">Same shelf, other kits: <code>numpy</code>,
+      <code>pygame</code>, <code>requests</code>.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn" style="font-size:23px"><b>One word that does neither:</b>
+    <code>import</code> is a Python <b>statement</b> in your code — it <i>opens a box
+    that is already installed</i>. It never downloads anything. Downloading is pip's
+    job; importing is yours.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §3–4</b> · standard vs third-party distinction per approved brief (teacher note A)</span><span>7 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · ACTIVITY 1 PREDICT ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Meeting 1 · Activity 1 — the Square Root Challenge <span class="lab cw">SG17 · 20-min activity</span></div>
+  <h2><span class="pausechip">PREDICT</span> Two ways to get the square root of 25</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>Way 1 — build it yourself</h3>
+      <p class="small">No <code>math.sqrt</code>, no tricks: only arithmetic you already
+      know. <b>How would you get closer and closer to the true square root, using nothing
+      but guesses?</b> Write your idea in one sentence before the next slide.</p>
+      <p class="small" style="margin-top:10px">Hint: if your guess is too big, what is
+      true about 25 ÷ guess?</p>
+    </div>
+    <div class="card">
+      <h3>Way 2 — use the library</h3>
+      <p class="small"><code>import math</code>, then one call. You already predict the
+      answer: <b>5.0</b>.</p>
+      <p class="small" style="margin-top:10px">The real questions, and today's:
+      <b>do both roads reach 5.0? What does each road cost?</b> Same answer is not the
+      same as same work.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:23px"><b>SG 17 runs this as a 20-minute typing
+    activity</b> — you will type both implementations yourself and see the same answer
+    come out of very different amounts of code. The deck walks the idea first; your
+    hands do the typing in class.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 1</b> (custom vs library sqrt of 25) · predict-first per house rules</span><span>8 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · HANDMADE SOLUTION ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">Meeting 1 · Activity 1 — the handmade solution</div>
+  <h2>Newton's method — guess, then improve the guess</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="c"># The "guess and check" method (SG Activity 1)</span>
+x = 25
+guess = x / 2          <span class="c"># first guess: 12.5</span>
+<span class="k">for</span> _ <span class="k">in</span> range(10):    <span class="c"># improve it ten times</span>
+    guess = (guess + x / guess) / 2
+<span class="k">print</span>(f<span class="s">"Manual: {guess}"</span>)</pre>
+      <p class="small" style="margin-top:12px"><b>The improvement rule:</b> take the
+      average of your guess and <code>x / guess</code>. If the guess is too big,
+      <code>x / guess</code> is too small — the average lands closer to the truth.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf">start: <b>12.5</b></div>
+      <div class="varr">↓</div>
+      <div class="vf reveal"><b>7.25</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal"><b>5.349138</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal"><b>5.011394</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal"><b>5.000013</b> → <b>5.0</b></div>
+      <div class="note reveal" style="font-size:21px; margin-top:10px"><b>Watch the
+      steps shrink</b> — slow at first, then suddenly precise. <i>Successive
+      approximations.</i> For small numbers like 25, ten rounds is plenty.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 1</b> · sequence verified live (12.5 → 7.25 → 5.349138 → 5.011394 → 5.000013 → 5.0)</span><span>9 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · LIBRARY SOLUTION ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Meeting 1 · Activity 1 — the library solution</div>
+  <h2>The NASA kit, in two lines</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div>
+<pre class="code" style="font-size:24px"><span class="k">import</span> math
+<span class="k">print</span>(f<span class="s">"Library: {math.sqrt(25)}"</span>)</pre>
+      <p class="small" style="margin-top:14px">Output: <b>Library: 5.0</b>. No loop, no
+      guesses, no rounding anxiety. <code>math</code> is the <b>standard library</b> —
+      already installed with Python, so no pip and no workspace needed (slide 7).</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What you did NOT do</h3>
+        <ul class="ticks">
+          <li>derive the algorithm</li>
+          <li>choose how many iterations are enough</li>
+          <li>test it against edge cases (0? 0.25? a million?)</li>
+          <li>maintain it when Python changes</li>
+        </ul>
+        <p class="small" style="margin-top:8px">Someone else did — a <b>long</b> time
+        ago, and millions of programs have stress-tested it since.</p>
+      </div>
+      <div class="note" style="font-size:22px"><b>The SG's claim, kept honest:</b> the
+      library version is <b>shorter, optimized, and vetted</b> — but "optimized" and
+      "vetted" are claims this meeting will <i>test</i>, not just repeat. That test is
+      Activity 2.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 1</b> (library implementation) · SG §3.2 ("optimized… vetted")</span><span>10 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · SAME ANSWER DIFFERENT WORK ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Meeting 1 · Activity 1 — the comparison</div>
+  <h2>Same answer, different work</h2>
+  <table class="cmp" style="margin-top:26px">
+    <tr><th>Question</th><th>Handmade Newton</th><th>Library <code>math.sqrt</code></th></tr>
+    <tr><td><b>Correct for 25?</b></td><td>yes — 5.0 (10 rounds)</td><td>yes — 5.0, always</td></tr>
+    <tr><td><b>Lines of code</b></td><td>4–5, plus a loop you must understand</td><td>1 call</td></tr>
+    <tr><td><b>Correct for 1,234,567?</b></td><td><b>depends on the round count</b> (slide 12!)</td><td>yes</td></tr>
+    <tr><td><b>Maintained by</b></td><td>you, forever</td><td>the Python core team</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3>What the handmade version is FOR</h3>
+      <p class="small">Typing it is how you <b>learn what an algorithm feels like</b> —
+      the guessing, the convergence, the "how many rounds is enough?" That insight is
+      yours forever. SG 17 grades the comparison, not the ceremony.</p></div>
+    <div class="card"><h3>What the library version is FOR</h3>
+      <p class="small">Shipping. When the answer exists, is tested, and is maintained —
+      <b>reuse it and spend your effort on what makes your project yours</b>. That trade
+      is the whole LEGO argument, now with evidence attached.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 1 discussion</b> · comparison dimensions per approved brief</span><span>11 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · ACTIVITY 2 RACE SETUP ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 1 · Activity 2 — the Performance Face-off <span class="lab cw">SG17 · 15-min activity</span></div>
+  <h2><span class="pausechip">PREDICT</span> Then race — but gate it on accuracy first</h2>
+  <div class="grid" style="grid-template-columns:1.05fr 1fr; margin-top:22px">
+    <div>
+<pre class="code" style="font-size:19px"><span class="c"># THE FIX: run Newton until it CONVERGES (the SG's fixed</span>
+<span class="c"># 10 rounds stops at ~1168.24 for this input — wrong by 57!)</span>
+<span class="k">def</span> manual_sqrt(x):
+    guess = x / 2
+    <span class="k">while</span> abs(guess*guess - x) > 1e-6:
+        guess = (guess + x / guess) / 2
+    <span class="k">return</span> guess
+
+<span class="c"># --- ACCURACY GATE FIRST: a race between wrong</span>
+<span class="c"># answers proves nothing ---</span>
+<span class="k">print</span>(<span class="s">"Manual Result: "</span>, manual_sqrt(number))
+<span class="k">print</span>(<span class="s">"Library Result:"</span>, library_sqrt(number))
+
+<span class="c"># --- THEN the 100,000-round race ---</span>
+manual_time  = timeit.timeit(<span class="k">lambda</span>: manual_sqrt(number),  number=repeats)
+library_time = timeit.timeit(<span class="k">lambda</span>: library_sqrt(number), number=repeats)</pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--red-wash); border-color:#e4c2bb">
+        <h3 style="color:var(--red)">The trap in the SG's original code</h3>
+        <p class="small">Ten fixed rounds converges for <b>25</b> — and quietly fails for
+        <b>1,234,567</b>: it stops at <b>1168.24</b>, wrong by 57 (≈5%). The SG's sample
+        output prints a far more precise answer than its code produces. <b>Fixed round
+        counts that worked on small numbers do not scale</b> — run to convergence
+        instead (13 rounds here).</p>
+      </div>
+      <div class="card"><h3>The corrected output, measured</h3>
+<pre class="code" style="font-size:17px; padding:14px 18px"><span class="out">--- Accuracy Check for 1,234,567 ---
+Manual Result:  1111.1107055558273
+Library Result: 1111.1107055554814
+Both within 1e-6? True
+Racing both methods 100,000 times...
+Manual Method: 0.1447 seconds
+Library Method: 0.0079 seconds
+RESULT: The Library is 18.3x faster!</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 2</b>, corrected per teacher notes B–C · output verified live on this deck's reference machine</span><span>12 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · WHAT THE RACE PROVES ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 1 · Activity 2 — reading the result honestly</div>
+  <h2>The winner — and what the race really proves</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">Why is <code>math.sqrt</code> faster?</h3>
+      <p class="small"><b>Carefully stated:</b> Python's <code>math</code> module wraps
+      the <b>C standard library's</b> square-root function — compiled, optimized machine
+      code that Python <i>calls into</i>. Your Newton loop is ten-plus rounds of Python
+      bytecode per answer; <code>math.sqrt</code> is one call into compiled code.
+      <b>Not</b> "the CPU just does it" — Python still makes the call; the C layer is
+      what makes the call cheap.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Five honest takeaways</h3>
+        <ul class="ticks">
+          <li>A good library <b>saves implementation time</b></li>
+          <li>Established libraries are often <b>highly optimized</b></li>
+          <li><b>Shorter ≠ faster</b> — the claim needs the stopwatch</li>
+          <li>Libraries are <b>not automatically correct or secure</b> — you still
+          verify (Meeting 2's accuracy gate habit)</li>
+          <li>Benchmarks <b>depend on machine and implementation</b> — our machine said
+          18×; the SG's example said 9.9×; both are true stories</li>
+        </ul>
+      </div>
+      <div class="note" style="font-size:21px"><b>And the stopwatch itself:</b>
+      <code>timeit</code>'s own docs warn that other running programs can interfere with
+      timings. Treat every race result as <b>evidence, not law</b> — same habit as the
+      accuracy gate.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 2</b>, corrected per teacher notes D–E · Python docs: math module, timeit</span><span>13 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · M2 OPENER ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">Meeting 2 · How do we integrate libraries responsibly?</div>
+  <h2>A good tool needs a proper workspace</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:30px">
+    <div class="card">
+      <h3>You chose the tool. Now — where does it install?</h3>
+      <p class="small">matplotlib is not in Python (slide 7). pip must fetch it. But
+      <b>into what?</b> Your computer has one Python — and many projects, each with its
+      own needs, versions, and kit combinations.</p>
+      <p class="small" style="margin-top:10px">Install everything into the one shared
+      Python and you get a slow-motion collision: <b>every project shares one
+      shelf.</b></p>
+    </div>
+    <div class="vflow">
+      <div class="vf">one shared Python</div>
+      <div class="varr">↓ every project installs onto the same shelf</div>
+      <div class="vf reveal bad">Project A needs matplotlib 3.9 · Project B needs 3.11 ·
+      a game needs pygame 2.1 — one shelf, one winner, many losers</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">the professional answer: <b>give each project its own
+      shelf</b> — a <b>virtual environment</b>, Meeting 2's core skill</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §4.1–4.2</b> (commands, dependency conflicts) · framing per approved brief</span><span>14 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · ONE COMPUTER, DIFFERENT PROJECTS ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">Meeting 2 · One computer, different projects</div>
+  <h2>A project has its own toolbelt</h2>
+  <svg viewBox="0 0 1500 430" style="width:78%; margin:14px auto 0; display:block" aria-hidden="true">
+    <rect x="40" y="30" width="640" height="360" rx="16" fill="#fffdf8" stroke="#0e7268" stroke-width="5"/>
+    <rect x="820" y="30" width="640" height="360" rx="16" fill="#fffdf8" stroke="#96591a" stroke-width="5"/>
+    <text x="360" y="90" text-anchor="middle" font-family="monospace" font-size="30" font-weight="bold" fill="#23211c">Chemistry Lab project</text>
+    <text x="1140" y="90" text-anchor="middle" font-family="monospace" font-size="30" font-weight="bold" fill="#23211c">Physics Lab project</text>
+    <rect x="120" y="130" width="480" height="220" rx="12" fill="#e2efeb" stroke="#0e7268" stroke-width="3" stroke-dasharray="10 6"/>
+    <rect x="900" y="130" width="480" height="220" rx="12" fill="#f4ead6" stroke="#96591a" stroke-width="3" stroke-dasharray="10 6"/>
+    <text x="360" y="175" text-anchor="middle" font-family="monospace" font-size="26" fill="#0e7268">.venv (its own shelf)</text>
+    <text x="1140" y="175" text-anchor="middle" font-family="monospace" font-size="26" fill="#96591a">.venv (its own shelf)</text>
+    <text x="360" y="235" text-anchor="middle" font-family="monospace" font-size="24" fill="#3c382f">matplotlib 3.9</text>
+    <text x="1140" y="235" text-anchor="middle" font-family="monospace" font-size="24" fill="#3c382f">matplotlib 3.11</text>
+    <text x="360" y="285" text-anchor="middle" font-family="monospace" font-size="24" fill="#3c382f">numpy 1.26</text>
+    <text x="1140" y="285" text-anchor="middle" font-family="monospace" font-size="24" fill="#3c382f">numpy 2.0</text>
+    <text x="360" y="330" text-anchor="middle" font-family="monospace" font-size="22" fill="#6f6a5c">versions stay put</text>
+    <text x="1140" y="330" text-anchor="middle" font-family="monospace" font-size="22" fill="#6f6a5c">different versions, no fight</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:16px">
+    <div class="note" style="font-size:22px"><b>Illustrative versions</b> — the point is
+    the <b>separation</b>, not the numbers: each project's <code>.venv</code> holds its
+    own installed packages, so installing for one project never rewrites another
+    project's shelf. <span class="lab cw">SG17 §4.3</span> Close the Chemistry project,
+    open the Physics project, and VS Code swaps the active toolbelt automatically.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §4.3</b> ("Switching Projects" logic) · diagram per approved brief</span><span>15 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · THE .VENV WORKSPACE ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">Meeting 2 · The .venv workspace — and its honest boundary</div>
+  <h2>What the workspace does — and what it does not</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">It DOES isolate between projects</h3>
+      <p class="small"><code>.venv</code> = a private Python + a private package shelf,
+      inside the project folder. Install matplotlib there and <b>only that project</b>
+      sees it. Your other projects, and the computer's main Python, never notice.
+      <i>Private workspaces so kits don't collide across projects.</i></p>
+    </div>
+    <div class="card" style="border:3px solid var(--red)">
+      <h3 style="color:var(--red)">It does NOT fix within-project conflicts</h3>
+      <p class="small">If <b>two libraries in the SAME project</b> demand different
+      versions of the same tool (slide 19), the workspace cannot satisfy both — there is
+      one shelf <i>inside</i> the project. That jam needs <b>investigation and a
+      decision</b>, not a new folder.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn" style="font-size:23px"><b>The sentence to keep:</b> virtual
+    environments separate <b>projects from each other</b>. They do not automatically
+    resolve <b>incompatible requirements inside one project</b>. (You will reason
+    through exactly this in Mission L-1's Traffic Jam phase — and the honest limits of
+    that practice are stated there too.)</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §4.2</b>, boundary corrected per teacher note F · packaging.python.org guide · <b>mission_l1</b> Phase 5</span><span>16 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · GIVE YOUR PROJECT ITS TOOLBELT ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">Meeting 2 · Give your project its toolbelt — Windows + VS Code</div>
+  <h2>Three moves, one workspace</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px; gap:16px">
+    <div class="card" style="padding:20px 30px">
+      <h3 style="margin-bottom:6px">1 · Create the workspace <span class="small">(in the project folder, VS Code terminal: Ctrl + `)</span></h3>
+<pre class="code" style="font-size:22px; padding:14px 24px">py -m venv .venv</pre>
+      <p class="small" style="margin-top:8px">A <code>.venv</code> folder appears in the Explorer — the project's private shelf.</p>
+    </div>
+    <div class="card" style="padding:20px 30px">
+      <h3 style="margin-bottom:6px">2 · Lock it in</h3>
+      <p class="small">Click the popup bottom-right (<b>Yes</b>) — or
+      <b>Ctrl + Shift + P → "Python: Select Interpreter" → the one with <code>.venv</code></b>.
+      The status bar now shows the workspace's Python.</p>
+    </div>
+    <div class="card" style="padding:20px 30px">
+      <h3 style="margin-bottom:6px">3 · Trust, then verify</h3>
+      <p class="small">Open a <b>new</b> terminal (it picks up the lock-in) and check the
+      <code>(.venv)</code> prefix. The terminal, the interpreter, and pip must all point
+      at the same workspace — the next slide proves it.</p>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 3 Phase 1 + video guide</b> · commands verbatim from <b>mission_l1</b> Phase 1</span><span>17 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · CHECK BEFORE YOU INSTALL ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">Meeting 2 · Check before you install</div>
+  <h2>Four lines that prevent every "wrong environment" bug</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:22px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="c"># 1 · which Python is this terminal using?</span>
+python -c <span class="s">"import sys; print(sys.executable)"</span>
+
+<span class="c"># 2 · does pip belong to that same Python?</span>
+python -m pip --version
+
+<span class="c"># 3 · fetch the kit — into THIS workspace</span>
+python -m pip install matplotlib
+
+<span class="c"># 4 · prove where it landed</span>
+python -m pip show matplotlib</pre>
+      <p class="small" style="margin-top:10px">Line 4's <code>Location:</code> must
+      contain <code>.venv</code> — that is the proof.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--teal)">
+        <h3 style="color:var(--teal)">The relationship that matters</h3>
+        <p class="small"><b>The selected interpreter and pip must be the same
+        environment.</b> <code>python -m pip</code> guarantees it: pip runs <i>inside</i>
+        the Python you called. Bare <code>pip</code> can belong to a different Python —
+        and installs onto the wrong shelf.</p>
+      </div>
+      <div class="card"><h3>Check, don't assume</h3>
+        <p class="small">A version check like <code>pip --version</code>
+        <b>diagnoses</b> — it tells you pip exists and where. It cannot <b>repair</b> a
+        missing or broken Python installation: if <code>py</code> itself is not
+        recognized, no command fixes it in class — that is a teacher/IT decision. When
+        something feels wrong, run line 1 and <i>look</i>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 3 + §4.1</b> · commands verbatim from <b>mission_l1</b> Phases 1–2 · pip-diagnosis boundary per teacher note G</span><span>18 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · DEPENDENCY TRAFFIC JAM ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">Meeting 2 · The dependency traffic jam</div>
+  <h2>Two libraries, one tool, two demands</h2>
+  <svg viewBox="0 0 1500 380" style="width:76%; margin:12px auto 0; display:block" aria-hidden="true">
+    <rect x="60" y="20" width="420" height="110" rx="14" fill="#fffdf8" stroke="#0e7268" stroke-width="5"/>
+    <text x="270" y="65" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">AgarGrower</text>
+    <text x="270" y="103" text-anchor="middle" font-family="monospace" font-size="22" fill="#6f6a5c">demands jsonkit 1.0</text>
+    <rect x="1020" y="20" width="420" height="110" rx="14" fill="#fffdf8" stroke="#96591a" stroke-width="5"/>
+    <text x="1230" y="65" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">GraphMaster</text>
+    <text x="1230" y="103" text-anchor="middle" font-family="monospace" font-size="22" fill="#6f6a5c">demands jsonkit 2.0</text>
+    <line x1="270" y1="130" x2="620" y2="250" stroke="#0e7268" stroke-width="6"/>
+    <line x1="1230" y1="130" x2="880" y2="250" stroke="#96591a" stroke-width="6"/>
+    <rect x="560" y="250" width="380" height="100" rx="14" fill="#f6e3df" stroke="#a13a2e" stroke-width="5"/>
+    <text x="750" y="292" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#a13a2e">ONE project shelf</text>
+    <text x="750" y="328" text-anchor="middle" font-family="monospace" font-size="22" fill="#a13a2e">jsonkit can only be ONE version</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:14px">
+    <div class="warn" style="font-size:22px"><b>Installing both demands breaks one
+    library or the other</b> — a <b>dependency conflict</b>. A new <code>.venv</code>
+    gives this project a shelf, but the two demands still collide <i>on</i> it. The
+    professional moves: read both libraries' docs for version flexibility · check for a
+    newer release · find an alternative to one library · decide and document.</div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:14px">
+    <div class="flag" style="font-size:21px"><b>Honest practice note:</b> Mission L-1
+    asks you to <b>reason</b> through this jam on paper — it deliberately does not break
+    a working environment to stage one. <b>Hands-on conflict resolution is a real gap
+    for this unit</b>; it is flagged for the ILA or a later activity, not quietly
+    counted as done.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §4.2</b> · scenario from <b>mission_l1</b> Phase 5 (BioSim) · gap per teacher note M</span><span>19 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · VIDEO OBSERVATION ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">Meeting 2 · Observe the professional workflow <span class="lab cw">SG17 · 5-min video</span></div>
+  <h2>Watch like a scout — three cues to catch</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The video</h3>
+      <p class="small">"How to setup a Python Virtual Environment in VS Code"
+      <b>(Tech with Tim)</b> — linked in SG 17. Watch it <b>as a scout on a mission</b>,
+      not as a viewer: you are hunting three specific moments.</p>
+      <p class="small" style="margin-top:10px">These are the same three moves you will
+      perform yourself in Mission L-1 — the video is the reconnaissance.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:14px">
+      <div class="card"><h3>Cue 1 · The folder appears</h3>
+        <p class="small">After the venv command, a new <code>.venv</code> folder shows in
+        the Explorer. <span class="chip">video ≈ 0:45–2:00</span></p></div>
+      <div class="card"><h3>Cue 2 · The interpreter gets selected</h3>
+        <p class="small">Popup bottom-right — or <b>Ctrl + Shift + P → Select
+        Interpreter</b>. <span class="chip">video ≈ 2:15–3:30</span></p></div>
+      <div class="card"><h3>Cue 3 · The terminal shows the environment</h3>
+        <p class="small">The <code>(.venv)</code> prefix before the cursor. <span class="chip">video ≈ 3:45</span></p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Learning Resource</b> (Tech with Tim; SG's own timestamps and observation activity) · interfaces drift — see teacher note L</span><span>20 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · MISSION DATA VISUALIZER ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">Meeting 2 · Mission: the Data Visualizer <span class="lab re">= Mission L-1 · 35 min</span></div>
+  <h2><span class="pausechip">PREDICT</span> The Biology team's numbers</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3>The data set — bacteria every hour, five hours</h3>
+      <table class="cmp" style="font-size:22px">
+        <tr><th>Hour</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+        <tr><td><b>Count</b></td><td>100</td><td>150</td><td>300</td><td>650</td><td>1200</td><td>2500</td></tr>
+      </table>
+      <p class="small" style="margin-top:10px"><b>Before the next slide:</b> what shape
+      will this curve make? Roughly what happens to the population each hour? Write the
+      prediction — the graph will grade it.</p>
+      <p class="small" style="margin-top:8px"><i>Illustrative sample data — teaching
+      numbers, not measurements from a real experiment.</i></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--teal)">
+        <h3 style="color:var(--teal)">The deliverable</h3>
+        <p class="small">One Python project (<code>Lab_Visualizer</code>) with its own
+        <code>.venv</code>, matplotlib installed and <b>verified</b>, a labeled graph —
+        title, axis labels, points, grid — <b>saved as a PNG</b>, and one sentence
+        explaining what the curve shows.</p>
+      </div>
+      <div class="note" style="font-size:22px"><b>Where the 35 minutes happen:</b> the
+      hands-on Data Visualizer <b>is Mission L-1</b> — <i>The Library Scroll</i> — the
+      same 35 minutes SG 17 gives Activity 3. It is not an extra activity on top. This
+      deck got you ready to understand it; the scroll runs it, role by role, rescue
+      card by rescue card.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 Activity 3</b> (35 min) · dataset verbatim from SG + <b>mission_l1</b></span><span>21 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · CODE TO GRAPH ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">Meeting 2 · From Python code to a matplotlib graph</div>
+  <h2>Read the template before you type it</h2>
+  <div class="grid" style="grid-template-columns:1.05fr 1fr; margin-top:22px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="k">import</span> matplotlib.pyplot <span class="k">as</span> plt
+
+<span class="c"># Sample research data — ILLUSTRATIVE</span>
+hours = [0, 1, 2, 3, 4, 5]
+bacteria_count = [100, 150, 300, 650, 1200, 2500]
+
+plt.plot(hours, bacteria_count, marker=<span class="s">'o'</span>, color=<span class="s">'green'</span>)
+
+plt.title(<span class="s">"Bacteria Population Growth"</span>)
+plt.xlabel(<span class="s">"Time (Hours)"</span>)
+plt.ylabel(<span class="s">"Number of Bacteria"</span>)
+plt.grid(<span class="k">True</span>)
+
+<span class="k">print</span>(<span class="s">"Generating graph..."</span>)
+plt.savefig(<span class="s">"bacteria_growth.png"</span>, dpi=150)  <span class="c"># save FIRST</span>
+plt.show()                                    <span class="c"># then display</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What each block does</h3>
+        <ul class="ticks">
+          <li><b>import … as plt</b> — open the kit, give it a short name</li>
+          <li><b>the lists</b> — x values, y values, same length</li>
+          <li><b>plot + marker + color</b> — the line and its visible points</li>
+          <li><b>title / labels / grid</b> — a graph a stranger can read</li>
+          <li><b>savefig → show</b> — evidence first, celebration second</li>
+        </ul>
+      </div>
+      <div class="note" style="font-size:21px"><b>Abstraction, again:</b> you call
+      <code>plt.plot</code> and never see how pixels are drawn — the library's
+      <b>interface</b> does the complex part. You met this idea as OOP pillar #4; here it
+      earns your graph. Reading happens now; the typing happens in L-1.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: template verbatim from <b>mission_l1</b> Phase 3 (SG Activity 3 + savefig addition) · matplotlib 3.11.2 docs</span><span>22 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · SAVE INSPECT EXPLAIN ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">Meeting 2 · Save, inspect, and explain</div>
+  <h2>The graph is not done until it testifies</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Why save before show</h3>
+      <p class="small"><code>plt.show()</code> hands control to the window — and closing
+      that window can <b>clear the figure</b>. <code>savefig</code> first means the PNG
+      exists no matter what happens to the window. <b>Order is evidence.</b></p>
+      <p class="small" style="margin-top:10px">Result on disk:
+      <code>bacteria_growth.png</code> — 960×720 pixels (dpi 150), openable without
+      Python, submittable to the LMS.</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">What the curve says</h3>
+      <p class="small">The count goes <b>×25 in five hours</b>. Each hour it roughly
+      <b>doubles</b> (1.5×, 2.0×, 2.2×, 1.9×, 2.1×). The largest proportional increase
+      happens between hours 2 and 3 (about 2.17×). However, the largest absolute
+      increase happens between hours 4 and 5 (+1,300 bacteria). The Biology team's
+      sentence: <i>the colony grows
+      faster and faster — exponential-style growth.</i> That sentence is the
+      "explain" in the mission.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:22px"><b>Check the whole chain, then claim the
+    rank:</b> <code>(.venv)</code> prefix → <code>Generating graph...</code> with no red
+    text → window shows title, labels, points, grid → PNG in the Explorer. <b>Then</b>
+    you may say what it proves — evidence is your rank, in that order.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_l1</b> Phase 3–4 (ratios verified live: 1.5 / 2.0 / 2.17 / 1.85 / 2.08; PNG 960×720)</span><span>23 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · CHOOSE TOOLS RESPONSIBLY ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Meeting 2 · Choose your tools responsibly</div>
+  <h2>A package manager trusts you to look</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Identity — check the name</h3>
+      <p class="small">PyPI is open to everyone. A mistyped or look-alike package name
+      can be a <b>Trojan horse</b> — SG 17's own warning. Check the package's page and
+      documentation before installing; prefer <b>established, relevant</b> kits
+      (matplotlib: millions of users, real docs).</p>
+    </div>
+    <div class="card">
+      <h3>Licensing — "open source" is not "no rules"</h3>
+      <p class="small">Some kits ask for <b>credit</b> (the MIT license does), others
+      restrict commercial use. Before reusing a library in a project, <b>check the
+      license</b> — school work included, because the habit is the point.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn" style="font-size:23px"><b>The discipline rule from Mission
+    L-1:</b> install <b>only what the task needs</b> — one clean delivery per mission.
+    Every extra package is more download time, more update risk, more shelf you cannot
+    explain. If you cannot say why a package is on the shelf, it should not be.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 §4.4</b> (Security &amp; Licensing) · wording per teacher note K</span><span>24 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · MISSION REVIEW ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Final mission review</div>
+  <h2>What the Tool Scroll leaves you with</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>Answer these before you leave</h3>
+      <ul class="ticks">
+        <li>Library or framework — <b>who calls whom?</b></li>
+        <li><code>math</code> vs matplotlib — which one needs a truck, and why?</li>
+        <li>What did the <b>accuracy gate</b> catch before the race ran?</li>
+        <li>What does <code>.venv</code> separate — and what can it <b>not</b> fix?</li>
+        <li>Which line proves matplotlib landed in <b>your</b> workspace?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The takeaways</h3>
+      <ul class="ticks">
+        <li>Existing code is a <b>lever</b>, not magic — test claims, gate on accuracy</li>
+        <li>pip + <code>.venv</code> + verification = the <b>professional workflow</b></li>
+        <li>Save evidence <b>before</b> displaying it</li>
+        <li>Choose tools by <b>identity, license, and need</b></li>
+        <li>Some competencies stay open — <b>hands-on conflict resolution</b> is flagged,
+        not claimed</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">Next: SG 18 — Data Handling</h3>
+      <p class="small">Today the bacteria numbers were typed into a list. Next unit, the
+      program <b>reads data from files</b> — real data, same workflow, one more tool on
+      the shelf.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="note" style="font-size:24px"><b>Closing message:</b> the professional
+    shinobi does not carry every tool — they know where the toolbox is, how to fetch
+    from it, and how to <b>prove the tool works</b>.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 17 summary + closing</b> · SG 18 preview per curriculum sequence</span><span>25 / 25</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 25</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg17-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg17-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pull Requests &amp; Code Review — Study Guide 14 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .d{color:#f0a5a0}
+  pre.code .g{color:#a7d78f}
+  pre.code .b{color:#f0a5a0}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 14 · Git Collaboration Tool Part 2 · Grade 9 CS · 2 meetings (100 min)</div>
+  <h1>Pull Requests &amp; Code Review</h1>
+  <p class="sub" style="margin-top:20px; font-size:34px; color:var(--ink)">
+    <b>The Shinobi's Guide to Trusted Changes — how a village accepts work it can
+    actually believe.</b></p>
+  <p class="sub" style="margin-top:14px">You already ran Mission G-2. Now you learn why the stamp exists.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> why sharing isn't enough → pull vs Pull Request → the PR
+        process → code review → constructive feedback → the review–fix cycle</li>
+        <li><b>Meeting 2:</b> how conflicts are born → resolving on the branch → recovery
+        (four drills) → rollback (revert) → .gitignore &amp; README → the complete
+        trusted-change workflow</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission G-2</span></h3>
+        <p class="small">You opened a PR that claimed a slime was "truly dangerous." A
+        reviewer caught the lie with engine evidence. You resolved a real conflict keeping
+        <b>both</b> shinobi's words. This deck explains the machinery underneath.</p>
+      </div>
+      <div class="card">
+        <h3>Learning objectives <span class="small">(SG14)</span></h3>
+        <p class="small">Perform pull requests, code reviews, recovery, and rollback ·
+        collaborate on a shared project, resolving conflicts and communicating
+        effectively.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 14 – Git Collaboration Tool Part2_FinalSG.md</b> — intro, objectives, §1.2, §1.3 · companion: <b>workshops/mission_g2_*</b></span><span>1 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · THE PROBLEM ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">1 · Why sharing code isn't enough</div>
+  <h2>"I pushed it — trust me."</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="vflow">
+      <div class="vf">Author pushes <b>attack_power = 99</b><br><span class="small">commit message: "truly dangerous"</span></div>
+      <div class="varr">↓</div>
+      <div class="vf bad">The engine <b>clamped it to 40</b> — loudly:<br><span class="small" style="font-family:var(--mono)">[WARN] attack_power=99 is out of range [0, 40]; clamped to 40.</span></div>
+      <div class="varr">↓</div>
+      <div class="vf bad">The claim was false — <b>and nobody had looked.</b></div>
+    </div>
+    <div class="card">
+      <h3>What sharing gets you — and what it doesn't</h3>
+      <ul class="ticks">
+        <li><b>Sharing</b> (push) delivers your code to a shared place — that is all it does</li>
+        <li>It does <b>not</b> check the claim in your commit message</li>
+        <li>It does <b>not</b> ask whether the change is <i>appropriate</i>, only whether
+        Git can store it</li>
+        <li><b>Verification is a separate act</b> — and it needs a second pair of eyes</li>
+      </ul>
+      <div class="flag" style="margin-top:14px; font-size:21px"><b>Mission G-2's warning, decoded</b> <span class="lab re">flashback</span>:
+      the chakra check said 3 passed <i>with a WARN</i>. Technically processed — honestly
+      failed. Sharing code is not the same as trusting code.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2</b> (PR = propose, review, discuss <i>before</i> merging) · <b>mission_g2</b> Stats PR (verified)</span><span>2 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · PULL VS PULL REQUEST ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">2 · Pull versus Pull Request</div>
+  <h2>A command — and an invitation</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th></th><th>`git pull` <span class="lab cw">a Git command</span></th><th>Pull Request <span class="lab cw">a GitHub feature</span></th></tr>
+    <tr><td><b>What it is</b></td><td>An action that immediately fetches and merges remote changes into your local branch</td><td>A <b>proposal</b> to merge your branch — it changes nothing until reviewed and merged</td></tr>
+    <tr><td><b>Direction</b></td><td>Remote → your machine</td><td>Your branch → <b>the same repo's</b> main (squad teams)</td></tr>
+    <tr><td><b>Who acts</b></td><td>You, alone, whenever you like</td><td>An <b>author proposes</b>; <b>reviewers judge</b>; an integrator merges</td></tr>
+    <tr><td><b>Purpose</b></td><td>Synchronize your copy</td><td>Enable review, discussion, and approval <b>before</b> history changes</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:22px"><b>Two PR worlds — know which one you're in:</b>
+    SG 14's table describes the <b>fork</b> world ("an administrator pulls from <i>your
+    repo</i> into <i>their main</i>") — that's open source. Squad teams live in the
+    <b>shared-repo</b> world: one repo, your branch proposes into <i>its</i> main,
+    teammates with write access do the reviewing. <b>Same button, different village.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2.1 table</b> (pull vs PR) · shared-repo vs fork distinction flagged for the CS team</span><span>3 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · PREDICT WHAT A PR CHANGES ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">2 · Pull versus Pull Request — predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> You click "Create Pull Request."</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Three machines and a hall</h3>
+      <p style="font-family:var(--mono); font-size:23px; line-height:1.8">
+      Your machine: on <code>feature/slime-stats</code>,<br>commit pushed.<br><br>
+      You open the PR. Now:<br>
+      Q1 · What appeared on GitHub?<br>
+      Q2 · What changed on <b>your</b> files?<br>
+      Q3 · What changed on a teammate's machine?<br>
+      Q4 · Did <code>main</code> move?</p>
+      <p class="small" style="margin-top:14px">You did this in Mission G-2, Phase 2 — now
+      commit to all four answers before the reveal.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>GitHub:</b> a proposal page appears — your branch,
+      your claim, a place for review. Nothing has merged.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Your machine:</b> untouched. Your branch, your files,
+      your local history — exactly as you left them.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Teammates' machines:</b> untouched. They'll see the
+      PR when they look — their code changes only when <i>they pull after merge</i>.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>main:</b> untouched. <b>A PR is a request, not a
+      pull</b> — the whole point is that the request can be judged first.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2.1</b> ("a PR does not automatically affect your local repository") · <b>mission_g2 Phase 2</b></span><span>4 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · PR ANATOMY ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">3 · Understanding the PR process</div>
+  <h2>Anatomy of a proposal</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">OPENING A PR (VS Code extension or web)</span>
+base:   <span class="k">main</span>          <span class="c"># where you propose to land</span>
+compare:<span class="k">feature/slime-stats</span>  <span class="c"># what you propose</span>
+
+<span class="c">TITLE</span>   <span class="s">stats: make the slime dangerous</span>
+
+<span class="c">DESCRIPTION</span>
+<span class="s">What it changes: Slime attack 99.</span>
+<span class="s">Why the village wants it: truly dangerous.</span>
+
+[ <span class="g">Create Pull Request</span> ]</pre>
+      <p class="small" style="margin-top:12px">Base ← compare: read it as
+      "<b>what → into where</b>." Wrong base = the proposal asks to land in the wrong
+      village (close it, reopen — nothing is lost).</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The branch — private until proposed</h3><p class="small">Your
+      commits live on <code>feature/…</code>. The PR does not move them; it
+      <b>advertises</b> them.</p></div>
+      <div class="card"><h3>The title — one honest line</h3><p class="small">The next reader
+      triages your work from this line alone. Formula:
+      <code>area: what changed</code>.</p></div>
+      <div class="card" style="border:3px solid var(--amber)"><h3 style="color:var(--amber)">The description — a CLAIM, not a report</h3>
+      <p class="small">"Truly dangerous" was a claim. The reviewer's job is to test claims
+      against evidence — which is why the description matters even though one squad mate
+      wrote it jokingly.</p></div>
+      <div class="card"><h3>What a PR is NOT</h3><p class="small">Not a pull · not a merge ·
+      not a backup — <b>an invitation to judge.</b></p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3</b> (open PR from branch to main, title + description) · <b>mission_g2 Phase 2</b></span><span>5 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · THE DESIGN REQUIREMENT ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">3 · The PR process — what the review enforces</div>
+  <h2>A review needs a standard, written before the attempt</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:27px"><b>📋 Mission G-2's Design Requirement — read it as
+    the reviewer's ruler:</b><br>
+    <span style="font-size:30px">"Make the Slime <b>moderately stronger</b> while keeping it
+    <b>playable</b> and within the <b>engine's supported limits</b>. Your implementation
+    must pass the checks <b>without warnings</b>."</span></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Every word is checkable</h3>
+      <ul class="ticks">
+        <li><b>Moderately stronger</b> — numbers you can reason about (3 → 6: harder, winnable)</li>
+        <li><b>Playable</b> — the starter game must remain winnable on the board</li>
+        <li><b>Within limits</b> — <code>hp</code> in [1, 200]; <code>attack_power</code> in [0, 40]</li>
+        <li><b>Without warnings</b> — the chakra check prints <code>0 warnings</code></li>
+      </ul>
+    </div>
+    <div class="warn"><b>The argument the standard kills:</b> *"But 40 is inside [0, 40] —
+    the slime IS more dangerous!"* In-range is not the requirement. A 40-damage bite
+    downs the 25-hp starter hero in <b>one hit</b> — legal, and unwinnable.
+    <b>The clamps tell you what the engine tolerates; the requirement tells you what the
+    village decided.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g2 Phase 0 Design Requirement</b> (approved wording) · engine ranges: base_classes.py (verified)</span><span>6 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · CODE REVIEW ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">4 · Code reviews</div>
+  <h2>Reading the actual diff — not the description</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">FILES CHANGED — the reviewer's first stop</span>
+rogue_edu/student_starter/classes.py
+@@ -51,7 +51,7 @@  class Slime(Villain):
+     def __init__(self, x: int, y: int):
+-        super().__init__(<span class="s">"Slime"</span>, x, y,
+-            hp=10, attack_power=<span class="b">3</span>)
++        super().__init__(<span class="s">"Slime"</span>, x, y,
++            hp=10, attack_power=<span class="b">99</span>)  <span class="c"># truly dangerous</span>
+
+<span class="c">one file · one line · on-territory ✓</span></pre>
+      <p class="small" style="margin-top:12px"><b>Files Changed</b> shows the reviewer
+      exactly what would land. Reading it is the difference between
+      <b>reviewing</b> and <b>approving on faith</b>.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What a review is <span class="lab cw">SG14</span></h3><p class="small">Checking someone's
+      code <b>before it is accepted</b> — catching errors, improving quality, keeping the
+      village's standards.</p></div>
+      <div class="card"><h3>What a review is NOT</h3><p class="small">Not spell-checking the
+      commit message · not skimming the description · not rubber-stamping a friend.
+      <b>SG 14 calls it "code review" for a reason.</b></p></div>
+      <div class="card"><h3>The reviewer runs it too</h3><p class="small">⚖️ Chakra check on the
+      branch — the reviewer collects the <b>same evidence</b> the author sees: the
+      <code>[WARN] … clamped to 40</code> line. Two machines, one truth.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2 concepts table (code reviews)</b> · <b>mission_g2 Phase 3</b> (verified: reviewer reproduces the WARN)</span><span>7 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · THE RUBRIC ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">4 · Code review — the reviewer's rubric</div>
+  <h2>Five checks, in order</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:25px"><b>1 · Design requirement.</b> Moderately
+      stronger, playable, within limits, <b>without warnings</b> — does the change satisfy
+      the standard written before the attempt?</p></div>
+      <div class="card"><p style="font-size:25px"><b>2 · Valid ranges.</b> hp in [1, 200],
+      attack_power in [0, 40] — inside, honestly?</p></div>
+      <div class="card"><p style="font-size:25px"><b>3 · Warnings.</b> Quote the chakra
+      output line — verbatim. A WARN is public evidence, not a private feeling.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:16px">
+      <div class="card"><p style="font-size:25px"><b>4 · Game behavior.</b> Will the board
+      show what the claim says? (Predict it — then the squad verifies by playing.)</p></div>
+      <div class="card"><p style="font-size:25px"><b>5 · Readable.</b> Would the next shinobi
+      understand this line without asking?</p></div>
+      <div class="note" style="font-size:22px"><b>Why "in order":</b> requirement first —
+      a change can pass checks 2–5 and still fail the mission. <b>Technical correctness
+      is not the same as an appropriate gameplay decision.</b> The reviewer owns both
+      questions.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g2 Phase 3 rubric</b> (approved) · distinction: technical correctness ≠ gameplay decision</span><span>8 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · CONSTRUCTIVE FEEDBACK ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">4 · Constructive feedback</div>
+  <h2>Request changes — with evidence, on the line</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">review comment on classes.py, line 54:</span>
+<span class="b">[WARN] 'Slime' had a stat clamped:
+attack_power=99 is out of range [0, 40];
+clamped to 40.</span>
+
+<span class="c">"The engine refuses your number and
+tells everyone. The mission 'truly
+dangerous' fails -- 40 downs the 25-hp
+hero in one hit. Propose values inside
+[0, 40] -- and honestly."</span>
+
+<span class="c">Finish review →</span> <span class="d">Request changes</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Evidence, quoted verbatim</h3><p class="small">The reviewer's
+      power is not opinion — it is the <b>same warning the engine printed</b>, on the
+      reviewer's own machine. Two machines, one truth.</p></div>
+      <div class="card"><h3>Aimed at the work, not the person</h3><p class="small">"This claim
+      fails" — never "you failed." The next commit is the author's answer, and the
+      village expects one.</p></div>
+      <div class="card"><h3>Request changes ≠ rejection</h3><p class="small">It means:
+      <b>not yet, like this.</b> The PR stays open; the author answers with a commit.
+      In G-2 the fix took one line and one push.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3 Part 3</b> (comment, suggest improvement, requested changes) · <b>mission_g2 Phase 3</b> comment verified</span><span>9 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · PREDICT REQUEST-CHANGES BLOCKING ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">4 · Feedback — predict the machinery</div>
+  <h2><span class="pausechip">PREDICT</span> Does "Request changes" block the merge?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The scene</h3>
+      <p class="small">The reviewer has clicked <b>Request changes</b>. The author —
+      impatient — clicks <b>Merge pull request</b> anyway.<br><br>
+      On <b>our</b> squad repositories (private, free accounts): does the merge
+      happen?<br><br>
+      What <i>actually</i> stops a bad merge in Mission G-2?</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal bad"><b>The button still works.</b> On private free-tier repos,
+      GitHub cannot enforce "approvals required" — branch protection needs paid plans;
+      rulesets need public repos.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>What stops it: the Stamp Law.</b>
+      <span style="font-size:23px">"No merge without a review stamp."</span> — a
+      <b>squad law</b>, enforced by shinobi, not by the machine.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>And it is stronger than it sounds:</b>
+      the machine enforces <i>syntax</i>; the squad enforces <i>judgment</i>. A village that
+      needs a robot to make it honest has already lost something worse than a slime fight.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>GitHub Docs</b> (branch protection plans — verified in audit) · <b>mission_g2 Stamp Law</b> (approved wording)</span><span>10 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · REVIEW-FIX CYCLE ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">4 · The review–fix cycle</div>
+  <h2>One PR, two passes — the loop that lands honest work</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="card" style="padding:26px 34px">
+      <p style="font-family:var(--mono); font-size:23px; line-height:2; color:#3c382f">
+      <span class="chip">author: change + commit + push</span> →
+      <span class="chip">open PR: the claim</span> →
+      <span class="chip" style="background:var(--amber-wash)">reviewer: evidence → Request changes</span> →
+      <span class="chip">author: fix commit to the SAME branch</span> →
+      <span class="chip">PR updates itself</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">reviewer: re-check → Approve 🌀</span> →
+      <span class="chip">merge (merge commit)</span> →
+      <span class="chip">squad pulls → verify</span></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Verified numbers from Mission G-2 <span class="lab re">flashback</span></h3>
+      <p class="small">Attempt 1: <code>attack_power=99</code> → WARN, clamped to 40 ·
+      Request changes with the quoted warning · Attempt 2: <code>hp=14, attack_power=6</code>
+      → <code>3 passed, 0 warnings</code> → Approved. <b>One line, one push, same branch —
+      the PR did the ceremony for you.</b></p></div>
+    <div class="card"><h3>Why the fix goes to the same branch</h3>
+      <p class="small">The PR <i>is</i> the branch's proposal. New commits on that branch
+      join the same review — history stays one story: attempt, evidence, answer, stamp.
+      <b>New PR per fix would scatter the conversation.</b></p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3 Part 3</b> (make requested changes if needed) · <b>mission_g2 Phases 3–5</b> (verified loop)</span><span>11 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · MEETING 1 TAKEAWAYS ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 1 — key takeaways</div>
+  <h2>If you remember four sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> <b>Sharing isn't trusting.</b>
+      A push delivers code; it verifies nothing. Claims need evidence.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> <b>A PR is a request, not a
+      pull</b> — it changes nothing until reviewed, merged, and pulled.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>3.</b> <b>A review reads the diff and
+      runs the checks</b> — against a requirement written before the attempt, not against
+      the author's confidence.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:26px"><b>4.</b> <b>"Request changes" doesn't block the button —
+        the Stamp Law does.</b> On our private repos the enforcement is the squad's
+        discipline. Guard it.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Meeting 2</h3>
+      <p class="small">Can you: say what exists after "Create PR" that didn't exist before?
+      · recite the rubric's five checks? · explain why the reviewer quotes the WARN? · say
+      what a Request changes review means — and what it does <i>not</i> do?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 objectives + §1.2–1.3</b> · <b>mission_g2 classroom cycle</b></span><span>12 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · MEETING 2 BRIDGE ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 2 · Conflicts, recovery, rollback</div>
+  <h1 style="font-size:92px">One stamp.<br>Two scrolls.</h1>
+  <p class="sub" style="margin-top:24px; font-size:32px; color:var(--ink)">
+    <b>What happens when two good ideas want the same line.</b></p>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Already true in Meeting 1</h3>
+      <p class="small">PRs propose · reviews judge with evidence · Request changes demands
+      better · stamps are earned. One change, one author, one clean path.</p>
+    </div>
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">Coming in Meeting 2</h3>
+      <p class="small">How conflicts are born · reading real markers · resolving on the
+      branch while keeping <b>both</b> ideas · recovery drills · rollback by revert ·
+      .gitignore &amp; README · the complete trusted-change workflow.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:23px"><b>Carry this question:</b> in Mission G-2's
+    ILA, two shinobi rewrote the <b>same line</b> of the Elder's dialogue. The first scroll
+    landed; the second could not. <b>What exactly collided?</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3 Part 4</b> (conflict practice) · <b>mission_g2 ILA</b></span><span>13 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · HOW CONFLICTS ARE BORN ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">5 · Merge conflicts — the only reliable recipe</div>
+  <h2>Genuinely overlapping, incompatible changes</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The recipe <span class="lab re">verified in Mission G-2</span></h3>
+      <ul class="ticks">
+        <li>Two shinobi branch from the <b>same main</b></li>
+        <li>Both rewrite <b>the same line</b> of the same file — the Elder's warning</li>
+        <li>Scroll 1's PR merges first (it may fast-forward — normal)</li>
+        <li>Scroll 2's PR now <b>cannot</b> merge: main's line changed under it</li>
+      </ul>
+      <div class="flag" style="margin-top:14px; font-size:21px"><b>The honest boundary:</b>
+      G-1's two shinobi edited two <b>different files</b> — different lines of one file
+      merge automatically, different files cannot collide on a line. Conflicts need
+      <b>overlap</b>. That is why Mission G-1 never met one, and G-2's ILA invited one
+      <b>on purpose</b>.</div>
+    </div>
+    <div class="vflow">
+      <div class="vf">main: <b>"Walls never move, but slimes never sleep…"</b></div>
+      <div class="varr">↓ two branches, one line</div>
+      <div class="vf">scroll 1: <b>"The walls hold, but the slimes bite hardest…"</b></div>
+      <div class="varr">↓ merges first — lands cleanly</div>
+      <div class="vf">scroll 2: <b>"Two slimes now guard this grove…"</b></div>
+      <div class="varr">↓ against the NEW main</div>
+      <div class="vf bad"><b>CONFLICT</b> — Git refuses to choose between two real warnings</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3 Part 4</b> · conflict recipe verified in scratch + ILA</span><span>14 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · THE CONFLICT OBSERVED ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">5 · Reading real markers</div>
+  <h2>The three lines that name both sides</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">git merge origin/main  (on feature/elder-lore)</span>
+Auto-merging classes.py
+<span class="b">CONFLICT (content): Merge conflict in classes.py</span>
+
+    def interact(self, view):
+        return SpeakAction(
+<span class="d">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+            <span class="s">"Two slimes now guard this grove --
+             keep your back to a corner!"</span>
+<span class="s">=======</span>
+            <span class="s">"The walls hold, but the slimes
+             bite hardest at your corners!"</span>
+<span class="k">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</span>
+        )</pre>
+      <p class="small" style="margin-top:12px">Verbatim from Mission G-2's ILA — the same
+      markers every developer on Earth reads.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3><span class="chip">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span> — your side</h3>
+        <p class="small"><b>HEAD = your branch's words</b> — the second author's line,
+        waiting on the feature branch.</p></div>
+      <div class="card"><h3><span class="chip">=======</span> — the wall</h3>
+        <p class="small">The divider between the two competing versions. Not a verdict —
+        a question.</p></div>
+      <div class="card"><h3><span class="chip">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</span> — the village's side</h3>
+        <p class="small">What main <b>already received</b> — the first author's line, now
+        the official history your branch must reckon with.</p></div>
+      <div class="note" style="font-size:21px"><b>Predict, then look:</b> before the reveal,
+        say whose words HEAD holds. The markers <i>always</i> name the sides — that is how
+        you know whose work you are weighing.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g2 ILA Phase 3</b> (markers verbatim, verified)</span><span>15 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · PREDICT HEAD ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">5 · Markers — predict before you resolve</div>
+  <h2><span class="pausechip">PREDICT</span> Three questions before touching a marker</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Answer from the ILA scene</h3>
+      <p style="font-size:24px; line-height:1.8">
+      Q1 · Where does resolution happen — on main, or on the feature branch?<br><br>
+      Q2 · May the resolution keep only <b>your</b> line, if your teammate's warning
+      is also good?<br><br>
+      Q3 · After you commit and push the resolution, what happens to the PR?</p>
+      <p class="small" style="margin-top:14px">These three answers separate a merge from a
+      mutiny.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal guard"><b>A1 · The feature branch.</b> You merge main <i>into
+      your branch</i> — main is the village's shared ground, never your scratchpad.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>A2 · No.</b> Silently discarding a teammate's good idea
+      is a <b>submission, not a merge</b>. The village reads both scrolls.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>A3 · The PR updates itself</b> — the conflict banner
+      clears, and the reviewer stamps the <i>resolution</i>.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g2 ILA Phase 3</b> (verified flow) · SG14 §1.3 Part 4 detail added</span><span>16 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · RESOLUTION ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">5 · Resolving — both scrolls survive</div>
+  <h2>Keep both ideas in one coherent line</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c"># on the FEATURE branch</span>
+git fetch origin
+git merge origin/main
+<span class="c"># → conflict markers appear in the editor</span>
+
+<span class="c"># replace the WHOLE marker block with one
+# line that keeps both ideas:</span>
+    <span class="g">"The walls hold, traveler, and two
+     slimes now guard this grove -- they
+     bite hardest at your corners!"</span>
+
+git add classes.py
+git commit -m <span class="s">"merge main: keep both
+  warnings -- walls hold AND two slimes"</span>
+git push          <span class="c"># the PR updates itself</span></pre>
+      <p class="small" style="margin-top:12px">Verified final line, spoken by the Elder in
+      the merged game: <b>"The walls hold, traveler, and two slimes now guard this grove -- they bite hardest at your corners!"</b></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The anatomy of a good resolution</h3>
+        <ul class="ticks">
+          <li><b>All three marker lines gone</b> — any survivor means the fight is still on</li>
+          <li><b>Both ideas present</b> — walls AND slimes, not one erased</li>
+          <li><b>One coherent sentence</b> — the Elder must still sound wise</li>
+          <li><b>Chakra check green</b> — then commit, push, re-review</li>
+        </ul></div>
+      <div class="warn" style="font-size:21px"><b>Escape hatch:</b> drowning mid-resolution?
+      <code>git merge --abort</code> restores your branch cleanly — read the map, then
+      try again. <b>Aborting is not failure.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g2 ILA Phase 3 + tale</b> (verified: combined line, green check, PR updated)</span><span>17 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · PREDICT CONFLICT VS UNCOMMITTED ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">5 · Two warnings that are NOT the same</div>
+  <h2><span class="pausechip">PREDICT</span> Which of these is a conflict?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <p style="font-size:24px; line-height:1.9"><b>A.</b> VS Code says:
+      <i>"Please clean your repository working tree before checkout."</i><br><br>
+      <b>B.</b> A merge stops with:
+      <i>"CONFLICT (content): Merge conflict in classes.py"</i> and markers appear.</p>
+      <p class="small" style="margin-top:14px">Both stop you. Both sound scary. Are they the
+      same problem? <span class="lab cw">SG14 mentions A</span></p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal"><b>A = uncommitted changes.</b> <i>Your own</i> unfinished work
+      would be disturbed by a branch switch. Commit it or discard it (↩) — a guard, not a
+      fight. Nothing is broken.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad"><b>B = a merge conflict.</b> Two <b>already-committed</b>
+      histories disagree on the same lines. A human must judge — that is real collaborative
+      work, not a mess.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Keep them separate:</b> one is about
+      <i>your envelope being open</i>; the other is about <i>two sealed histories
+      disagreeing</i>. SG 14 names both — Mission G-2 made you live both.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3 step 5</b> (warning message) + §1.3 Part 4 (conflict) · distinction verified in G-2 drills</span><span>18 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · RECOVERY ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">6 · Recovery — your uncommitted work</div>
+  <h2>Four mistakes, four quiet fixes</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c"># 1 · ruined a tracked file? throw the edit away</span>
+git restore classes.py          <span class="c">(↩ Discard)</span>
+
+<span class="c"># 2 · staged the WRONG file? un-open the envelope</span>
+git restore --staged game_config.py  <span class="c">(− icon)</span>
+
+<span class="c"># 3 · deleted a tracked file? history still has it</span>
+git restore classes.py
+
+<span class="c"># 4 · need an OLDER committed version?</span>
+git log --oneline -6            <span class="c"># find the good hash</span>
+git restore --source=&lt;hash&gt; game_config.py</pre>
+      <p class="small" style="margin-top:12px">All four verified in Mission G-2's drills.
+      VS Code equivalents in parentheses — the words change, the act doesn't.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What recovery touches</h3><p class="small"><b>Your uncommitted or
+      local work only.</b> Nothing shared, nothing on GitHub, nothing in a teammate's
+      machine. Private, silent, instant.</p></div>
+      <div class="card"><h3>Why history protects you</h3><p class="small">Every commit is a
+      checkpoint Git can hand back. Deleted a tracked file? <b>Committed history is the
+      undeletable backup.</b> The only truly lost work is work never committed.</p></div>
+      <div class="note" style="font-size:21px"><b>The boundary sentence:</b> recovery fixes
+      <i>your</i> messes quietly. Rollback (next) fixes the <i>village's</i> — loudly.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2 concepts (Recovery)</b> · all four drills verified in <b>mission_g2 tale</b></span><span>19 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · ROLLBACK ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">6 · Rollback — undoing SHARED work</div>
+  <h2>Revert: a new scroll, never an erased one</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="vflow">
+      <div class="vf">Wall PR merged: <b>6 pillars</b> — the grove path is blocked</div>
+      <div class="varr">↓</div>
+      <div class="vf">The village regrets it → <b>Revert</b> button on the merged PR</div>
+      <div class="varr">↓</div>
+      <div class="vf guard">GitHub proposes a <b>new revert PR</b> — proposing the undo</div>
+      <div class="varr">↓</div>
+      <div class="vf good">Stamped, merged, pulled → <b>5 pillars</b>, game as designed</div>
+      <div class="varr">↓</div>
+      <div class="vf good">History shows: merge … then <b>Revert "…"</b> — <b>both kept</b></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Why a new commit — not deletion</h3><p class="small">Every
+      teammate's clone already holds the shared history. <b>Erasing it would orphan every
+      copy.</b> A revert adds the correction <i>on top</i> — everyone heals by pulling.
+      Verified: 6 walls → revert → 5 walls, `Revert "…"` in the log.</p></div>
+      <div class="card"><h3>The wall between the two arts</h3><p class="small"><b>Recovery</b>
+      = your uncommitted work — private, silent. <b>Rollback</b> = already-shared work —
+      public, loud, a new commit for the whole village.</p></div>
+      <div class="warn" style="font-size:21px"><b>Never</b> <code>git reset --hard</code> on
+      shared work — it rewrites the village's memory and orphans every clone. Recovery
+      drills are for local work; <b>revert is for shared work.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2 concepts (Roll Back)</b> · verified in <b>mission_g2 ILA Phase 7</b> (Wall PR revert)</span><span>20 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · GITIGNORE & README ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">7 · .gitignore and README.md</div>
+  <h2>Our repo's own two quiet documents</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card">
+      <h3><code>.gitignore</code> — what Git must never track <span class="lab cw">SG14</span></h3>
+      <p class="small">Lists files and folders Git should ignore: unnecessary, generated, or
+      sensitive. <b>Open ours</b> — it explains itself:</p>
+<pre class="code" style="font-size:19px; margin-top:10px">venv/          <span class="c"># your env, rebuilt anywhere</span>
+__pycache__/   <span class="c"># python's scratch work</span>
+curriculum/    <span class="c"># teacher materials</span>
+plans/         <span class="c"># teacher answer keys</span>
+slides/*.pdf   <span class="c"># teacher-local exports</span></pre>
+      <p class="small" style="margin-top:10px">Why it matters to you: the chakra check and
+      the game run from a venv <b>outside history</b> — ignored on purpose, so squads
+      clone <b>clean</b> games, not your machine's innards.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3><code>README.md</code> — the village gate <span class="lab cw">SG14</span></h3>
+        <p class="small">Markdown-formatted, shown automatically on the repo's main page:
+        purpose, setup, usage. <b>Ours is the project's front door</b> — quick start, how
+        students use it, controls.</p></div>
+      <div class="card"><h3>The squad connection</h3><p class="small">SG 14's own activity
+        builds a README project — your squad's real repo <b>already has both files</b>.
+        When you write one, answer the SG's three questions: <b>what, why, how.</b></p></div>
+      <div class="note" style="font-size:21px"><b>One honest tie-in:</b> ignored ≠ unimportant.
+        <code>venv/</code> is required to <i>run</i> the game — it is ignored from
+        <i>history</i> because it is reproducible from <code>requirements.txt</code>.
+        Ignore files you can rebuild; track files you must remember.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.2</b> (.gitignore, README.md definitions) · living examples: repo <code>.gitignore</code> + <code>README.md</code></span><span>21 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · COMPLETE WORKFLOW ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">8 · The complete trusted-change workflow</div>
+  <h2>You have pressed every button on this map</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card" style="padding:26px 34px">
+      <p style="font-family:var(--mono); font-size:22px; line-height:2.05; color:#3c382f">
+      <span class="chip">branch feature/…</span> →
+      <span class="chip">change + commit + push</span> →
+      <span class="chip">open PR: the claim</span> →
+      <span class="chip" style="background:var(--amber-wash)">review: rubric + evidence → Request changes</span> →
+      <span class="chip">author: fix commit → PR updates</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">Approve 🌀 Stamp Law</span> →
+      <span class="chip">Merge PR → <b>Create a merge commit</b> (never squash/rebase)</span> →
+      <span class="chip">conflict? resolve on the branch, keep both ideas</span> →
+      <span class="chip">squad pulls</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">RUN THE GAME — verify</span> →
+      <span class="chip">regret? Revert → new PR</span></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Three shinobi, three duties <span class="lab re">G-2</span></h3>
+      <p class="small"><b>Loremaster — Change Author</b> (forges, proposes, answers) ·
+      <b>Arena-Master — Code Reviewer</b> (diff, evidence, stamp) ·
+      <b>Scout — Integration Steward</b> (guards the law, merges, verifies).
+      <b>Rotate — every shinobi earns every stamp.</b></p></div>
+    <div class="card"><h3>Which arrows did <i>you</i> press?</h3>
+      <p class="small">Stats PR (classroom) — all of them. Conflicting Scrolls (ILA) —
+      including the conflict arrow and the Revert arrow. <b>Nobody watched from the
+      shore.</b></p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 §1.3</b> (workflow assembled) · every arrow verified in <b>mission_g2</b></span><span>22 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · REAL WORLD ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">Bringing it together</div>
+  <h2>You just used the professionals' trust machinery</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What real teams add on top</h3>
+      <ul class="ticks">
+        <li><b>Required approvals:</b> on paid/public plans, GitHub can <i>enforce</i> the
+        Stamp Law — the button itself refuses unreviewed merges</li>
+        <li><b>Issue links &amp; project boards:</b> every PR tells the story of a mission
+        being tracked</li>
+        <li><b>Reviews as culture:</b> "request changes" is how senior engineers teach —
+        exactly what Arena-Master did to the 99</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Next: SG 15 — the SDLC</h3>
+        <p class="small">Plan → design → build → test → release. You have been living the
+        <b>build and review</b> stages all term; SG 15 names the whole journey and shows
+        where Git's checkpoints belong in it.</p>
+      </div>
+      <div class="flag" style="font-size:21px"><b>Honest machinery note:</b> what your squad
+      enforces by <b>law</b>, professional teams often enforce by <b>settings</b>
+      (protected branches, required reviewers). Same law — stronger walls. Which walls a
+      village can afford is a real decision, not a moral one.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 closing + objectives</b> · SG 15 preview per curriculum sequence</span><span>23 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · CURRICULUM ALIGNMENT ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Curriculum alignment</div>
+  <h2>SG 14 ↔ this deck ↔ Mission G-2</h2>
+  <table class="cmp" style="margin-top:22px; font-size:22px">
+    <tr><th>SG 14 objective / concept</th><th>Deck slides</th><th>Mission G-2 evidence</th></tr>
+    <tr><td>Perform <b>pull requests</b> <span class="lab cw">objectives</span></td>
+        <td>3–5, 22</td><td>Stats PR + two Elder PRs opened and landed <span class="lab re">direct</span></td></tr>
+    <tr><td>Perform <b>code reviews</b> <span class="lab cw">objectives</span></td>
+        <td>6–9, 11</td><td>WARN caught with evidence; Request changes → fix → stamp <span class="lab re">direct</span></td></tr>
+    <tr><td>Perform <b>recovery</b> <span class="lab cw">§1.2 table</span></td>
+        <td>19</td><td>Four drills verified (discard, unstage, recover, source-restore) <span class="lab re">direct</span></td></tr>
+    <tr><td>Perform <b>rollback</b> <span class="lab cw">§1.2 table</span></td>
+        <td>20</td><td>Wall PR merged → reverted → 5 pillars restored <span class="lab re">direct</span></td></tr>
+    <tr><td><b>Resolve conflicts</b>, communicate effectively <span class="lab cw">objectives</span></td>
+        <td>13–18</td><td>Real conflict, both ideas preserved, resolution stamped <span class="lab re">direct</span></td></tr>
+    <tr><td><b>Data → visuals</b> <span class="lab cw">objectives</span></td>
+        <td>—</td><td><b>Gap, kept visible:</b> optional Insights reading only; G-2 does not claim this competency <span class="lab cw">flagged</span></td></tr>
+    <tr><td>VS Code + GitHub PR extension, auth, identity <span class="lab cw">§1.1</span></td>
+        <td>Appendix in teacher prep</td><td>Teacher-prepped on lab machines; rehearsed with two accounts</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <div class="flag" style="font-size:21px"><b>SG 14 wording, corrected in this deck (flagged, not fixed in the source):</b>
+    the SG's PR table describes the <b>fork</b> workflow (slide 3 teaches both worlds) ·
+    Recovery/Rollback are defined but never practiced in the SG (G-2 adds the practice) ·
+    "approve and merge" is not machine-enforced on our private free repos (Stamp Law,
+    slide 10) · closing takeaways describe a "project plan," not this unit's content.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 DLC, objectives, §1.1–1.3</b> · <b>mission_g2_sg14_alignment.md</b></span><span>24 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · KEY TAKEAWAYS ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>1.</b> <b>A PR proposes; it does not
+      pull, and it does not merge</b> — it is an invitation for the village to judge.</p></div>
+      <div class="card"><p style="font-size:26px"><b>2.</b> <b>A review reads the diff and
+      collects evidence</b> — a quoted warning beats a confident claim, every time.</p></div>
+      <div class="card"><p style="font-size:26px"><b>3.</b> <b>"Request changes" is not a
+      wall</b> — on our private repos the Stamp Law is the wall, and the shinobi are its
+      bricks.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:26px"><b>4.</b> <b>Conflicts need overlap</b> —
+      resolve them on the feature branch, keeping <b>both</b> ideas in one coherent line;
+      recovery fixes your quiet messes, <b>rollback reverts shared work as a new
+      commit</b> — never erase the village's memory.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:26px"><b>5.</b> <b>A clean merge, a green check, and a stamped
+        PR are still not proof</b> — the last arrow of every workflow is: <b>run the
+        game.</b></p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before SG 15</h3>
+      <p class="small">Can you: explain what exists after a PR opens that didn't before? ·
+      name the marker that holds your side? · say where a conflict is resolved and why? ·
+      do all four recovery fixes from memory? · say why revert instead of erase?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG14 objectives + closing</b> (annotated honestly) · <b>mission_g2</b> evidence throughout</span><span>25 / 25</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 25</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg14-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg14-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>

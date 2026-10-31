@@ -1,0 +1,68 @@
+{
+  "missions": [
+    {
+      "mission_id": 101,
+      "team": "Squad Cedar",
+      "village": "Cedar Hold",
+      "rank": "C",
+      "status": "open",
+      "reward": 300
+    },
+    {
+      "mission_id": 102,
+      "team": "Squad Maple",
+      "village": "Cedar",
+      "rank": "B",
+      "status": " OPEN ",
+      "reward": "450"
+    },
+    {
+      "mission_id": 103,
+      "team": "Squad Pine",
+      "village": "Rivergate",
+      "rank": "C",
+      "status": "assigned",
+      "reward": 0
+    },
+    {
+      "mission_id": 101,
+      "team": "Squad Cedar",
+      "village": "Cedar Hold",
+      "rank": "C",
+      "status": "open",
+      "reward": 300
+    },
+    {
+      "mission_id": 104,
+      "team": null,
+      "village": "Cedar Hold",
+      "rank": "D",
+      "status": "open",
+      "reward": 200
+    },
+    {
+      "mission_id": 105,
+      "team": "Squad Birch",
+      "village": "Mist Harbor",
+      "rank": "B",
+      "status": "completed",
+      "reward": "600"
+    },
+    {
+      "mission_id": 106,
+      "team": "Squad Oak",
+      "village": " Cedar Hold ",
+      "rank": "A",
+      "status": "OPEN",
+      "reward": 900
+    },
+    {
+      "mission_id": 107,
+      "team": "Squad Wave",
+      "village": "Cloudridge",
+      "rank": "A",
+      "status": "open",
+      "reward": 800
+    }
+  ]
+}

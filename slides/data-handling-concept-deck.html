@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Shinobi's Data Scroll — SG 18 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:100px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .out{color:#b8e6c8}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 18 · Introduction to Data Handling · Grade 9 CS · 2 meetings (100 min) + ILA</div>
+  <h1>The Shinobi's Data Scroll</h1>
+  <p class="sub" style="margin-top:18px; font-size:34px; color:var(--ink)">
+    <b>Reading, Cleaning, and Transforming JSON.</b></p>
+  <p class="sub" style="margin-top:14px">A program can process data correctly and still produce bad decisions if the data itself is unreliable.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>The journey of this unit</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> get data INTO a program — JSON structure, <code>json.dump</code>,
+        <code>json.load</code> — then <b>Activity 1</b> (the graded class-based exercise).</li>
+        <li><b>ILA (30 min, self-study):</b> why raw data lies — missing values, duplicates,
+        inconsistencies.</li>
+        <li><b>Meeting 2:</b> clean it honestly — <b>Activity 2</b>, then Activity 3 as
+        optional extra credit.</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">What you must be able to do <span class="lab cw">SG18</span></h3>
+        <p class="small">Read data from a JSON file into proper Python structures · clean
+        and transform raw data — missing values, duplicates, inconsistencies — until it is
+        <b>reliable and meaningful</b> · support data-driven decisions.</p>
+      </div>
+      <div class="card">
+        <h3>You already lived this <span class="lab re">Mission D-1</span></h3>
+        <p class="small">The village ledger: 8 records, 1 duplicate, 1 half-empty, three
+        spellings of one village. This deck names what you did — and why it mattered.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 — Introduction to Data Handling</b> (competency, schedule, LR1–2, Activities 1–3) · companion workshop: <b>mission_d1_*</b></span><span>1 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · FROM TOOLS TO INFORMATION ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">Meeting 1 · From tools to information</div>
+  <h2>SG 17 gave your program hands. SG 18 gives it facts.</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>What you proved last unit <span class="lab cw">SG17</span></h3>
+      <p class="small">A library (matplotlib) does a complex task when you call it — once
+      you have <b>fetched, installed, and verified</b> it. Your program could <b>do</b>
+      something impressive.</p>
+      <p class="small" style="margin-top:10px">But that graph needed <b>numbers to
+      plot</b>. Where did they come from?</p>
+    </div>
+    <div class="card" style="border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">This unit's question</h3>
+      <p class="small">How does an application <b>obtain, store, and manage</b> its data —
+      and how do you know the data is <b>fit to act on</b>?</p>
+      <p class="small" style="margin-top:10px">Reading files is the skill. <b>Trusting
+      them blindly is the trap.</b></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="warn" style="font-size:24px"><b>The central message, up front:</b> a
+    program can run flawlessly, print beautiful summaries — and still produce
+    <b>bad decisions</b>, if the data it read was unreliable. Code correctness ≠ data
+    trustworthiness. That gap is the whole unit.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Introduction</b> ("External data sources are not always ready for use…") · <b>SG 17</b> bridge</span><span>2 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · DATA SOURCES ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Meeting 1 · Where does an application get its data?</div>
+  <h2>Five fountains, one problem</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The sources <span class="lab cw">SG18</span></h3>
+      <ul class="ticks">
+        <li><b>User input</b> — forms, keystrokes, game moves</li>
+        <li><b>Files</b> — TXT, <b>CSV</b>, XML, <b>JSON</b> (this unit)</li>
+        <li><b>Databases</b> — organized, queryable stores</li>
+        <li><b>Other systems / the web</b> — APIs send and receive JSON</li>
+      </ul>
+      <p class="small" style="margin-top:10px">SG 18 focuses on the <b>file</b>
+      fountains — JSON first; CSV is next unit.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--red)">
+        <h3 style="color:var(--red)">Why "external" is a warning label</h3>
+        <p class="small">Files you didn't write yourself often contain
+        <b>missing entries, duplicates, or inconsistencies</b> — the SG's exact words —
+        and they "can affect how you will interpret information."</p>
+      </div>
+      <div class="note" style="font-size:22px"><span class="pausechip">PREDICT</span>
+        Before any code: name one way a school spreadsheet of scores could be wrong in a
+        way the computer would <b>never notice on its own</b>. (Your D-1 prediction had the
+        same shape.)</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Introduction</b> (data sources list, verbatim)</span><span>3 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · WHY JSON ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">Meeting 1 · Why JSON?</div>
+  <h2>Plain text that carries structure</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3>Why this format</h3>
+      <ul class="ticks">
+        <li><b>Readable</b> — a human can open it in any editor and see the structure</li>
+        <li><b>Structured</b> — keys and nesting, not just a wall of characters</li>
+        <li><b>Cross-platform</b> — nearly every language reads and writes it; the
+        standard format for data exchange between platforms and over the internet</li>
+        <li><b>Simple rules</b> — one file extension: <code>.json</code></li>
+      </ul></div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What JSON is NOT</h3>
+        <p class="small">Not the only format — <b>CSV</b> (next unit), <b>XML</b>, and
+        plain text all carry data too. Not a database, not a program — it is
+        <b>text with a shape</b>. And not Python's own syntax: JSON has stricter rules
+        than a Python dict (double quotes only, for one).</p></div>
+      <div class="note" style="font-size:22px"><b>Retrieval check:</b> your last two
+      units used two other ways to move information — a library <i>call</i> (SG 17) and a
+      printed <i>graph</i>. What can JSON carry that neither can? <i>(Structured records
+      — many fields, many entries, with types — storable and re-readable.)</i></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (JSON: "standard text based data source… data exchange between platforms") · "only" claim deliberately not made (CSV next unit)</span><span>4 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · INSIDE A JSON SCROLL ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Meeting 1 · Inside a JSON scroll</div>
+  <h2>Objects, arrays, and exactly six kinds of value</h2>
+  <div class="grid" style="grid-template-columns:1.05fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px">{
+  <span class="s">"missions"</span>: [
+    { <span class="s">"mission_id"</span>: 101, <span class="s">"rank"</span>: <span class="s">"C"</span>,
+      <span class="s">"reward"</span>: 300, <span class="s">"active"</span>: true },
+    { <span class="s">"mission_id"</span>: 102, <span class="s">"rank"</span>: <span class="s">"B"</span>,
+      <span class="s">"reward"</span>: null, <span class="s">"active"</span>: false }
+  ],
+  <span class="s">"village"</span>: <span class="s">"Cedar Hold"</span>
+}</pre>
+      <p class="small" style="margin-top:10px"><i>(valid JSON — executed and parsed
+      before this deck shipped)</i></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The anatomy</h3>
+        <ul class="ticks">
+          <li><b>Object</b> <code>{ }</code> — key → value pairs</li>
+          <li><b>Array</b> <code>[ ]</code> — an ordered list</li>
+          <li><b>Keys</b> — text, <b>double quotes always</b></li>
+        </ul></div>
+      <div class="card"><h3>The six value types</h3>
+        <p class="small"><b>"text"</b> · <b>300</b> numbers · <b>true / false</b> ·
+        <b>null</b> (deliberately empty) · nested objects · arrays of anything</p></div>
+      <div class="flag" style="font-size:21px"><b>Strictness is the price of portability:</b>
+      single quotes, comments, and trailing commas are all <b>invalid</b> JSON — the parser
+      refuses everything Python would tolerate.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (structure image) · example validated with json.loads before publication</span><span>5 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · JSON MEETS PYTHON ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">Meeting 1 · JSON meets Python</div>
+  <h2>The translation table — related, not identical</h2>
+  <table class="cmp" style="margin-top:26px">
+    <tr><th>In the JSON file (text)</th><th>In Python (after <code>json.load</code>)</th></tr>
+    <tr><td><code>{ ... }</code> object</td><td><b>dict</b> — keys map to values</td></tr>
+    <tr><td><code>[ ... ]</code> array</td><td><b>list</b></td></tr>
+    <tr><td><code>"text"</code> string</td><td><b>str</b></td></tr>
+    <tr><td><code>101</code> / <code>300.5</code> number</td><td><b>int</b> or <b>float</b></td></tr>
+    <tr><td><code>true</code> / <code>false</code></td><td><b>True</b> / <b>False</b> (Python capitalization)</td></tr>
+    <tr><td><code>null</code></td><td><b>None</b></td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="warn" style="font-size:23px"><b>Not the same thing:</b> JSON is
+    <b>text on disk</b>; a dict is an <b>object in memory</b>. You cannot "open" a dict
+    with Notepad, and <code>json.load()</code> is the bridge that converts one to the
+    other. The reverse bridge (dict → text) is slide 7. Saying "a JSON <i>is</i> a
+    dictionary" is the shortcut that breaks the moment types or quotes matter.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (structure comparison) · mapping verified by execution (json.load round-trip)</span><span>6 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · PYTHON → JSON ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">Meeting 1 · From Python to JSON</div>
+  <h2><code>json.dump()</code> — write the structures out</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">import</span> json
+
+students = {
+  <span class="s">"students"</span>: [
+    {<span class="s">"id"</span>: 1, <span class="s">"name"</span>: <span class="s">"Alex Rivera"</span>,
+     <span class="s">"scores"</span>: {<span class="s">"math"</span>: 88, <span class="s">"science"</span>: 92}},
+    {<span class="s">"id"</span>: 2, <span class="s">"name"</span>: <span class="s">"Bianca Cruz"</span>,
+     <span class="s">"scores"</span>: {<span class="s">"math"</span>: 0, <span class="s">"science"</span>: 87}}
+  ]
+}
+
+<span class="k">with</span> open(<span class="s">"students.json"</span>, <span class="s">"w"</span>) <span class="k">as</span> file:
+    json.dump(students, file, indent=4)
+<span class="k">print</span>(<span class="s">"Data written to students.json"</span>)</pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The two moves</h3>
+        <p class="small"><code>open(..., "w")</code> — "w" = <b>write</b> (creates or
+        replaces the file). <code>json.dump(obj, file, indent=4)</code> — converts the
+        Python object to JSON text and writes it <b>into the open file</b>.</p></div>
+      <div class="note" style="font-size:22px"><b>Why <code>indent=4</code>?</b> Purely
+      for humans: four-space nesting makes the file readable in any editor. Machines
+      don't need it; <b>you</b> will, the moment you inspect what was saved. (Executed:
+      the file above is 22 readable lines.)</div>
+      <div class="flag" style="font-size:21px"><b>Watch the direction:</b>
+      <code>dump</code> = object → file · <code>load</code> = file → object. Dump, load —
+      don't mix them up (d<b>u</b>mp writes, l<b>o</b>ad reads).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> sample (executed verbatim; output = 22 lines with indent=4) · names are the SG's fictional records</span><span>7 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · JSON → PYTHON ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Meeting 1 · From JSON to Python</div>
+  <h2><code>json.load()</code> — read the text back into structures</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">import</span> json
+
+<span class="k">with</span> open(<span class="s">"students.json"</span>, <span class="s">"r"</span>) <span class="k">as</span> file:
+    students = json.load(file)   <span class="c"># text -> dict</span>
+
+<span class="k">print</span>(<span class="s">"Student data loaded:"</span>)
+<span class="k">for</span> student <span class="k">in</span> students[<span class="s">"students"</span>]:
+    <span class="k">print</span>(f<span class="s">"{student['name']} - Math: {student['scores']['math']}"</span>)</pre>
+<pre class="code" style="font-size:21px; margin-top:14px"><span class="out">Student data loaded:
+Alex Rivera - Math: 88
+Bianca Cruz - Math: 0</span></pre>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What happened</h3>
+        <ul class="ticks">
+          <li><code>"r"</code> = read mode</li>
+          <li><code>json.load(file)</code> parses the text <b>and</b> stores it in the
+          variable — one statement, two steps</li>
+          <li>Nested access works exactly like your own dicts:
+          <code>students["students"][0]["scores"]["math"]</code> → <b>88</b></li>
+        </ul></div>
+      <div class="flag" style="font-size:21px"><b>Note Bianca's line: Math: 0.</b> The
+      file round-tripped faithfully — <b>zero survived</b>. Hold onto that fact; slides
+      15 and 21 show code that would destroy it.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> sample · executed verbatim; output quoted from the run</span><span>8 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · FOLLOWING THE STRUCTURE ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">Meeting 1 · Following the data structure</div>
+  <h2>A path, not a guess — box inside box inside box</h2>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr; margin-top:24px">
+    <div>
+<svg viewBox="0 0 880 460" style="width:100%; display:block" aria-hidden="true">
+  <rect x="20" y="20" width="840" height="420" rx="14" fill="#fffdf8" stroke="#0e7268" stroke-width="4"/>
+  <text x="44" y="58" font-family="monospace" font-size="24" fill="#0e7268">students  (dict)</text>
+  <rect x="60" y="80" width="760" height="330" rx="12" fill="#e2efeb" stroke="#0e7268" stroke-width="3" stroke-dasharray="9 6"/>
+  <text x="84" y="118" font-family="monospace" font-size="22" fill="#0e7268">"students"  (list of 2)</text>
+  <rect x="100" y="140" width="680" height="120" rx="10" fill="#fffdf8" stroke="#96591a" stroke-width="3"/>
+  <text x="124" y="178" font-family="monospace" font-size="21" fill="#96591a">[0]  dict: id 1, name "Alex Rivera"</text>
+  <rect x="140" y="196" width="600" height="52" rx="8" fill="#f4ead6" stroke="#96591a" stroke-width="2"/>
+  <text x="160" y="230" font-family="monospace" font-size="21" fill="#23211c">"scores" → {"math": 88, "science": 92}</text>
+  <rect x="100" y="290" width="680" height="100" rx="10" fill="#fffdf8" stroke="#96591a" stroke-width="3"/>
+  <text x="124" y="330" font-family="monospace" font-size="21" fill="#96591a">[1]  dict: id 2, name "Bianca Cruz"</text>
+  <text x="124" y="368" font-family="monospace" font-size="21" fill="#23211c">"scores" → {"math": 0, …}</text>
+</svg>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Walk the path</h3>
+        <p class="small">Open the dict → follow the key → step through the list → follow
+        another key:</p>
+<pre class="code" style="font-size:20px; padding:14px 20px">students[<span class="s">"students"</span>][0][<span class="s">"scores"</span>][<span class="s">"math"</span>]
+<span class="c"># dict → list[0] → dict → 88</span></pre></div>
+      <div class="card"><h3>Loop the list, not the maze</h3>
+        <p class="small">One <code>for</code> over the list handles any length — 2 records
+        or 2,000. Inside the loop, the path is always the same. The output on slide 8
+        came from exactly this loop (executed).</p></div>
+      <div class="note" style="font-size:22px"><b>Map-reading rule:</b> every
+      <code>[...]</code> is a <b>list step</b>, every <code>"..."</code> is a
+      <b>key step</b>. If a path fails, one of the steps isn't there — that's slide 15's
+      territory.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> traversal example · diagram = HTML/SVG; nested access verified by execution</span><span>9 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · WHERE DID MY FILE GO ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Meeting 1 · Where did my file go?</div>
+  <h2>Files land where the terminal stands</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Working directory — the invisible address</h3>
+        <p class="small">A relative path like <code>students.json</code> means "beside
+        wherever my program is running." Different terminal, different folder →
+        <b>different file</b>. That's why <code>students.json</code> sometimes appears
+        "somewhere unexpected": it was written exactly where the terminal stood. Colab
+        hides this (it manages a default folder); locally, the VS Code Explorer <b>is</b>
+        your folder view — open the project with <b>File → Open Folder</b> and run from
+        there.</p></div>
+      <div class="card"><h3>Three different "empty"s</h3>
+        <table class="cmp" style="font-size:21px">
+          <tr><th>File content</th><th>What <code>json.load()</code> does</th></tr>
+          <tr><td><code>{"characters": []}</code><br>valid, zero records</td><td>✅ loads — returns <code>[]</code></td></tr>
+          <tr><td>0 bytes (empty file)</td><td>❌ <b>JSONDecodeError</b> — "Expecting value: line 1 column 1"</td></tr>
+          <tr><td>malformed (missing comma/quote)</td><td>❌ <b>JSONDecodeError</b> — names the problem</td></tr>
+        </table></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="note" style="font-size:22px"><b>Never expect a silent empty list
+      from an empty file.</b> "No data" has two meanings with two very different
+      outcomes — a <i>valid structure with zero records</i> loads; a <i>zero-byte file</i>
+      is broken JSON and raises. (All three rows executed before this slide shipped.)</div>
+      <div class="warn" style="font-size:22px"><b>Your rescue card R2</b> in Mission D-1
+      said exactly this: <code>JSONDecodeError</code> = syntax error <b>or</b> zero-byte
+      file — not a feature, not a warning to ignore.</div>
+      <div class="small">Handy probe when a file "isn't there": <code>print(os.getcwd())</code>
+      shows the terminal's current folder (the SG's own tip — needs
+      <code>import os</code>).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (os.getcwd, Colab folder note) · three empty-cases executed (teacher note B) · <b>mission_d1</b> R2</span><span>10 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · ACTIVITY 1 INTRO ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Meeting 1 · Activity 1 — The Archive File <span class="lab cw">SG18 · graded · 20 pts (Annex A)</span></div>
+  <h2>Your first class that owns its own data</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>The JSON your class will hold</h3>
+<pre class="code" style="font-size:20px; padding:16px 22px">{
+  <span class="s">"characters"</span>: [
+    { <span class="s">"name"</span>: <span class="s">"…"</span>, <span class="s">"series"</span>: <span class="s">"…"</span>,
+      <span class="s">"power_level"</span>: <span class="s">&lt;int&gt;</span>, <span class="s">"special_move"</span>: <span class="s">"…"</span> },
+    <span class="c">// … three records, as supplied in your SG</span>
+  ]
+}</pre>
+      <p class="small">Same shape you have seen all meeting: <b>object → array →
+      records</b>. The SG supplies the initial records and the task sheet; this deck
+      shows the <i>shape</i>, not the graded answers.</p></div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--teal)"><h3 style="color:var(--teal)">The class's responsibility</h3>
+        <p class="small">An <code>Anime</code> object <b>owns</b> the list of records —
+        loaded from the file on creation, changeable only through its methods,
+        written back by its save method. Encapsulation with a real file behind it:
+        the object is the <b>gatekeeper</b> of the archive.</p></div>
+      <div class="note" style="font-size:22px"><b>The lifecycle you are about to
+      build:</b> <b>load → modify → save.</b> Every method below is one arrow of that
+      loop. (No solution given here — the exercise, the code, and the 20-point Annex A
+      rubric are the SG's.)</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 1</b> (graded; Annex A rubric) · structure shown with placeholders per teacher notes H</span><span>11 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · THE CLASS WORKFLOW ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">Meeting 1 · The class workflow</div>
+  <h2>Four methods, one loop: load → modify → save</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px; gap:18px">
+    <div class="card"><h3><code>__init__(self)</code> — open the vault</h3>
+      <p class="small">Sets <code>self.characters = self.read_json()</code> — the archive
+      exists the moment the object is born.</p></div>
+    <div class="card"><h3><code>read_json(self)</code> — file → list</h3>
+      <p class="small">Opens <code>anime.json</code>, <code>json.load()</code>s it,
+      returns the characters <b>list</b>. If the file has no data → return an
+      <b>empty list</b> — handle it, don't crash (slide 10's table).</p></div>
+    <div class="card"><h3><code>add_character(self, …)</code> — list → append</h3>
+      <p class="small">Builds one dict from the four arguments and appends it to
+      <code>self.characters</code>. The object changes <b>in memory</b> first.</p></div>
+    <div class="card" style="border:3px solid var(--green)"><h3 style="color:var(--green)"><code>save_anime(self)</code> — list → file</h3>
+      <p class="small"><code>json.dump(self.characters_as_object, file, indent=4)</code>
+      — writes the current list back. <b>Nothing persists until this runs.</b></p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="note" style="font-size:23px"><b>The loop, said plainly:</b> modify in
+    memory → <code>save_anime()</code> → the file catches up → next time,
+    <code>read_json()</code> sees your changes. Skip the save and your work vanishes with
+    the program — the classic file-handling bug, and the reason this loop gets its own
+    slide.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 1</b> (method responsibilities; SG's own phrasing "If the .json file has no data…") — bodies not given (graded)</span><span>12 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · FILTER, SAVE, VERIFY ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 1 · Filter, save, and verify</div>
+  <h2><code>show_characters(power_level)</code> — selection with a condition</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="k">def</span> show_characters(self, powerLevel):
+    <span class="k">for</span> character <span class="k">in</span> self.characters:
+        <span class="k">if</span> character[<span class="s">"power_level"</span>] >= powerLevel:
+            <span class="k">print</span>(f<span class="s">"{character['name']} - {character['power_level']}"</span>)</pre>
+      <p class="small" style="margin-top:12px">One loop, one condition, prints only
+      matches — the same selection pattern as D-1's by-rank count, at the method scale.
+      <b>Test it twice</b> with different thresholds: results that only work once may be
+      an accident.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Completion conditions — Activity 1</h3>
+        <ul class="ticks" style="font-size:22px">
+          <li><code>anime.json</code> created with the given records</li>
+          <li>class reads it via <code>read_json()</code> (empty → <code>[]</code>)</li>
+          <li><code>add_character()</code> appends dicts</li>
+          <li><code>save_anime()</code> writes back</li>
+          <li><code>show_characters()</code> filters by <code>&gt;=</code></li>
+          <li>saved under your teacher's name convention</li>
+        </ul></div>
+      <div class="flag" style="font-size:21px"><b>Verify persistence:</b> add one
+      character → save → <b>close and reopen</b> → does the new record reappear? On
+      screen is memory; in the file is proof.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 1</b> (show_characters, completion + naming convention) · conditions summarized from the SG task text</span><span>13 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · ILA: RAW DATA ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">Independent Learning Activity · Data cleaning and transformation <span class="lab cw">SG18 ILA · 30 min · self-study</span></div>
+  <h2>Raw data is not ready data</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3>You have already seen this</h3>
+      <p class="small">Mission D-1's village ledger arrived with <b>duplicates, a
+      half-empty record, and three spellings of one village</b>. The office could not
+      count it as received — and the computer never complained once.</p>
+      <p class="small" style="margin-top:10px">The SG's diagnosis: external sources "often
+      contain missing entries, duplicates or inconsistencies that can affect how you
+      interpret information."</p></div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--red)"><h3 style="color:var(--red)">The four failure families</h3>
+        <p class="small"><b>Missing</b> values · <b>Duplicate</b> records ·
+        <b>Inconsistent</b> representations · <b>Invalid</b> types or formats —
+        plus the fifth failure that hides behind all of them: <b>trusting the count
+        anyway.</b></p></div>
+      <div class="note" style="font-size:22px"><span class="pausechip">PREDICT</span>
+        Before the next four slides: which family is the <b>quietest</b> — the one a
+        program will happily process without a single error? <i>(All of them: every one
+        is valid data doing wrong work. Errors only come from crashes; bad decisions come
+        from success.)</i></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Introduction</b> (missing/duplicates/inconsistencies, verbatim) · <b>mission_d1</b> scenario</span><span>14 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · MISSING ≠ ZERO ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">ILA · Missing values are not always zero</div>
+  <h2>The <code>if not value</code> trap — three victims, one test</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="vflow">
+      <div class="vf bad"><b>if not student["math"]</b> … treats all three as "missing":</div>
+      <div class="varr">↓ evaluated (executed)</div>
+      <div class="vf reveal"><b>0</b> → not 0 = True &nbsp;·&nbsp; <b>""</b> → True &nbsp;·&nbsp; <b>None</b> → True</div>
+      <div class="varr reveal">and if the key is absent at all…</div>
+      <div class="vf reveal bad"><b>KeyError: 'math'</b> — the program crashes instead of deciding</div>
+      <div class="note reveal" style="font-size:22px; margin-top:10px"><b>Victim #1 is a
+      real grade:</b> a student with <b>math = 0</b> — a legitimate, recorded zero — is
+      silently thrown out as "incomplete." The data was right; the <i>test</i> was
+      wrong.</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--green)"><h3 style="color:var(--green)">The explicit check</h3>
+<pre class="code" style="font-size:20px; padding:14px 20px">value = student.get(<span class="s">"math"</span>)   <span class="c"># no crash</span>
+missing = value <span class="k">is None</span> <span class="k">or</span> (
+    isinstance(value, str)
+    <span class="k">and</span> value.strip() == <span class="s">""</span>)</pre>
+        <p class="small" style="margin-top:8px">Executed behavior:
+        <code>0 → missing? False</code> · <code>None → True</code> ·
+        <code>" " → True</code> · <code>absent → True</code>.</p></div>
+      <div class="flag" style="font-size:21px"><b>Rule to carry:</b> never decide
+      "missing" from <b>falsiness</b>. Ask what <b>missing means</b> for that field, and
+      say it out loud: absent? null? blank? — <b>zero is a value.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2 sample</b> (`if not student["math"]…`) critiqued per teacher notes C · all evaluations executed</span><span>15 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · DUPLICATES ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">ILA · One record, two copies</div>
+  <h2>Identical twin or same-name stranger?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card" style="border:3px solid var(--teal)"><h3 style="color:var(--teal)">Type 1 — exact duplicate</h3>
+      <p class="small">Same key <b>and</b> every value equal. Two copies of one event —
+      counting it twice inflates every total.</p>
+<pre class="code" style="font-size:19px; padding:14px 20px">a == b  →  <span class="out">True</span></pre>
+      <p class="small">Safe to <b>remove, keeping one copy</b> — nothing is lost, because
+      nothing differs. Report it: D-1 printed <code>[DUPLICATE] mission 101 — identical
+      copy removed</code>.</p></div>
+    <div class="card" style="border:3px solid var(--red)"><h3 style="color:var(--red)">Type 2 — same ID, conflicting content</h3>
+      <p class="small">Same key, different values: id 1, math 88 <b>vs</b> id 1, math 75.
+      Which is true? <b>The data does not say.</b></p>
+<pre class="code" style="font-size:19px; padding:14px 20px">a == c  →  <span class="out">False</span></pre>
+      <p class="small">Never auto-delete and never <b>first-record-wins</b> — that just
+      picks an answer for the data. <b>Flag it for human review</b> and keep both until
+      someone decides. D-1's <code>[REVIEW]</code> branch is this rule in code.</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note" style="font-size:23px"><b>The question before any deletion:</b>
+    <i>"If I remove this record, is anything in it known nowhere else?"</i> If yes — it's
+    not a duplicate, it's a <b>decision</b>, and decisions need a person.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> (duplicate removal task) · two-type distinction per teacher notes D · dict equality executed</span><span>16 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · INCONSISTENCIES ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">ILA · Same meaning, different representation</div>
+  <h2>Three spellings, one village — standardize before you group</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th>As found in the data</th><th>Problem</th><th>Standardized</th></tr>
+    <tr><td><code>"  Cedar Hold "</code></td><td>invisible whitespace</td><td><code>"Cedar Hold"</code> — <code>.strip()</code></td></tr>
+    <tr><td><code>" OPEN "</code></td><td>spaces <b>and</b> capitals</td><td><code>"open"</code> — <b>both</b> <code>.strip()</code> <b>and</b> <code>.lower()</code></td></tr>
+    <tr><td><code>"Cedar"</code></td><td>abbreviation / alias</td><td><code>"Cedar Hold"</code> — a mapping dict</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Why order matters (executed)</h3>
+      <p class="small"><code>" OPEN "</code>: strip alone → <code>"OPEN"</code>;
+      lower alone → <code>" open "</code> (spaces survive!). <b>Strip then lower</b> →
+      <code>"open"</code>. One step is not the other — and a group-by on the raw string
+      makes <b>three groups where one exists</b>.</p></div>
+    <div class="card"><h3>The SG's own example</h3>
+      <p class="small">"Quezon City" vs "QC" vs "Q.C." — same place, three labels. Any
+      count, average, or chart that groups by the <b>text</b> instead of the
+      <b>meaning</b> is quietly wrong. Standardization is how a label earns the right to
+      be counted.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> (inconsistency example, verbatim) · D-1 rules 3–5 · all transformations executed</span><span>17 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · TRANSFORMING ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">ILA · Transforming data for use</div>
+  <h2>Cleaning fixes lies — transformation adds use</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px; gap:18px">
+    <div class="card"><h3>Changing types</h3>
+      <p class="small"><code>"450"</code> → <code>450</code>: text that must be
+      <b>added or compared</b> becomes a number. Guard it: digit-strings convert, real
+      <b>0</b> passes through untouched (executed: <code>'450'→450</code>,
+      <code>0→0</code>, <code>'600'→600</code>).</p></div>
+    <div class="card"><h3>Normalizing values</h3>
+      <p class="small">Same format everywhere: dates as YYYY-MM-DD, statuses lowercase,
+      names trimmed — slide 17's work, generalized.</p></div>
+    <div class="card"><h3>Aggregating</h3>
+      <p class="small">Many records → one number: totals, averages, counts. (D-1's
+      "open missions by rank" is an aggregation — and why its limit sentence mattered.)</p></div>
+    <div class="card"><h3>Reformatting / restructuring</h3>
+      <p class="small">One shape → another: split a full name into first/last, pivot a
+      list into a lookup dict — preparing data for the next tool's appetite.</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <div class="note" style="font-size:22px"><b>Cleaning vs transformation, one line:</b>
+    cleaning makes the data <b>true</b> (it says what is); transformation makes it
+    <b>useful</b> (it says what you need).</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> (four transformation examples, verbatim) · conversions executed</span><span>18 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · THE PIPELINE ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">ILA · The data preparation pipeline</div>
+  <h2>Two names for the flow — and the stage that isn't the flow</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <svg viewBox="0 0 1500 330" style="width:82%; margin:0 auto; display:block" aria-hidden="true">
+      <rect x="30" y="60" width="360" height="120" rx="14" fill="#e2efeb" stroke="#0e7268" stroke-width="4"/>
+      <text x="210" y="115" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">Extract</text>
+      <text x="210" y="152" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f6a5c">json.load(file)</text>
+      <line x1="395" y1="120" x2="510" y2="120" stroke="#0e7268" stroke-width="6"/>
+      <rect x="515" y="60" width="360" height="120" rx="14" fill="#f4ead6" stroke="#96591a" stroke-width="4"/>
+      <text x="695" y="115" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">Transform</text>
+      <text x="695" y="152" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f6a5c">clean · convert · standardize</text>
+      <line x1="880" y1="120" x2="995" y2="120" stroke="#96591a" stroke-width="6"/>
+      <rect x="1000" y="60" width="360" height="120" rx="14" fill="#e6efe2" stroke="#2e6b34" stroke-width="4"/>
+      <text x="1180" y="115" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">Load</text>
+      <text x="1180" y="152" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f6a5c">json.dump(cleaned, …)</text>
+      <text x="750" y="240" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c"><tspan font-weight="bold">ETL</tspan> = Extract → Transform → Load</text>
+      <text x="750" y="285" text-anchor="middle" font-family="monospace" font-size="24" fill="#23211c"><tspan font-weight="bold">ELT</tspan> = Extract → Load → Transform  (swap the last two)</text>
+    </svg>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:14px">
+    <div class="warn" style="font-size:22px"><b>The correction:</b> transformation is
+    <b>one stage</b> of the pipeline — not another name for the whole pipeline. Some
+    texts blur this (our SG's sentence does; your teacher notes record it). ETL and ELT
+    are the two <i>orderings</i>; both have the same three jobs.</div>
+    <div class="card"><h3>ILA reflection — answer before Meeting 2</h3>
+      <p class="small">1) Name the stage where <i>your</i> D-1 rules ran — and why.
+      2) Why load-before-transform (ELT) can suit exploratory work? 3) Which stage's
+      output would you show a client to prove the data is trustworthy — and what would
+      you check first?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> ETL sentence corrected per teacher notes E · D-1 Phase 4 "pipeline words" · diagram HTML/SVG</span><span>19 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · ACTIVITY 2 ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">Meeting 2 · Activity 2 — The Student Records Challenge <span class="lab cw">SG18 · non-graded · 45–50 min</span></div>
+  <h2>Your class, the cleansing gauntlet</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px">students = {
+  <span class="s">"students"</span>: [
+    {<span class="s">"id"</span>: 1, <span class="s">"name"</span>: <span class="s">"Alex Rivera"</span>, <span class="s">"math"</span>: 88, <span class="s">"science"</span>: 92},
+    {<span class="s">"id"</span>: 2, <span class="s">"name"</span>: <span class="s">"Bianca Cruz"</span>,  <span class="s">"math"</span>: None, <span class="s">"science"</span>: 87},
+    {<span class="s">"id"</span>: 1, <span class="s">"name"</span>: <span class="s">"Alex Rivera"</span>, <span class="s">"math"</span>: 88, <span class="s">"science"</span>: 92},
+    {<span class="s">"id"</span>: 4, <span class="s">"name"</span>: <span class="s">"Carlos Tan"</span>,   <span class="s">"math"</span>: 75, <span class="s">"science"</span>: 75}
+  ]
+}</pre>
+      <p class="small" style="margin-top:10px"><i>The SG's supplied sample — fictional
+      records for a fictional class (no real student data anywhere in this unit).</i></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>What the SG hands you</h3>
+        <ul class="ticks">
+          <li>A <code>Students</code> class with <code>save_raw</code>,
+          <code>load_raw</code>, <code>clean_data</code>, <code>save_cleaned</code></li>
+          <li>Working load/save — <b>read it first</b>, it is the reference</li>
+        </ul></div>
+      <div class="card" style="border:3px solid var(--teal)"><h3 style="color:var(--teal)">What you add</h3>
+        <ul class="ticks">
+          <li><b>Remove duplicate records</b> (the id-1 twin above)</li>
+          <li><b>Print every removed record with its reason</b> — incomplete or duplicate</li>
+        </ul>
+        <p class="small" style="margin-top:8px">Two tasks, one loop. The supplied
+        <code>clean_data()</code> does half the job — slides 21–22 sharpen both halves.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> (supplied dataset + two modifications, verbatim) · privacy per teacher notes G</span><span>20 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · FIND MISSING ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">Meeting 2 · Find the missing information</div>
+  <h2>The supplied test has two leaks — patch both</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="vflow">
+      <div class="vf bad">The SG's line: <b>if not student["math"] or not student["science"]:</b></div>
+      <div class="varr">↓ two failure modes (executed)</div>
+      <div class="vf reveal"><b>Leak 1 — a real zero dies:</b> Bianca's <code>None</code>
+      is correctly missing… but a student scored <b>math: 0</b> would be dropped too
+      (slide 15).</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal"><b>Leak 2 — a missing key crashes:</b> <code>KeyError:
+      'math'</code> if a record lacks the field entirely (slide 15's executed result).</div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="border:3px solid var(--green)"><h3 style="color:var(--green)">Your patched check</h3>
+<pre class="code" style="font-size:20px; padding:14px 20px">math_score  = student.get(<span class="s">"math"</span>)
+science_score = student.get(<span class="s">"science"</span>)
+missing = (<span class="k">any</span>(v <span class="k">is None</span> <span class="k">for</span> v <span class="k">in</span> (math_score, science_score))
+           <span class="k">or</span> <span class="k">any</span>(isinstance(v, str)
+               <span class="k">and</span> v.strip() == <span class="s">""</span>
+               <span class="k">for</span> v <span class="k">in</span> (math_score, science_score)))</pre>
+        <p class="small" style="margin-top:6px">Explicit, crash-free — and a
+        <b>0 passes</b>: <code>0 → missing? False</code> (executed).</p></div>
+      <div class="flag" style="font-size:21px"><b>Also report, don't vanish:</b> whatever
+      you skip, <b>print it with its reason</b> — the SG's second modification. An
+      invisible deletion is a decision nobody can audit (D-1's law 6).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2 sample line</b> critiqued per teacher notes C · D-1 TODO-1 reference answer · behavior executed</span><span>21 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · FIND REPORT DUPLICATES ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">Meeting 2 · Find and report duplicates</div>
+  <h2>The twin hunt — compare, keep one, report both kinds</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px">cleaned = []
+seen_ids = {}
+<span class="k">for</span> student <span class="k">in</span> self.data[<span class="s">"students"</span>]:
+    <span class="k">if</span> student[<span class="s">"id"</span>] <span class="k">in</span> seen_ids:
+        <span class="k">if</span> seen_ids[student[<span class="s">"id"</span>]] == student:
+            <span class="k">print</span>(<span class="s">f"Removed duplicate: {student['name']}"</span>)
+            <span class="k">continue</span>          <span class="c"># exact twin — drop the extra copy</span>
+        <span class="k">else</span>:
+            <span class="k">print</span>(<span class="s">f"CONFLICT: id {student['id']} differs — needs review"</span>)
+            <span class="k">continue</span>          <span class="c"># different data — do NOT pick a winner</span>
+    seen_ids[student[<span class="s">"id"</span>]] = student
+    cleaned.append(student)</pre>
+      <p class="small" style="margin-top:10px"><i>(The structure D-1 drilled — dict
+      equality <code>==</code> decides which branch runs: <code>True</code> = twin,
+      <code>False</code> = conflict. Executed both ways.)</i></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The three obligations</h3>
+        <ul class="ticks">
+          <li><b>Compare fields</b> — id equality alone never proves twinhood</li>
+          <li><b>Keep exactly one copy</b> of an exact duplicate</li>
+          <li><b>Report every removal</b> with its reason — the SG requires printing them</li>
+        </ul></div>
+      <div class="warn" style="font-size:22px"><b>The line not to cross:</b> a
+      same-id-different-data record is <b>not a duplicate — it's an unresolved
+      question.</b> Auto-deleting (or first-record-wins) invents history. Flag it; a
+      person decides. <i>Do not use arbitrary first-record-wins deletion as your
+      universal rule.</i></div>
+      <div class="small">On the sample above: <b>1 twin removed</b> (id 1, exact match),
+      0 conflicts.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> modification #1 · two-type policy per teacher notes D · structure executed</span><span>22 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · CLEAN TRANSFORM SAVE ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">Meeting 2 · Clean, transform, and save</div>
+  <h2>The whole mission in one line of arrows</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <svg viewBox="0 0 1500 240" style="width:88%; margin:0 auto; display:block" aria-hidden="true">
+      <rect x="20" y="50" width="250" height="120" rx="14" fill="#fffdf8" stroke="#0e7268" stroke-width="4"/>
+      <text x="145" y="105" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">read</text>
+      <text x="145" y="142" text-anchor="middle" font-family="monospace" font-size="19" fill="#6f6a5c">json.load</text>
+      <line x1="275" y1="110" x2="330" y2="110" stroke="#0e7268" stroke-width="6"/>
+      <rect x="335" y="50" width="250" height="120" rx="14" fill="#fffdf8" stroke="#0e7268" stroke-width="4"/>
+      <text x="460" y="105" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">inspect</text>
+      <text x="460" y="142" text-anchor="middle" font-family="monospace" font-size="19" fill="#6f6a5c">count · look · list</text>
+      <line x1="590" y1="110" x2="645" y2="110" stroke="#0e7268" stroke-width="6"/>
+      <rect x="650" y="50" width="250" height="120" rx="14" fill="#f4ead6" stroke="#96591a" stroke-width="4"/>
+      <text x="775" y="105" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">clean</text>
+      <text x="775" y="142" text-anchor="middle" font-family="monospace" font-size="19" fill="#6f6a5c">missing · duplicates</text>
+      <line x1="905" y1="110" x2="960" y2="110" stroke="#96591a" stroke-width="6"/>
+      <rect x="965" y="50" width="250" height="120" rx="14" fill="#f4ead6" stroke="#96591a" stroke-width="4"/>
+      <text x="1090" y="105" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">transform</text>
+      <text x="1090" y="142" text-anchor="middle" font-family="monospace" font-size="19" fill="#6f6a5c">standardize · convert</text>
+      <line x1="1220" y1="110" x2="1275" y2="110" stroke="#2e6b34" stroke-width="6"/>
+      <rect x="1280" y="50" width="200" height="120" rx="14" fill="#e6efe2" stroke="#2e6b34" stroke-width="4"/>
+      <text x="1380" y="105" text-anchor="middle" font-family="monospace" font-size="26" font-weight="bold" fill="#23211c">save</text>
+      <text x="1380" y="142" text-anchor="middle" font-family="monospace" font-size="19" fill="#6f6a5c">json.dump → NEW file</text>
+    </svg>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:18px">
+    <div class="card"><h3>Readability is a requirement, not a courtesy</h3>
+      <p class="small">Meaningful names (<code>cleaned_students</code>, not
+      <code>x2</code>), one job per block, comments on the <i>decisions</i>. Your
+      reviewer is a classmate — and future-you in a month. The Annex A rubric literally
+      pays points for this (Good Coding Practices).</p></div>
+    <div class="note" style="font-size:22px"><b>The save rule (D-1's law 5):</b> the
+    source file stays <b>read-only</b> — clean into a <b>separate</b> output
+    (<code>students_cleaned.json</code>). Keeping raw + cleaned side by side is what
+    makes the work auditable. <i>(The SG's own workflow has a different, in-place option
+    in Activity 3 — teacher notes F explains the choice.)</i></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2/Activity 2</b> (save_raw/save_cleaned split) · D-1 laws 5–6 · Annex A rubric criteria</span><span>23 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · TRUST BUT VERIFY ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Meeting 2 · Trust, but verify</div>
+  <h2>Four numbers, one story — the audit that earns trust</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Count everything you changed</h3>
+      <table class="cmp" style="font-size:22px">
+        <tr><th>Check (D-1's ledger, executed)</th><th>Value</th></tr>
+        <tr><td>Raw records read</td><td><b>8</b></td></tr>
+        <tr><td>Unique ids present</td><td><b>7</b> (→ 1 duplicate copy)</td></tr>
+        <tr><td>Records with missing team</td><td><b>1</b> (→ flagged, excluded)</td></tr>
+        <tr><td>Retained after cleaning</td><td><b>6</b></td></tr>
+        <tr><td>Legit zeros preserved</td><td><b>1</b> (reward 0)</td></tr>
+      </table>
+      <p class="small" style="margin-top:8px">8 − 1 − 1 = 6 — the arithmetic must
+      close. If it doesn't, one of your rules ate something it shouldn't have.</p></div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>The verify list</h3>
+        <ul class="ticks" style="font-size:22px">
+          <li>Open the <b>output file</b> — don't trust the console alone</li>
+          <li>Removed records were <b>printed with reasons</b></li>
+          <li>Spot-check one normalized value (whitespace gone, type converted)</li>
+          <li>Re-open the <b>raw</b> file — still the original 8</li>
+        </ul></div>
+      <div class="warn" style="font-size:22px"><b>Why saving + documentation matter:</b>
+      a clean file nobody can re-check is an <i>opinion.</i> Raw in, cleaned out, counts
+      printed — that's a record someone else can audit, defend, or catch you on. That's
+      the point.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> (display removed records) · D-1 Record §4 counts, re-executed this session</span><span>24 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · BEYOND ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Final mission review</div>
+  <h2>Beyond the small dataset</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card"><h3>Activity 3 — the optional expedition <span class="lab cw">extra credit · own time</span></h3>
+      <ul class="ticks">
+        <li>Pick your <b>own</b> JSON file (the SG links a sampler — or take one from
+        your sensei; squads shouldn't share one source)</li>
+        <li>Define a class for it; build <code>read_json()</code>,
+        <code>count_records()</code>, <code>remove_duplicate()</code>,
+        <code>update_json()</code></li>
+        <li>Same four obligations as today, on data <b>you didn't curate</b></li>
+      </ul>
+      <p class="small">Note the SG's <code>update_json()</code> writes back <b>in
+      place</b> — know the difference from D-1's save-separate rule, and say which you
+      chose and why (teacher notes F).</p></div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Take these with you</h3>
+        <ul class="ticks">
+          <li>Raw data is <b>not</b> automatically trustworthy</li>
+          <li>Missing ≠ zero; identical ≠ same-id; text ≠ meaning</li>
+          <li>Every removal is <b>reported</b>, every count <b>closes</b></li>
+          <li>Counts are <b>evidence for further consideration</b> — not a
+          resource-allocation policy</li>
+        </ul></div>
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">Next: SG 19 — CSV data handling</h3>
+        <p class="small">Same muscles, new file type: commas instead of braces. The
+        reading, cleaning, and verifying you learned this unit transfer whole — only the
+        parser changes.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 3</b> (sampler link, four methods, no-shared-source note) · SG 19 preview · D-1 limit sentence</span><span>25 / 25</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 25</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg18-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg18-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>

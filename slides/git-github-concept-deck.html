@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git &amp; GitHub — Study Guide 13 Teaching Deck · RogueEdu Grade 9</title>
+<style>
+  :root{
+    --paper:#f7f3ec; --paper2:#efe9dd; --ink:#23211c; --muted:#6f6a5c;
+    --line:#d9d2c2; --teal:#0e7268; --teal-wash:#e2efeb;
+    --amber:#96591a; --amber-wash:#f4ead6; --red:#a13a2e; --red-wash:#f6e3df;
+    --green:#2e6b34; --green-wash:#e6efe2;
+    --serif:"Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+    --mono:ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:#2a2721; font-family:var(--serif); color:var(--ink); overflow:hidden}
+  #stage{position:fixed; inset:0}
+  #scaler{position:absolute; transform-origin:top left}
+  .slide{width:1920px; height:1080px; background:var(--paper); position:absolute;
+         padding:80px 110px 110px; display:none; flex-direction:column;
+         box-shadow:0 10px 60px rgba(0,0,0,.5)}
+  .slide.active{display:flex}
+  .kicker{font-family:var(--mono); font-size:20px; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--teal); margin-bottom:14px}
+  h1{font-size:104px; line-height:1.02; font-weight:700; letter-spacing:-.01em}
+  h2{font-size:60px; line-height:1.05; font-weight:700; margin-bottom:8px}
+  .sub{font-size:28px; color:var(--muted); line-height:1.4; max-width:1500px}
+  .small{font-size:21px; color:var(--muted); line-height:1.4}
+  .foot{position:absolute; left:110px; right:110px; bottom:40px;
+        display:flex; justify-content:space-between; align-items:baseline;
+        font-family:var(--mono); font-size:18px; color:var(--muted);
+        border-top:1px solid var(--line); padding-top:14px}
+  .src{font-family:var(--mono); font-size:18px; color:var(--muted)}
+  .src b{color:var(--ink); font-weight:600}
+  .lab{display:inline-block; font-family:var(--mono); font-size:16px; padding:4px 12px;
+       border-radius:999px; vertical-align:middle; white-space:nowrap}
+  .cw{background:var(--ink); color:var(--paper)}
+  .pr{background:var(--teal); color:#fff}
+  .re{background:var(--green); color:#fff}
+  .flag{background:var(--amber-wash); border:1px solid #e2cba0; border-radius:12px;
+        padding:16px 24px; font-size:23px; line-height:1.45}
+  .flag b{color:var(--amber)}
+  .note{background:var(--teal-wash); border:1px solid #bcd8d1; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .note b{color:var(--teal)}
+  .warn{background:var(--red-wash); border:1px solid #e4c2bb; border-radius:12px;
+        padding:16px 24px; font-size:24px; line-height:1.45}
+  .warn b{color:var(--red)}
+  .grid{display:grid; gap:24px}
+  .card{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:26px 30px}
+  .card h3{font-size:30px; margin-bottom:10px}
+  .card p, .card li{font-size:24px; line-height:1.45; color:#3c382f}
+  ul.ticks{list-style:none}
+  ul.ticks li{padding-left:32px; position:relative; margin-bottom:8px}
+  ul.ticks li::before{content:"—"; position:absolute; left:0; color:var(--teal); font-weight:700}
+  pre.code{font-family:var(--mono); font-size:23px; line-height:1.5; background:#22201b;
+           color:#e9e4d8; border-radius:12px; padding:22px 28px; overflow:hidden}
+  pre.code .k{color:#8fd3c7}
+  pre.code .s{color:#e6c98a}
+  pre.code .c{color:#8a8474; font-style:italic}
+  pre.code .d{color:#f0a5a0}
+  pre.code .g{color:#a7d78f}
+  pre.code .b{color:#f0a5a0}
+  code{font-family:var(--mono); font-size:.92em; background:var(--paper2);
+       padding:2px 8px; border-radius:6px}
+  .vflow{display:flex; flex-direction:column; align-items:stretch; gap:0}
+  .vf{background:#fffdf8; border:1px solid var(--line); border-radius:12px;
+      padding:16px 24px; text-align:center; font-size:26px}
+  .vf b{font-family:var(--mono)}
+  .varr{text-align:center; font-size:34px; color:var(--ink); line-height:1.2; padding:2px 0}
+  .vf.bad{background:var(--red-wash); border-color:#e4c2bb}
+  .vf.good{background:var(--green-wash); border-color:#c4d8bd}
+  .vf.guard{background:var(--teal-wash); border-color:#bcd8d1}
+  .bridge{display:grid; grid-template-columns:1fr 140px 1fr; align-items:center; gap:0}
+  .bcol{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:24px 28px}
+  .bcol h4{font-family:var(--mono); font-size:19px; letter-spacing:.1em; text-transform:uppercase;
+           color:var(--muted); margin-bottom:12px}
+  .bmid{display:flex; flex-direction:column; align-items:center; color:var(--teal)}
+  .bmid .a{font-size:44px; line-height:1}
+  .bmid .t{font-family:var(--mono); font-size:16px; color:var(--muted); text-align:center;
+           margin-top:6px; max-width:130px}
+  /* four-station flow (slide 6) */
+  .f4{display:grid; grid-template-columns:1fr 84px 1fr 84px 1fr 84px 1.1fr; align-items:stretch; gap:0}
+  .f4 .st{background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:22px 24px}
+  .f4 .st h4{font-size:27px; margin-bottom:8px}
+  .f4 .st p{font-size:20px; line-height:1.4; color:#3c382f}
+  .f4 .st.remote{border:3px solid var(--teal)}
+  .f4 .op{display:flex; flex-direction:column; align-items:center; justify-content:center;
+          color:var(--teal); font-family:var(--mono)}
+  .f4 .op .a{font-size:40px; line-height:1}
+  .f4 .op .t{font-size:16px; color:var(--muted); text-align:center; margin-top:6px}
+  .chip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--paper2);
+        border:1px solid var(--line); border-radius:8px; padding:3px 10px}
+  .reveal{opacity:0; transform:translateY(10px); transition:opacity .35s, transform .35s}
+  .reveal.shown{opacity:1; transform:none}
+  .pausechip{display:inline-block; font-family:var(--mono); font-size:17px; background:var(--amber);
+             color:#fff; border-radius:999px; padding:5px 16px; letter-spacing:.08em}
+  table.cmp{width:100%; border-collapse:collapse; font-size:24px}
+  table.cmp th{font-family:var(--mono); font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+               color:var(--muted); text-align:left; padding:10px 16px; border-bottom:2px solid var(--ink)}
+  table.cmp td{padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.4}
+  #hud{position:fixed; right:26px; bottom:20px; z-index:50; display:flex; gap:10px;
+       font-family:var(--mono); color:#cfc8b8; align-items:center}
+  #hud button{background:#3a362e; color:#e8e2d4; border:1px solid #57524a;
+       border-radius:8px; font-family:var(--mono); font-size:16px; padding:8px 14px; cursor:pointer}
+  @media print{
+    body{background:#fff; overflow:visible}
+    #stage{position:static}
+    #hud{display:none}
+    .slide{display:flex !important; position:relative; width:1920px; height:1080px;
+           box-shadow:none; page-break-after:always; inset:auto}
+    .reveal{opacity:1 !important; transform:none !important}
+    @page{size:1920px 1080px; margin:0}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><div id="scaler">
+
+<!-- ================= SLIDE 1 · TITLE ================= -->
+<section class="slide" id="s1">
+  <div class="kicker">Study Guide 13 · Git Collaboration Tool Part 1 · Grade 9 CS · 2 meetings (100 min) + 1 ILA (30 min)</div>
+  <h1>Git &amp; GitHub</h1>
+  <p class="sub" style="margin-top:20px; font-size:34px; color:var(--ink)">
+    <b>The Shinobi's Guide to Version Control — keeping one reliable history while many
+    hands build one game.</b></p>
+  <p class="sub" style="margin-top:14px">You already ran this mission. Now you learn why it worked.</p>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Where this unit goes</h3>
+      <ul class="ticks">
+        <li><b>Meeting 1:</b> the many-versions problem → version control → Git vs GitHub →
+        local vs remote → the four stages → the core operations → reading VS Code</li>
+        <li><b>Meeting 2:</b> why branches exist → main vs feature → creating &amp; publishing →
+        merging → conflicts → the complete workflow → Git in the real world</li>
+        <li><b>Appendix:</b> VS Code &amp; GitHub indicators (your 30-min ILA) · setup &amp; configuration</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission G-1</span></h3>
+        <p class="small">Three shinobi. Two feature branches. One Scout merge. A pull that
+        changed your game. Every slide in this deck points back to something that
+        <b>already happened on your machines</b>.</p>
+      </div>
+      <div class="card">
+        <h3>Learning competency <span class="small">(SG13)</span></h3>
+        <p class="small">Set up and configure a version control system (Git) for a team-based
+        project; perform the basic workflow — commit, push, pull from a cloned remote
+        repository; create, manage, and merge branches.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 13 – Git Collaboration Tool Part1_FinalSG.md</b> — header, DLC, outline · companion: <b>workshops/mission_g1_*</b></span><span>1 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 2 · THE PROBLEM ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">1 · The problem version control solves</div>
+  <h2>final_v2_FINAL(3).py</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div>
+<pre class="code" style="font-size:22px"><span class="c">Documents/game/</span>
+├── project.py
+├── project_v2.py
+├── project_final.py
+├── project_FINAL.py
+├── project_FINAL_v2.py
+├── project_FINAL_v2_fixed.py
+└── project_FINAL_v2_FIXED<span class="b">(3)</span>.py   <span class="c">← the one that runs?</span></pre>
+      <p class="small" style="margin-top:14px">Every shinobi invents their own version-naming
+      system. None of them can answer: <b>which copy is newest? which one works? what
+      changed between them? who changed it?</b></p>
+    </div>
+    <div class="vflow">
+      <div class="vf bad">Arena-Master saves <b>game_config.py</b><br>— overwriting this morning's work</div>
+      <div class="varr">↓</div>
+      <div class="vf bad">Loremaster's edits: <b>gone. No copy. No undo.</b></div>
+      <div class="varr">↓</div>
+      <div class="vf">"Which version should I run?" — <b>the squad guesses</b></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="warn"><b>Mission G-1 without Git</b> <span class="lab re">imagine it</span>: two shinobi
+    editing one folder — one careless <b>Save</b> erases a teammate's contribution, and the
+    mission fails with no way back. <b>The fix is not "be careful with filenames." The fix is
+    a system that remembers every version for you.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction</b> (VCS tracks and manages changes; why use Git) · scenario mirrors <b>mission_g1</b> roles</span><span>2 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 3 · VCS & DVCS ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">2 · What version control is</div>
+  <h2>A complete copy of the project <span style="color:var(--teal)">and its whole history</span> — on every machine</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="card">
+      <h3>Version Control System <span class="lab cw">SG13 wording</span></h3>
+      <p>A tool that <b>tracks and manages changes</b> to source code over time. You can
+      look back at previous versions, undo mistakes, and see who changed what.</p>
+      <h3 style="margin-top:18px">Distributed (DVCS) <span class="lab cw">SG13 wording</span></h3>
+      <p><b>Every developer has a complete local copy of the entire repository — including
+      its full history.</b> Work offline; the network is only needed to sync.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Why bother? <span class="small">(SG13)</span></h3>
+        <ul class="ticks">
+          <li><b>History</b> — every past version is retrievable</li>
+          <li><b>Collaboration</b> — many people, one project, no overwrites</li>
+          <li><b>Revert</b> — go back to the last known-good version</li>
+        </ul>
+      </div>
+      <div class="note" style="font-size:22px"><b>The village archive</b> <span class="lab re">analogy</span>:
+      every shinobi carries a <b>complete copy of the archive</b> — scrolls and all. The
+      village hall keeps the shared copy. <b>The analogy is the on-ramp; the machinery
+      is real:</b> Mission G-1 put a full clone on all three machines
+      <span class="lab pr">verified</span> — <code>git log</code> showed the same history everywhere.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction + Glossary</b> (VCS, Distributed System) · verified: 3 clones in Mission G-1</span><span>3 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 4 · GIT VS GITHUB ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">3 · Git versus GitHub</div>
+  <h2>The tool versus the hall</h2>
+  <table class="cmp" style="margin-top:24px">
+    <tr><th></th><th>Git</th><th>GitHub</th></tr>
+    <tr><td><b>What it is</b></td><td>A distributed version control system — tracks changes in source code</td><td>A cloud-based Git repository <b>hosting service</b> for collaboration</td></tr>
+    <tr><td><b>Where it lives</b></td><td>A command-line tool installed <b>on your machine</b></td><td>Accessed via the web — <b>no installation</b></td></tr>
+    <tr><td><b>Focus</b></td><td>Version control and managing code changes</td><td>Hosting, collaboration, and project management</td></tr>
+    <tr><td><b>Maintained by</b></td><td>The Linux community</td><td>Microsoft (since 2018)</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note"><b>The sentence that must survive this slide:</b> <b>Git is the tool;
+    GitHub is a hall that hosts Git repositories.</b> Siblings exist — GitLab, Bitbucket —
+    they all speak Git. In Mission G-1 your squad repo lived on GitHub, but every push,
+    pull, branch, and merge was <b>Git</b> working on your machine. <i>The village analogy:
+    the archive is the system; the hall is where squads share theirs.</i></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction</b> (Git vs GitHub table, verbatim rows)</span><span>4 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 5 · LOCAL VS REMOTE ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">4 · Local repository versus remote repository</div>
+  <h2>Your copy — and the shared one</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="bridge" style="grid-template-columns:1fr">
+      <div class="bcol"><h4>Local repository <span class="small">(glossary)</span></h4>
+        <p class="small">The repository copy stored <b>on your computer</b>. You work and
+        make changes here — with full history, offline.</p></div>
+    </div>
+    <div class="bridge" style="grid-template-columns:1fr">
+      <div class="bcol" style="border:3px solid var(--teal)"><h4 style="color:var(--teal)">Remote repository <span class="small">(glossary)</span></h4>
+        <p class="small">Stored on a server like <b>GitHub</b>, where you and your teammates
+        <b>share</b> commits. The squad's meeting point.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 90px 1fr 90px 1fr; margin-top:26px; align-items:center">
+    <div class="card" style="text-align:center"><h3>Loremaster's machine</h3><p class="small">local repo<br><span class="chip">full history</span></p></div>
+    <div style="text-align:center; font-size:30px; color:var(--teal)">⇄</div>
+    <div class="card" style="text-align:center; border:3px solid var(--teal)"><h3 style="color:var(--teal)">GitHub — squad repo</h3><p class="small">the remote<br><span class="chip">shared history</span></p></div>
+    <div style="text-align:center; font-size:30px; color:var(--teal)">⇄</div>
+    <div class="card" style="text-align:center"><h3>Arena-Master's machine</h3><p class="small">local repo<br><span class="chip">full history</span></p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
+    <div class="note" style="font-size:22px"><b>Mission G-1, Phase 1</b> <span class="lab re">flashback</span>:
+    <b>clone</b> = receiving your own complete village archive — the project <i>and</i> its
+    whole history, not a ZIP of files. That is why all three machines could prove the
+    <b>same short hash</b> with <code>git log -1</code>. A copy of files alone would have had
+    no history to prove.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 1 + Glossary</b> (clone = full history + version-control metadata, unlike a ZIP) · <b>mission_g1 Phase 1</b></span><span>5 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 6 · THE FOUR STAGES (major visual) ================= -->
+<section class="slide" id="s6">
+  <div class="kicker">5 · The basic workflow — four stages</div>
+  <h2>Where every change stands</h2>
+  <div class="f4" style="margin-top:34px">
+    <div class="st"><h4>1 · Working directory</h4><p>Where <b>you edit files</b>. Saved work
+      lives here — and <b>no history has happened yet</b>.</p></div>
+    <div class="op"><div class="a">→</div><div class="t">git add<br><b>stage</b></div></div>
+    <div class="st"><h4>2 · Staging area</h4><p>The <b>prep zone</b>: you choose <i>which</i>
+      changes go into the next commit — the envelope.</p></div>
+    <div class="op"><div class="a">→</div><div class="t">git commit<br><b>record</b></div></div>
+    <div class="st"><h4>3 · Local repository</h4><p><b>Permanent history on your machine.</b>
+      The commit is a checkpoint, with a message and a hash.</p></div>
+    <div class="op"><div class="a">→</div><div class="t">git push<br><b>upload</b></div></div>
+    <div class="st remote"><h4 style="color:var(--teal)">4 · Remote repository</h4><p><b>Shared
+      history on GitHub.</b> Now teammates can <i>pull</i> your checkpoint into their
+      machines.</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:30px">
+    <div class="note"><b>The first three stages live on your computer</b> <span class="lab cw">SG13</span> —
+    only push touches the network. <span class="lab re">Mission G-1 map</span>: working folder →
+    the <b>Staged</b> list in VS Code → <code>git log</code> → the squad repo on GitHub.
+    <i>Analogy: write the scroll · seal the envelope · file the checkpoint · send it to
+    the hall.</i></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2</b> (four stages, first three local) · stage = glossary "prep zone / index"</span><span>6 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 7 · PREDICT SAVE vs STAGE vs COMMIT ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">5 · The four stages — predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> You pressed Ctrl+S. What happened?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>The situation</h3>
+      <p style="font-family:var(--mono); font-size:23px; line-height:1.7">classes.py is
+      <b>open, edited, saved</b>.<br><br>
+      Q1 · What badge does the file show now?<br>
+      Q2 · Has the <b>history</b> moved?<br>
+      Q3 · Has your teammate's machine changed?</p>
+      <p class="small" style="margin-top:14px">Commit to all three answers before the reveal.
+      You lived this in Phase 3 — now say the machinery out loud.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good"><b>Ctrl+S</b> → badge <b>M</b> (modified) — but that only says
+      "changed since the last commit." <b>History has NOT moved.</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal"><b>Click +</b> (stage) → file moves to <b>Staged Changes</b>.
+      Still nothing permanent — the envelope is open.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard"><b>Commit</b> → envelope sealed: a checkpoint <b>in local
+      history</b>, with your message. GitHub still knows nothing.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good"><b>Push</b> → only NOW does the remote — and possibly a
+      teammate — get your checkpoint.</div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="warn"><b>The chain, said once, fully:</b> saving a file is <b>not</b> staging
+    it · staging is <b>not</b> committing · committing is <b>not</b> pushing.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 2–3 + Glossary (stage)</b> · <b>mission_g1 Phase 3</b> (same sequence, live)</span><span>7 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 8 · CORE OPERATIONS ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">6 · The core operations</div>
+  <h2>Six commands, one honest table</h2>
+  <table class="cmp" style="margin-top:22px; font-size:22px">
+    <tr><th>Command</th><th>What it does <span class="lab cw">SG13</span></th><th>Scope</th><th><span class="lab re">G-1</span></th></tr>
+    <tr><td><b>git clone</b></td><td>Creates a complete, fresh local copy of a repository — full history, not a ZIP</td><td>Remote → Local</td><td>Phase 1</td></tr>
+    <tr><td><b>git add</b></td><td>Adds changes from the working directory to the staging area</td><td>Local</td><td>Phase 3 · the +</td></tr>
+    <tr><td><b>git commit</b></td><td>Records a snapshot of <b>staged</b> changes into local history, with a message</td><td>Local</td><td>Phase 3</td></tr>
+    <tr><td><b>git push</b></td><td>Uploads local commits to the remote so others can see them</td><td>Local → Remote</td><td>Phase 3–4</td></tr>
+    <tr><td><b>git pull</b></td><td><b>Fetches</b> remote changes and <b>integrates (merges)</b> them into your local branch</td><td>Remote → Local</td><td>Phase 4–5</td></tr>
+    <tr><td><b>git checkout</b></td><td>Switches branches — or restores a file to a previous state</td><td>Local</td><td>Phase 2 (branching)</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:20px">
+    <div class="flag" style="font-size:21px"><b>Teacher note (modern alternatives):</b>
+    <code>checkout</code> does two different jobs — switch branches and restore files.
+    Modern Git splits them: <code>git switch</code> for branches, <code>git restore</code>
+    for files. VS Code's branch picker and Discard button do these jobs for you.
+    <b>Grade 9 lives in VS Code; the CLI is the map underneath.</b></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2 command table</b> (functions verbatim) · checkout/switch note per SG13 wording review</span><span>8 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 9 · JOURNEY OF ONE CHANGE ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">6 · One change's journey across machines</div>
+  <h2>Follow one edit from your hands to your teammate's game</h2>
+  <div class="grid" style="grid-template-columns:1fr 90px 1fr 90px 1fr; margin-top:26px; align-items:stretch">
+    <div class="card" style="text-align:center">
+      <h3>Your machine</h3>
+      <p class="small" style="font-family:var(--mono)">edit → <b>add</b> → <b>commit</b><br>
+      <span class="chip">local only so far</span></p>
+    </div>
+    <div class="bmid"><div class="a">⇢</div><div class="t">push</div></div>
+    <div class="card" style="text-align:center; border:3px solid var(--teal)">
+      <h3 style="color:var(--teal)">GitHub (remote)</h3>
+      <p class="small">your commit lands in the <b>shared history</b><br>
+      <span class="chip">others can now fetch it</span></p>
+    </div>
+    <div class="bmid"><div class="a">⇠</div><div class="t">teammate pulls</div></div>
+    <div class="card" style="text-align:center">
+      <h3>Teammate's machine</h3>
+      <p class="small">pull = <b>fetch + integrate</b><br>their game changes <b>now</b></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="warn"><b>The law that Grade 9 forgets:</b> pushing does <b>NOT</b> update
+    anyone's computer. The remote holds your checkpoint — a teammate's game changes
+    <b>only when they pull</b>.</div>
+    <div class="note" style="font-size:22px"><b>Fetch vs pull</b> <span class="lab cw">SG13 pull definition</span>:
+    <b>pull = fetch + integrate</b>. Fetch alone just <i>looks</i> — "what's new out there?"
+    (Scout's Phase 2 watch). Pull brings it in and merges it. <span class="lab re">G-1</span>:
+    Arena-Master's game changed in Phase 5 — the moment they <b>pulled</b>, not when the
+    Scout pushed.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 4–5 + Glossary (push, pull)</b> · <b>mission_g1 Phases 4–5</b></span><span>9 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 10 · VS CODE SOURCE CONTROL TOUR ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">7 · Reading VS Code</div>
+  <h2>The Source Control panel — your mission board</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">SOURCE CONTROL        ≡ ⋯</span>
+<span class="c">Message</span> (type, then ✓ Commit)
+<span class="g">lore: Elder warns of the slimes</span>
+
+<span class="c">STAGED CHANGES</span>          <span class="g">A</span>
+  <span class="g">game_config.py</span>
+
+<span class="c">CHANGES</span>                  <span class="c">M  U</span>
+  <span class="s">M</span>  classes.py
+  <span class="d">U</span>  tactics.md
+
+<span class="c">[ ✓ Commit ]   [ ☁ Publish Branch ]</span>
+
+<span class="c">status bar:</span>  <span class="k">main*</span>   1↓ 2↑</pre>
+      <p class="small" style="margin-top:12px">Stylized — open <b>your</b> VS Code next to it
+      and find every piece in the real panel. That matching is the skill.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3><span class="chip">M</span> Modified</h3><p class="small">A file Git
+      already tracks has <b>changed since the last commit</b>. <span class="lab cw">SG13 ILA</span></p></div>
+      <div class="card" style="border:3px solid var(--amber)"><h3><span class="chip" style="background:var(--amber-wash)">U</span> Untracked — <b style="color:var(--amber)">a new file is U, not M</b></h3>
+      <p class="small">You <i>created</i> a file and saved it: Git sees it, but <b>history has
+      never recorded it</b>. It is Untracked until you stage and commit it.</p></div>
+      <div class="card"><h3><span class="chip">A</span> Added</h3><p class="small">A brand-new file
+      that <b>is staged</b> for the next commit — it moves U → A on the + click.</p></div>
+      <div class="card"><h3>Two lists — the whole point</h3><p class="small"><b>Staged Changes</b>
+      go into the next commit; <b>Changes</b> wait — slide 7's staging area, made
+      visible.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 ILA (M definition)</b> · U/A extension flagged honestly on slide 22 · stylized panel, no screenshots</span><span>10 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 11 · PREDICT UNTRACKED ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">7 · Indicators — predict before you see</div>
+  <h2><span class="pausechip">PREDICT</span> M or U?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>Two files, two stories</h3>
+      <p style="font-family:var(--mono); font-size:23px; line-height:1.8">
+      1 · open <b>classes.py</b> (old friend), change a line, <b>Ctrl+S</b><br>
+      2 · create a <b>brand-new</b> file <b>tactics.md</b>, type, <b>Ctrl+S</b><br><br>
+      What badge does each show — and why?</p>
+      <p class="small" style="margin-top:14px">Both are saved. Both are "changed on disk."
+      Are they the same to Git?</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal"><b>classes.py → M.</b> Git has recorded this file before; it
+      changed <b>since the last commit</b>.</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad" style="border-color:#e4c2bb"><b>tactics.md → U.</b> No version
+      of this file exists in <b>any</b> commit. Saved on disk ≠ in history.
+      <b>New files are U, not M.</b></div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal guard">Stage it → <b>A</b> · Commit → from now on it is
+      <b>tracked</b>: future edits show <b>M</b>.</div>
+      <div class="varr reveal">·</div>
+      <div class="note reveal" style="font-size:21px"><b>Why the badge matters:</b> it tells you
+      <i>where the file stands in the workflow</i> — not what the file contains. The M badge
+      after Ctrl+S is slide 7's truth wearing a visible badge.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: VS Code Git indicator behavior (U/A/M) — verified against VS Code docs behavior · SG13 ILA extended</span><span>11 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 12 · MEETING 1 TAKEAWAYS ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">8 · Meeting 1 — key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>1.</b> A VCS tracks and manages changes;
+      a <b>DVCS gives every developer the full project and its whole history</b> — offline
+      work included.</p></div>
+      <div class="card"><p style="font-size:27px"><b>2.</b> <b>Git is the tool; GitHub is a
+      hall</b> that hosts Git repositories (so are GitLab and Bitbucket).</p></div>
+      <div class="card"><p style="font-size:27px"><b>3.</b> Four stages — working directory →
+      staging → local repository → remote — and the <b>first three live on your
+      machine</b>.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>4.</b> Saving ≠ staging ≠ committing ≠
+      pushing. The <b>M/U/A badges</b> tell you where each file stands.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:27px"><b>5.</b> <b>Push never updates a teammate's machine.</b>
+        Their game changes when they <b>pull</b> — fetch + integrate. You watched this
+        happen in Phase 5.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before Meeting 2</h3>
+      <p class="small">Can you: say which stage a file is in, given only its badge? · explain
+      why a clone is more than a ZIP download? · name the command that moves changes from
+      Staged to history? · say what push does <i>not</i> do?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2 + Glossary</b> · <b>mission_g1 Phases 1–3</b></span><span>12 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 13 · MEETING 2 BRIDGE ================= -->
+<section class="slide" id="s13">
+  <div class="kicker">Meeting 2 · Branching, merging, and collaboration</div>
+  <h1 style="font-size:92px">One history.<br>Many paths.</h1>
+  <p class="sub" style="margin-top:24px; font-size:32px; color:var(--ink)">
+    <b>How developers work independently — without ever losing the main project.</b></p>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:44px">
+    <div class="card">
+      <h3>Already true in Meeting 1</h3>
+      <p class="small">Local repo · remote repo · the four stages · commit–push–pull. Every
+      change so far traveled a <b>single line of history</b> — <code>main</code>.</p>
+    </div>
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">Coming in Meeting 2</h3>
+      <p class="small">Why branches exist · main vs feature · creating and publishing them ·
+      what merging really does · what happens when two shinobi edit the same line · the
+      complete workflow, end to end.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note" style="font-size:23px"><b>Carry this question into the meeting:</b>
+    in Mission G-1, Loremaster and Arena-Master worked at the <b>same time</b> and
+    <b>nobody's game broke</b>. What made that possible?</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 Branching and Merging</b> · <b>mission_g1 Phase 2</b></span><span>13 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 14 · WHY BRANCHES EXIST ================= -->
+<section class="slide" id="s14">
+  <div class="kicker">9 · Why branches exist</div>
+  <h2>Work in private. Land it when it's ready.</h2>
+  <svg viewBox="0 0 1500 300" style="width:100%; margin-top:26px" aria-hidden="true">
+    <line x1="60"  y1="150" x2="1440" y2="150" stroke="#0e7268" stroke-width="8"/>
+    <circle cx="120" cy="150" r="16" fill="#0e7268"/><circle cx="480" cy="150" r="16" fill="#0e7268"/>
+    <circle cx="1020" cy="150" r="16" fill="#0e7268"/><circle cx="1380" cy="150" r="16" fill="#0e7268"/>
+    <path d="M 480 150 C 640 40, 800 40, 960 40" stroke="#96591a" stroke-width="6" fill="none"/>
+    <line x1="960" y1="40" x2="1200" y2="40" stroke="#96591a" stroke-width="6"/>
+    <path d="M 1200 40 C 1300 40, 1340 90, 1380 140" stroke="#96591a" stroke-width="6" fill="none"/>
+    <circle cx="960" cy="40" r="14" fill="#96591a"/><circle cx="1200" cy="40" r="14" fill="#96591a"/>
+    <text x="90" y="200" font-family="monospace" font-size="30" fill="#23211c">main</text>
+    <text x="1000" y="20" font-family="monospace" font-size="30" fill="#96591a">feature/elder-lore</text>
+    <text x="560" y="110" font-family="monospace" font-size="24" fill="#6f6a5c">branch: private work begins</text>
+    <text x="1180" y="90" font-family="monospace" font-size="24" fill="#6f6a5c">merge back</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:22px">
+    <div class="card"><h3>The definition <span class="lab cw">SG13</span></h3>
+      <p class="small">Branching lets developers <b>diverge from the main line and work
+      independently without affecting the main project</b> — features and experiments grow
+      in private.</p></div>
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">You already know the feeling <span class="lab re">G-1 Phase 2</span></h3>
+      <p class="small">On <code>feature/elder-lore</code>, Loremaster edited freely — and
+      <b>main was untouched</b> the whole time. Switch branches and watch the Elder's line
+      change under your feet: <b>that is what a branch is.</b></p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4</b> (branching definition, verbatim intent) · <b>mission_g1 Phase 2</b></span><span>14 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 15 · MAIN VS FEATURE ================= -->
+<section class="slide" id="s15">
+  <div class="kicker">10 · Main branch versus feature branches</div>
+  <h2>The official game — and the training paths</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:28px">
+    <div class="bridge" style="grid-template-columns:1fr">
+      <div class="bcol" style="border:3px solid var(--teal)"><h4 style="color:var(--teal)">main <span class="small">— the village's official game</span></h4>
+        <p class="small">The project's <b>official version</b> <span class="lab cw">SG13</span> —
+        the one the sensei clones, the one that must always run. In Mission G-1, only the
+        <b>Scout</b> touched main, on purpose.</p></div>
+    </div>
+    <div class="bridge" style="grid-template-columns:1fr">
+      <div class="bcol"><h4>feature/… <span class="small">— the training paths</span></h4>
+        <p class="small">Independent lines for <b>new features and fixes</b>
+        <span class="lab cw">SG13</span>. G-1 grew <code>feature/elder-lore</code> and
+        <code>feature/second-slime</code> — in private, from main.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="note"><b>The honest mental model:</b> a branch is <b>just a movable name
+    pointing at a line of work</b> — not a copy of files. That is why creating one is
+    instant and why switching branches changes your folder so dramatically.
+    <i>Naming law: <code>feature/&lt;what-it-does&gt;</code> — the name should tell the next
+    reader what grows there.</i></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (branches, main vs feature)</b> · naming: mission_g1 Phase 2</span><span>15 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 16 · MANAGING BRANCHES ================= -->
+<section class="slide" id="s16">
+  <div class="kicker">10 · Creating, switching, and publishing branches</div>
+  <h2>Grow a path — then let it fly</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="c"># what VS Code does for you</span>
+git switch -c feature/elder-lore  <span class="c"># create+switch</span>
+git switch main                   <span class="c"># go back</span>
+git push -u origin feature/elder-lore
+
+<span class="c"># names you saw in the merge picker</span>
+  feature/elder-lore      <span class="c"># local only</span>
+  origin/feature/second-slime <span class="c"># on GitHub</span></pre>
+      <p class="small" style="margin-top:12px"><b>local vs remote branches:</b> your branch
+      exists on your machine the moment you create it — <b>Publish Branch</b> (the cloud
+      button) sends it to GitHub and creates the <code>origin/…</code> twin. Phase 4's merge
+      picker showed both kinds.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>In VS Code — your actual workflow <span class="lab re">G-1</span></h3>
+        <p class="small">Status bar (bottom-left) → branch name → <b>Create new branch…</b> →
+        type the name → you are there. Switch the same way. <b>Publish Branch</b> after the
+        first commit.</p></div>
+      <div class="card"><h3>Why create from main?</h3>
+        <p class="small">A new branch grows <b>from where you stand</b>. Phase 2 stood on
+        main — so both features carried main's known-good game. <b>Branch from the line you
+        intend to extend.</b></p></div>
+      <div class="flag" style="font-size:21px"><b>Teacher note:</b> <code>checkout</code>
+        historically did switching <i>and</i> restoring; SG13's table says so. Modern,
+        focused verbs: <code>switch</code> (branches), <code>restore</code> (files). See
+        slide 8.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 4 (publish branch, cloud icon) + §1.4</b> · <b>mission_g1 Phases 2–3</b></span><span>16 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 17 · UNDERSTANDING MERGING ================= -->
+<section class="slide" id="s17">
+  <div class="kicker">11 · Understanding merging</div>
+  <h2>Combining completed missions</h2>
+  <svg viewBox="0 0 1500 360" style="width:100%; margin-top:24px" aria-hidden="true">
+    <line x1="60" y1="170" x2="520" y2="170" stroke="#0e7268" stroke-width="8"/>
+    <line x1="1060" y1="170" x2="1440" y2="170" stroke="#0e7268" stroke-width="8"/>
+    <circle cx="180" cy="170" r="15" fill="#0e7268"/><circle cx="520" cy="170" r="15" fill="#0e7268"/>
+    <path d="M 520 170 C 660 60, 780 60, 900 60" stroke="#96591a" stroke-width="6" fill="none"/>
+    <line x1="900" y1="60" x2="1010" y2="60" stroke="#96591a" stroke-width="6"/>
+    <circle cx="955" cy="60" r="13" fill="#96591a"/>
+    <path d="M 520 170 C 660 290, 780 290, 900 290" stroke="#2e6b34" stroke-width="6" fill="none"/>
+    <line x1="900" y1="290" x2="1010" y2="290" stroke="#2e6b34" stroke-width="6"/>
+    <circle cx="955" cy="290" r="13" fill="#2e6b34"/>
+    <path d="M 1010 60 C 1060 100, 1060 140, 1085 165" stroke="#96591a" stroke-width="6" fill="none"/>
+    <path d="M 1010 290 C 1060 250, 1060 210, 1085 178" stroke="#2e6b34" stroke-width="6" fill="none"/>
+    <circle cx="1105" cy="170" r="20" fill="none" stroke="#a13a2e" stroke-width="5"/>
+    <circle cx="1105" cy="170" r="11" fill="#a13a2e"/>
+    <line x1="1130" y1="170" x2="1440" y2="170" stroke="#0e7268" stroke-width="8"/>
+    <text x="90"  y="225" font-family="monospace" font-size="30" fill="#23211c">main</text>
+    <text x="880" y="40"  font-family="monospace" font-size="28" fill="#96591a">feature/elder-lore</text>
+    <text x="820" y="335" font-family="monospace" font-size="28" fill="#2e6b34">feature/second-slime</text>
+    <text x="1100" y="130" font-family="monospace" font-size="24" fill="#a13a2e">merge commit: TWO parents</text>
+  </svg>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:18px">
+    <div class="card"><h3>The definition <span class="lab cw">SG13</span></h3>
+      <p class="small"><b>Merging combines the work of two or more branches into one</b> — the
+      primary way completed features land in the main line. The merge commit has
+      <b>two parents</b>: proof that two histories met.</p></div>
+    <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+      <h3 style="color:var(--green)">The Scout did this twice <span class="lab re">G-1 Phase 4</span></h3>
+      <p class="small">On main: <b>Git: Merge Branch…</b> → <code>origin/feature/elder-lore</code>,
+      then <code>origin/feature/second-slime</code>. Then push — and the graph showed merged
+      lines flowing into one point.</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (merging)</b> · <b>mission_g1 Phase 4</b></span><span>17 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 18 · PREDICT MERGE ≠ WORKING ================= -->
+<section class="slide" id="s18">
+  <div class="kicker">11 · Merging — predict before you trust it</div>
+  <h2><span class="pausechip">PREDICT</span> The merge is clean. Is the game working?</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What Git said</h3>
+      <p style="font-family:var(--mono); font-size:22px; line-height:1.7">
+      Merge made by the 'ort' strategy.<br>
+      chakra check → <span style="color:#a7d78f">Summary: 3 passed, 0 warnings, 0 failures.</span></p>
+      <p style="margin-top:16px; font-size:25px">Commit to your answer: does the game
+      <b>run</b>?</p>
+      <p class="small" style="margin-top:14px">This really happened — ask your sensei for the
+      full Teacher's Tale.</p>
+    </div>
+    <div class="vflow">
+      <div class="vf reveal good">Merge: <b>clean</b> — no conflicts, histories combined</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal good">Chakra check: <b>3 PASS</b> — the doctor saw a healthy file</div>
+      <div class="varr reveal">↓</div>
+      <div class="vf reveal bad">Game: <b>CRASHED</b> — <span class="small" style="font-family:var(--mono)">NameError: name 'WaitAction' is not defined</span>
+      <div class="reveal" style="margin-top:8px; font-size:21px">One word missing from an import line. The check's mock view never walks far — so the broken line never ran <i>during the check</i>.</div></div>
+      <div class="varr reveal">·</div>
+      <div class="warn reveal" style="font-size:22px"><b>The sentence that must survive:</b>
+      a clean merge proves <b>histories combined</b>. It does <b>not</b> prove the application
+      works. <b>Only running the game proves the game.</b></div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g1 Teacher's Tale</b> (mission_g1_teachers_tale_rescue.md) · SG13 understanding made honest</span><span>18 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 19 · TWO DEVELOPERS, ONE LINE ================= -->
+<section class="slide" id="s19">
+  <div class="kicker">12 · What happens when two developers contribute?</div>
+  <h2>Two shinobi, one scroll line</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:20px"><span class="c">same import line, two proposals:</span>
+
+<span class="d">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+from student_starter.classes import (
+    BraveKnight, Elder, <span class="g">GroveElder</span>, Slime)
+<span class="s">=======</span>
+from student_starter.classes import (
+    BraveKnight, Elder, <span class="s">GuardSlime</span>, Slime)
+<span class="d">&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/demo/b</span></pre>
+      <p class="small" style="margin-top:12px">A <b>merge conflict</b>: Git refuses to guess.
+      It shows both versions and asks a human to decide. Resolving is normal, planned
+      work — <b>SG 14 meets one on purpose.</b></p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Why G-1 had none <span class="lab re">design honesty</span></h3>
+        <p class="small">The two shinobi edited <b>two different files</b> — different lines
+        of the same file merge automatically; different files cannot collide on a line.
+        That made conflicts <b>unlikely — not impossible</b>. Off-territory edits can still
+        collide.</p></div>
+      <div class="card"><h3>Not every warning is a conflict</h3>
+        <p class="small">“Please clean your repository working tree before checkout”
+        <span class="lab cw">SG13</span> = <b>uncommitted changes</b> blocking a switch. Nothing
+        is broken — commit or discard, then move. A guard, not a fight.</p></div>
+      <div class="warn" style="font-size:21px"><b>Keep the distinctions separate:</b>
+        uncommitted changes (your envelope is open) ≠ merge conflict (two sealed histories
+        disagree on the same lines).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 5 warning + §1.4</b> · conflict demo &amp; G-1 territory design: mission_g1 documents</span><span>19 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 20 · COMPLETE WORKFLOW ================= -->
+<section class="slide" id="s20">
+  <div class="kicker">13 · The complete workflow, end to end</div>
+  <h2>You have run every arrow of this diagram</h2>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card" style="padding:28px 34px">
+      <p style="font-family:var(--mono); font-size:24px; line-height:2; color:#3c382f">
+      <span class="chip">clone</span> →
+      <span class="chip">branch feature/…</span> →
+      <span class="chip">edit &amp; save</span> →
+      <span class="chip">stage (+)</span> →
+      <span class="chip">commit</span> →
+      <span class="chip">publish / push</span> →
+      <span class="chip" style="background:var(--teal-wash)">integrator: switch main → merge → push</span> →
+      <span class="chip">teammates pull</span> →
+      <span class="chip" style="background:var(--green-wash); border-color:#c4d8bd">RUN THE GAME — verify</span></p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div class="card"><h3>Which arrows did <i>you</i> press? <span class="lab re">G-1</span></h3>
+      <p class="small">Phase 1 clone · Phase 2 branch · Phase 3 stage–commit–publish–push ·
+      Phase 4 Scout's merge · Phase 5 pull + verify. <b>Nobody skipped a station.</b></p></div>
+    <div class="card"><h3>The two honest guards</h3>
+      <p class="small"><b>Fetch vs pull</b> — looking vs bringing home (slide 9). ·
+      <b>Merge vs working</b> — slide 18's law: the last arrow, <i>run the game</i>, is
+      not decoration. It is the only proof.</p></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
+    <div class="note"><b>Say the workflow once, from memory, before the ILA:</b> stage what you
+    choose, commit what you staged, push what you committed, pull what your squad shared —
+    and verify what you pulled.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2–1.4</b> (workflow assembled) · arrows verified in <b>mission_g1 Phases 1–5</b></span><span>20 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 21 · GIT IN THE REAL WORLD ================= -->
+<section class="slide" id="s21">
+  <div class="kicker">14 · Git collaboration in the real world</div>
+  <h2>You just used the professionals' toolbox</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
+    <div class="card">
+      <h3>What teams actually do</h3>
+      <ul class="ticks">
+        <li><b>Branch + review:</b> work lands on main through reviewed proposals —
+        <b>Pull Requests</b> on GitHub (your Meeting 2 map, with a referee step)</li>
+        <li><b>Issues &amp; project boards:</b> the hall's mission board — who does what, and
+        what's broken</li>
+        <li><b>History as a tool:</b> blame, revert, release — "go back to the last
+        known-good version" is a superpower you already own</li>
+      </ul>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
+        <h3 style="color:var(--green)">SG 14 — your squad's next mission</h3>
+        <p class="small">Graduate from merging two planned contributions to <b>reviewing each
+        other's work (PR flow)</b>, meet <b>one real conflict on purpose</b>, and build a team
+        arena — every shinobi's own class file, one shared game_config, a TITLE card on the
+        class <code>/games</code> arcade.</p>
+      </div>
+      <div class="flag" style="font-size:21px"><b>Why this unit matters beyond the grade</b>
+      <span class="lab cw">SG13 closing</span>: a well-structured Git workflow is how modern
+      teams keep <b>efficient collaboration, change tracking, and code quality</b>. Every
+      professional project you will ever touch speaks this language.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Closing/Summary</b> · SG14 preview per curriculum sequence</span><span>21 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 22 · CURRICULUM ALIGNMENT ================= -->
+<section class="slide" id="s22">
+  <div class="kicker">Curriculum alignment</div>
+  <h2>SG13 ↔ this deck ↔ Mission G-1</h2>
+  <table class="cmp" style="margin-top:22px; font-size:22px">
+    <tr><th>SG13 requirement</th><th>Deck slides</th><th>Mission G-1 evidence</th></tr>
+    <tr><td>Importance &amp; benefits of a VCS; terminologies <span class="lab cw">objectives</span></td>
+        <td>2–5, 12</td><td>Three clones, one shared history (Phase 1 hash check) <span class="lab re">direct</span></td></tr>
+    <tr><td>Git vs GitHub; DVCS; local vs remote <span class="lab cw">§ Introduction</span></td>
+        <td>3–5</td><td>Squad repo on GitHub = remote; machines = locals <span class="lab re">direct</span></td></tr>
+    <tr><td>Basic workflow: commit, push, pull from a cloned remote <span class="lab cw">objectives, §1.2–1.3</span></td>
+        <td>6–11, 20</td><td>Phases 1–5, every arrow pressed <span class="lab re">direct</span></td></tr>
+    <tr><td>File indicators in VS Code <span class="lab cw">ILA</span></td>
+        <td>10–11, Appendix A</td><td>M badges in Phase 3; U/A extension flagged below <span class="lab re">direct + extension</span></td></tr>
+    <tr><td>Create, manage, merge branches <span class="lab cw">objectives, §1.4</span></td>
+        <td>14–18</td><td>Two feature branches + Scout merge <span class="lab re">direct</span></td></tr>
+    <tr><td>Setup &amp; configuration <span class="lab cw">§1.1</span></td>
+        <td>Appendix B</td><td>Teacher-prepped (lab env, identity, auth) — individual practice on personal machines</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:18px">
+    <div class="flag" style="font-size:21px"><b>Honest notes:</b>
+    <span class="lab cw">SG13 ILA</span> defines <b>M</b>; this deck extends with
+    <b>U (untracked)</b> and <b>A (added)</b> — an addition, not a correction (slide 11).
+    SG13's <code>checkout</code> row is honored, with <code>switch</code>/<code>restore</code>
+    as teacher notes (slides 8, 16). Conflict resolution is <b>introduced</b> (slide 19),
+    practiced in SG 14.</div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 DLC, objectives, §1.1–1.4, ILA, closing</b></span><span>22 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 23 · KEY TAKEAWAYS ================= -->
+<section class="slide" id="s23">
+  <div class="kicker">15 · Key takeaways</div>
+  <h2>If you remember five sentences</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:34px">
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>1.</b> <b>Saving is not committing.</b>
+      The M badge means "changed since the last commit" — history hasn't moved.</p></div>
+      <div class="card"><p style="font-size:27px"><b>2.</b> <b>Staging chooses, committing
+      records.</b> The Staged list is the envelope; the commit seals it into local
+      history.</p></div>
+      <div class="card"><p style="font-size:27px"><b>3.</b> <b>Committing is not pushing,
+      pushing is not updating.</b> Teammates' machines change only when they pull —
+      fetch + integrate.</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr; gap:18px">
+      <div class="card"><p style="font-size:27px"><b>4.</b> <b>Branches work in private;
+      merges combine in public.</b> A merge commit has two parents — and a clean merge is
+      <i>not</i> proof of a working game.</p></div>
+      <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
+        <p style="font-size:27px"><b>5.</b> <b>Every machine carries the whole history.</b>
+        That is what "distributed" means — and why Mission G-1 could prove the same hash on
+        all three machines.</p></div>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
+    <div class="card"><h3>Check yourself before SG 14</h3>
+      <p class="small">Can you: draw the four stages from memory? · explain U vs M? · say what
+      a merge commit's two parents mean? · name what a pull does that a fetch doesn't? ·
+      say why the final arrow is "run the game"?</p></div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Closing/Summary + Glossary</b> (annotated honestly)</span><span>23 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 24 · APPENDIX A · ILA INDICATORS ================= -->
+<section class="slide" id="s24">
+  <div class="kicker">Appendix A · ILA companion (30 min, non-graded)</div>
+  <h2>VS Code &amp; GitHub indicators — your reference card</h2>
+  <div class="grid" style="grid-template-columns:1.15fr 1fr; margin-top:22px">
+    <div>
+      <table class="cmp" style="font-size:21px">
+        <tr><th>Where</th><th>Indicator</th><th>Meaning</th></tr>
+        <tr><td>Explorer / tab</td><td><span class="chip">M</span></td><td>Modified since last commit</td></tr>
+        <tr><td>Explorer / tab</td><td><span class="chip" style="background:var(--amber-wash)">U</span></td><td>Untracked — new file, never in history</td></tr>
+        <tr><td>Explorer / tab</td><td><span class="chip">A</span></td><td>Added — new file staged for next commit</td></tr>
+        <tr><td>Gutter / minimap</td><td><span class="chip" style="background:#dfeadb">green bar</span></td><td>Lines <b>added</b> since last commit</td></tr>
+        <tr><td>Gutter / minimap</td><td><span class="chip" style="background:#dfe7f0">blue bar</span></td><td>Lines <b>changed</b> since last commit</td></tr>
+        <tr><td>Status bar</td><td><span class="chip">main* · ☁ · 1↓ 2↑</span></td><td>Current branch · unpublished branch · pull/push counts</td></tr>
+      </table>
+      <p class="small" style="margin-top:12px">Verify each in <b>your own</b> VS Code, then
+      submit <b>Section_FamilyName_ILA_Indicators_and_Icons.pdf</b> <span class="lab cw">SG13 ILA</span>.</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>Five GitHub Octicons to know</h3>
+        <p class="small"><b>repo</b> · <b>fork</b> · <b>pull request</b> · <b>issue opened</b> ·
+        <b>star</b> — GitHub's icon set is called <b>Octicons</b> <span class="lab cw">glossary</span>.</p></div>
+      <div class="card"><h3>Editor dot ≠ Git badge</h3>
+        <p class="small">A <b>dot</b> on a tab means <i>unsaved editor changes</i> — an editor
+        fact. <b>M/U/A</b> are Git facts. Two different systems, one window.</p></div>
+      <div class="flag" style="font-size:20px"><b>Honest extension note:</b> SG13's ILA sample
+      lists <b>M</b> only; U and A are added here so the badge story is complete (slide 11).</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 ILA + Glossary (diff editor, minimap, octicons)</b></span><span>24 / 25</span></div>
+</section>
+
+<!-- ================= SLIDE 25 · APPENDIX B · SETUP & CONFIG ================= -->
+<section class="slide" id="s25">
+  <div class="kicker">Appendix B · SG13 §1.1 — setup and configuration</div>
+  <h2>The four steps behind every Git machine</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
+    <div>
+<pre class="code" style="font-size:21px"><span class="c"># 1 · install Git  (git-scm.com)</span>
+<span class="c"># 2 · set your identity — once per machine</span>
+git config --global user.name  <span class="s">"Your Name"</span>
+git config --global user.email <span class="s">"you@example.com"</span>
+<span class="c"># 3 · get a repository</span>
+git clone &lt;url&gt;        <span class="c"># from a remote</span>
+git init               <span class="c"># or start fresh here</span>
+<span class="c"># 4 · connect &amp; explore</span>
+git remote add origin &lt;url&gt;
+git help everyday      <span class="c"># the daily commands</span></pre>
+      <p class="small" style="margin-top:12px">Prerequisites: <b>VS Code</b> installed ·
+      <b>GitHub account</b> — students should claim the
+      <b>GitHub Student Developer Pack</b> (education.github.com/pack).</p>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr">
+      <div class="card"><h3>On the lab machines, this was done <b>for</b> you</h3>
+        <p class="small">Identity, sign-in, and the shared game environment were teacher-prepped
+        before Mission G-1 — that is why your scroll could start at <b>clone</b>. This
+        appendix is your map for <b>your own machine</b>.</p></div>
+      <div class="card"><h3>Why identity matters</h3>
+        <p class="small">Every commit is <b>signed</b> with your name and email — the history
+        records <i>who</i> made each checkpoint. On shared lab machines the identity is the
+        seat's; on your own machine, make it yours.</p></div>
+      <div class="note" style="font-size:21px"><b>SG13's individual practice</b> (clone
+        GitHubRepo, testHello.py: clone → edit → stage → commit → push → edit on GitHub →
+        pull) is exactly Mission G-1's arc, solo. Run it on your personal machine with
+        these four steps as the foundation.</div>
+    </div>
+  </div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.1</b> (steps, prerequisites, GitHub Education, git help) · lab reality: mission_g1_teacher_prep.md</span><span>25 / 25</span></div>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev">←</button>
+  <span id="count">1 / 25</span>
+  <button id="next">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var scaler = document.getElementById('scaler');
+  var cur = 0;
+  function totalReveals(s){ return s ? s.querySelectorAll('.reveal').length : 0; }
+  function shownReveals(s){ return s ? s.querySelectorAll('.reveal.shown').length : 0; }
+  function fit(){
+    var sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    scaler.style.transform = 'scale('+sc+')';
+    scaler.style.left = ((window.innerWidth-1920*sc)/2)+'px';
+    scaler.style.top  = ((window.innerHeight-1080*sc)/2)+'px';
+  }
+  function show(k){
+    cur = Math.max(0, Math.min(slides.length-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===cur); });
+    document.getElementById('count').textContent = (cur+1)+' / '+slides.length;
+    try{ localStorage.setItem('sg13-slide', cur); }catch(e){}
+    location.hash = 's'+(cur+1);
+  }
+  function next(){
+    var s = slides[cur];
+    if (shownReveals(s) < totalReveals(s)){
+      s.querySelectorAll('.reveal:not(.shown)')[0].classList.add('shown');
+      return;
+    }
+    show(cur+1);
+  }
+  function prev(){
+    var s = slides[cur];
+    if (shownReveals(s) > 0){
+      var rs = s.querySelectorAll('.reveal.shown');
+      rs[rs.length-1].classList.remove('shown');
+      return;
+    }
+    show(cur-1);
+  }
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', function(e){
+    if (e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') next();
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') prev();
+    else if (e.key==='Home') show(0);
+    else if (e.key==='End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  var saved = 0;
+  try{ saved = parseInt(localStorage.getItem('sg13-slide')||'0',10)||0; }catch(e){}
+  var h = parseInt((location.hash||'').replace('#s',''),10);
+  if (!isNaN(h) && h>=1 && h<=slides.length) saved = h-1;
+  fit(); show(saved);
+})();
+</script>
+</body>
+</html>
