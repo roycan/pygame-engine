@@ -1,6 +1,6 @@
 # 📋 SQUAD MISSION MANAGEMENT CARD — Project Safari
 
-*(Workshop P-1 · one page per squad · print single-sided)*
+*(Workshop D-5 · one page per squad · print single-sided)*
 
 **Squad:** ______ **Date:** ______
 **Coordinator (Loremaster):** ____________ **Scope Master (Arena-Master):** ____________
@@ -15,7 +15,7 @@
 
 | Field | Our answer |
 | --- | --- |
-| **Problem** | new players wander into the slime's reach blind — the game punishes wandering instead of teaching caution *(S-1's client need, carried forward)* |
+| **Problem** | new players wander into the slime's reach blind — the game punishes wandering instead of teaching caution *(D-4's client need, carried forward)* |
 | **Target users** | ________________________________ |
 | **Cross-disciplinary connection — Biology** | what Biology contributes: predator–prey relationships · population changes over time · reproduction · ecological balance. Our simulation respects these rules because: ________________________________ |
 

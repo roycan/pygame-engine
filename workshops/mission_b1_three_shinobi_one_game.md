@@ -1,6 +1,9 @@
-# 🌀 RogueEdu — MISSION G-1: Three Shinobi, One Shared Game
+# 🌀 RogueEdu — MISSION B-1: Three Shinobi, One Shared Game
 
-*(Workshop 1 · SG 13 · Genin Edition · VS Code Scroll · 30 minutes)*
+*(Mission B-1 · SG 13 · Chūnin Edition · VS Code Scroll · 30 minutes)*
+
+> **-promotion on record—** your squad cleared the C-rank missions, so the village
+> now issues you **chūnin** orders. B-rank work: one shared repository, three hands.
 
 ![The squad — three shinobi, one mission](3-shinobi-squad.png)
 
@@ -255,10 +258,10 @@ running the game proved the mission.**
    ______________________________________________
 
 **Rank earned:** ________  **Sensei stamp:** ________
-*Genin who complete all three evidence categories are mission-ready for SG 14's
+*Chūnin who complete all three evidence categories are mission-ready for SG 14's
 group missions — where the squad meets a real merge conflict, on purpose.*
 
 ---
 
-**Rescue guide & the full Teacher's Tale:** `mission_g1_teachers_tale_rescue.md`
-**Sensei preparation:** `mission_g1_teacher_prep.md` · **Fallback missions:** `mission_g1_fallbacks_ab.md`
+**Rescue guide & the full Teacher's Tale:** `teacher/mission_b1_teachers_tale_rescue.md`
+**Sensei preparation:** `teacher/mission_b1_teacher_prep.md` · **Fallback missions:** `teacher/mission_b1_fallbacks_ab.md`

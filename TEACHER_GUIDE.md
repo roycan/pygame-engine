@@ -150,7 +150,7 @@ The 90-minute workshop worksheet ([`workshops/workshop_01_meet_the_engine.md`](w
 - 🌿 **Personality** — write a new villain AI (a "coward" that moves *away* from the hero; a "berserker" that always charges). Requires a real `if` and real reasoning about `view`.
 - 🌳 **Mini-arena** — compose a new level in `game_config.py`: walls, multiple villains, a chosen win condition.
 
-Assessment is built in: the checker's output, the working game itself, and two reflection pauses (3 questions each) already written into the worksheet. The answer key for teachers lives in the teacher pack at [`plans/workshop_01_teacher_answer_key.md`](plans/workshop_01_teacher_answer_key.md:1) — deliberately NOT in the student handout — with a single tested source of truth in [`tests/fixtures/worksheet_answers.py`](tests/fixtures/worksheet_answers.py:1) (both the key and that fixture are excluded from the student ZIP).
+Assessment is built in: the checker's output, the working game itself, and two reflection pauses (3 questions each) already written into the worksheet. The answer key for teachers lives in the teacher pack at [`plans/workshop_01_teacher_answer_key.md`](plans/workshop_01_teacher_answer_key.md:1) — deliberately NOT in the student handout — with a single tested source of truth in `teacher/worksheet_answers.py` (the key, that fixture and its gate `teacher/test_worksheet.py` are git-ignored — they never reach a clone or the student ZIP).
 
 ---
 

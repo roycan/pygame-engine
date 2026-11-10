@@ -1,4 +1,4 @@
-# 🧪 WORKSHOP L-1 — THE LIBRARY SCROLL: EQUIP THE DATA LAB
+# 🧪 WORKSHOP C-7 — THE LIBRARY SCROLL: EQUIP THE DATA LAB
 
 *SG 17 — Frameworks and Libraries Integration · companion to Activity 3 (Data Visualizer)*
 

@@ -1,4 +1,4 @@
-# 📜 MISSION S-1 — MISSION RECORD (one page per squad)
+# 📜 MISSION D-4 — MISSION RECORD (one page per squad)
 
 **Squad:** ______ **Date:** ______ **Shinobi:** Scribe __________ · User Advocate __________ · Cartographer __________ · (Skeptic __________)
 
@@ -94,7 +94,7 @@ ________________________________________________
 
 ## §5 · WHAT'S NEXT? — *Implementation · Testing · beyond*
 
-1. **Implementation** will use these G-2 skills, in order: change → commit/push → ______ → Stamp Law → ______ → pull → ______.
+1. **Implementation** will use these B-2 skills, in order: change → commit/push → ______ → Stamp Law → ______ → pull → ______.
 2. **Testing:** one test anyone could perform: ____________________________________
 3. **Approach:** finalize the whole blueprint first ⬜ OR build a small piece, playtest, improve ⬜ — because: ____________________________________
 

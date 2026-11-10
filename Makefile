@@ -6,7 +6,7 @@
 .PHONY: test zip smoke
 
 test:
-	venv/bin/pytest -q tests/
+	venv/bin/pytest -q tests/ $(wildcard teacher/*.py)
 	node --test tests/js/*.test.js
 
 zip:

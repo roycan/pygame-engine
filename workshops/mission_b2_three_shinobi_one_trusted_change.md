@@ -1,6 +1,6 @@
-# 🌀 RogueEdu — MISSION G-2: Three Shinobi, One Trusted Change
+# 🌀 RogueEdu — MISSION B-2: Three Shinobi, One Trusted Change
 
-*(Workshop · SG 14 · Genin Edition · VS Code + GitHub scroll · 20 minutes)*
+*(Workshop · SG 14 · Chūnin Edition · VS Code + GitHub scroll · 20 minutes)*
 
 ![The squad — three shinobi, one trusted change](3-shinobi-squad.png)
 
@@ -23,7 +23,7 @@ does a change enter the village game.
 
 ---
 
-**Village laws (carried from G-1):**
+**Village laws (carried from B-1):**
 1. **Predict before you run.** 2. **One change at a time.** 3. **90 seconds stuck →
 raise your hand.** 4. **Write your evidence. Evidence is your rank.**
 5. **"You decide. The engine acts."** — and a **Pull Request is a request, not a pull**:
@@ -32,7 +32,7 @@ it changes nothing until reviewed, merged, and pulled.
 **New law for this mission:** a **PR proposes; a review judges; a merge publishes; a
 pull delivers.** Four different acts — never collapse them into one.
 
-**Shell Law:** VS Code first, exactly like G-1. Git Bash only at the ⚖️ marks.
+**Shell Law:** VS Code first, exactly like B-1. Git Bash only at the ⚖️ marks.
 Today one more door opens: the **GitHub web page** for pull requests. Same village,
 different gate.
 
@@ -207,6 +207,6 @@ decision. Review checks both.
 | 2 | **Review evidence** — the quoted WARN + the Request-changes comment + the stamp | Arena-Master |
 | 3 | **Game verification** — green chakra on main + the 6-damage bite, observed | Scout |
 
-**Rescue guide & drills:** `mission_g2_teachers_tale_rescue.md` ·
-**ILA — The Conflicting Scrolls:** `mission_g2_ila_conflicting_scrolls.md` ·
-**Sensei prep:** `mission_g2_teacher_prep.md`
+**Rescue guide & drills:** `teacher/mission_b2_teachers_tale_rescue.md` ·
+**ILA — The Conflicting Scrolls:** `mission_b2_ila_conflicting_scrolls.md` ·
+**Sensei prep:** `teacher/mission_b2_teacher_prep.md`

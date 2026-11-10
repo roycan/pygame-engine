@@ -2,41 +2,66 @@
 
 > **Name:** ______________________    **Section:** ____________    **Date:** ____________
 
-**You will need:** the `rogue_edu_workshop` folder, VS Code, and 90 curious minutes.
+**You will need:** Python 3, VS Code, and Git for Windows installed — plus 90 curious minutes.
 **You will build:** your own video-game villain — with a personality *you* designed.
+(No tools yet? Section 0 installs all three, once, on this machine.)
 
 ---
 
-## 0) Setup on Windows (15 min)
+## 0) Setup on Windows (20 min)
 
-Do these once, in order. Check each box as you go.
+Three tools, then the files. Do it once, in order. Check each box as you go.
 
-- [ ] 1. Get `rogue_edu_workshop.zip` from your teacher (Google Classroom or USB). Save it in **Documents**.
-- [ ] 2. Right-click the ZIP → **Extract All** → **Extract**. You now have a `rogue_edu_workshop` folder.
-- [ ] 3. If Python is not installed yet: go to **python.org/downloads**, run the installer, and — this is the step everyone misses — **tick the box that says "Add python.exe to PATH"** before clicking Install.
-- [ ] 4. Open **VS Code** → **File → Open Folder…** → choose the `rogue_edu_workshop` folder. (Optional but nice: install the *Python* extension when VS Code offers it.)
-- [ ] 5. Open a terminal in VS Code (**Ctrl+`**) and run these two commands, one at a time:
+**Part A — install the three tools**
+
+- [ ] A1. **Python 3** — go to **python.org/downloads**, run the installer, and — this is the step everyone misses — **tick the box that says "Add python.exe to PATH"** before clicking Install.
+- [ ] A2. **VS Code** — go to **code.visualstudio.com**, download the Windows installer, accept the defaults. Say yes when it offers the *Python* extension.
+- [ ] A3. **Git for Windows** — go to **git-scm.com/download-win**, accept the defaults and leave the **Git Bash** option ticked. Git Bash is this course's terminal: every git command you ever run here runs in Git Bash, not in PowerShell.
+- [ ] A4. Prove all three installed. Open **Git Bash** from the Start menu (the prompt must show `MINGW64 … $`) and run these one at a time:
+
+       git --version
+       python --version
+       code --version
+
+  Each must print a version number. `'…' is not recognized` → that tool did not finish installing → raise your hand.
+
+**Part B — get the files**
+
+- [ ] B1. **Option A — clone with git (recommended):** in Git Bash:
+
+       git clone https://github.com/roycan/pygame-engine.git
+       cd pygame-engine
+
+  A public repo clones with no login. (Later in the quarter you will *push* work — that is when a GitHub account matters.)
+- [ ] B2. **Option B — no git today:** get `rogue_edu_workshop.zip` from your teacher (Google Classroom or USB). Save it in **Documents**, right-click the ZIP → **Extract All** → **Extract**. You now have a `rogue_edu_workshop` folder.
+
+**Part C — open it and wake it up**
+
+- [ ] C1. Open **VS Code** → **File → Open Folder…** → the folder you just got (`pygame-engine` if you cloned, `rogue_edu_workshop` if you extracted). (Optional but nice: install the *Python* extension when VS Code offers it.)
+- [ ] C2. Open a terminal in VS Code (**Ctrl+`**) and run these two commands, one at a time:
 
        python -m venv venv
        venv\Scripts\pip install -r requirements.txt
 
-- [ ] 6. Check that your code is healthy:
+- [ ] C3. Check that your code is healthy:
 
        venv\Scripts\python rogue_edu\check_my_class.py
 
   You should see three `[PASS]` lines. If you see `[FAIL]`, raise your hand — do not fix it yet.
-- [ ] 7. Start the game:
+- [ ] C4. Start the game:
 
        venv\Scripts\python rogue_edu\app.py
 
   Then open a browser to **http://127.0.0.1:5000**. You should see a 10x10 board with a hero, walls, an NPC, and a slime.
-- [ ] 8. Remember this loop — you will repeat it all workshop: **edit code → `Ctrl+C` the server → re-run step 7 → refresh the browser.**
+- [ ] C5. Remember this loop — you will repeat it all workshop: **edit code → `Ctrl+C` the server → re-run C4 → refresh the browser.**
 
 **Troubleshooting**
 
 | Problem | Fix |
 | --- | --- |
-| `'python' is not recognized…` | Python was installed without the PATH box. Reinstall (step 3) and tick it. |
+| `'python' is not recognized…` | Python was installed without the PATH box. Reinstall (step A1) and tick it. |
+| `'git' is not recognized…` or the prompt isn't `MINGW64` | Git for Windows is missing, or you opened PowerShell. Open **Git Bash** (step A3) and run it there. |
+| `git clone` asks for a GitHub login | You opened the wrong terminal, or chose Option B. Re-run B1 in **Git Bash** — a public repo needs no login. |
 | Emoji prints as garbage or crashes | Run `set PYTHONUTF8=1` in the same terminal, then try again. |
 | Port already in use | Another `app.py` is still running — find it and `Ctrl+C` it. |
 
@@ -189,7 +214,7 @@ The engine you met today is the same engine the demo dungeon runs on — and tha
 
 | Segment | Minutes | Watch for |
 | --- | --- | --- |
-| 0) Setup | 15 | The PATH checkbox; Extract All creating a nested folder; venv typos. |
+| 0) Setup | 20 | Three `--version` checks first (git/python/code); then the PATH checkbox; Extract All creating a nested folder; venv typos. Seat anyone whose install fails next to a finished machine. |
 | 1) Hook | 5 | Seat struggling installers next to finished ones. |
 | 2) What/Analogies | 5 | Keep it brisk — the code will teach the rest. |
 | 3) ME | 10 | Deliberately set `hp=999` and read the clamp warning aloud. |

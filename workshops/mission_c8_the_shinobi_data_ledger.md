@@ -1,4 +1,4 @@
-# 📜 WORKSHOP D-1 — THE SHINOBI DATA LEDGER: CLEAN BEFORE YOU DECIDE
+# 📜 WORKSHOP C-8 — THE SHINOBI DATA LEDGER: CLEAN BEFORE YOU DECIDE
 
 *SG 18 — Introduction to Data Handling · companion practice for Learning Resource 2 and
 Activity 2 (Data Cleaning and Summarizing)*
@@ -44,12 +44,12 @@ supplied file, three TODOs to complete, one cleaned file to defend.
 3. **90 seconds stuck → raise your hand.** (Any shinobi may call it; the Audit Officer
    tracks which rescue card fired.)
 4. **Evidence is your rank.**
-5. **NEW — The raw ledger is READ-ONLY.** `mission_d1_missions_raw.json` is opened with
+5. **NEW — The raw ledger is READ-ONLY.** `mission_c8_missions_raw.json` is opened with
    `"r"` only. Cleaning produces a **new** file; the source never changes. If the raw
    file could rewrite itself, nobody could ever audit what you did.
 6. **NEW — Flag, don't guess.** A record that looks wrong gets **reported with its
    reason**, never silently dropped and never "first one wins". When the data is
-   ambiguous, the answer is *human review* — the same honesty as G-2's review stamps.
+   ambiguous, the answer is *human review* — the same honesty as B-2's review stamps.
 
 ---
 
@@ -79,7 +79,7 @@ mission with no team? Is `" OPEN "` the same status as `"open"`?)
 
 ## PHASE 1 · INSPECT THE SCROLL (4 min)
 
-1. In VS Code, open the folder that holds **both** files: `mission_d1_missions_raw.json`
+1. In VS Code, open the folder that holds **both** files: `mission_c8_missions_raw.json`
    and the posted template. Open the raw JSON and read the first record.
 2. Type these six lines into a new file **`peek_ledger.py`** and run it (you will meet
 these same lines again inside the full template in Phase 3):
@@ -87,7 +87,7 @@ these same lines again inside the full template in Phase 3):
 ```python
 import json
 
-with open("mission_d1_missions_raw.json", "r") as file:
+with open("mission_c8_missions_raw.json", "r") as file:
     ledger = json.load(file)        # JSON object -> Python dict
 missions = ledger["missions"]       # JSON array  -> Python list of dicts
 print(f"Raw records loaded: {len(missions)}")
@@ -148,10 +148,10 @@ the raw file stays untouched):
 ```python
 import json
 
-# THE SHINOBI DATA LEDGER — cleaning template (Workshop D-1, SG 18)
+# THE SHINOBI DATA LEDGER — cleaning template (Workshop C-8, SG 18)
 # The raw ledger is READ-ONLY: never open it in "w" mode.
 
-RAW_FILE = "mission_d1_missions_raw.json"
+RAW_FILE = "mission_c8_missions_raw.json"
 CLEAN_FILE = "missions_cleaned.json"
 
 # Cleaning rule 5 — approved village names
@@ -264,7 +264,7 @@ reward must still be **`0`**.
 
 1. Confirm the output file exists in the project folder: **`missions_cleaned.json`**
    (check the VS Code Explorer — refresh if you do not see it).
-2. **The READ-ONLY law, verified:** open `mission_d1_missions_raw.json` again — it must
+2. **The READ-ONLY law, verified:** open `mission_c8_missions_raw.json` again — it must
    still contain **all 8 records**, untouched. Your code opens it with `"r"` and only
    `"r"`.
 3. Count the cleaned records in the file: **6** (`101, 102, 103, 105, 106, 107`).
@@ -394,4 +394,4 @@ as mastery.
 
 *All data is fictional: original village and squad names, invented records, no student
 or personal information. This is short formative practice — the graded exercise remains
-SG 18 Activity 1 (Annex A rubric); D-1 does not replace it.*
+SG 18 Activity 1 (Annex A rubric); C-8 does not replace it.*

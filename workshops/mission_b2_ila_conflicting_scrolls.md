@@ -1,6 +1,6 @@
 # 🌀 RogueEdu — ILA: The Conflicting Scrolls
 
-*(Mission G-2 ILA · SG 14 · Genin Edition · 30 minutes · follow-up to the Scroll of Approval)*
+*(Mission B-2 ILA · SG 14 · Chūnin Edition · 30 minutes · follow-up to the Scroll of Approval)*
 
 **Squad:** ______ **Date:** ______ **Recorded by (Scout's ledger):** ______________
 
@@ -26,7 +26,7 @@ verifies. **The roles are the curriculum — take your seat.**
 
 ## 🥷 PHASE 0 — Briefing (2 min)
 
-Today the squad meets the **one thing Mission G-1 promised never to require**: a real
+Today the squad meets the **one thing Mission B-1 promised never to require**: a real
 merge conflict. Two shinobi will edit **the same line of the same file**. The first
 scroll lands; the second **must** conflict. That is not failure — **the conflict is the
 lesson**, and resolving it is a planned, normal act of collaboration.
@@ -58,7 +58,7 @@ marker hold — the first author's or the second's? Why? ______________
 **Both PRs propose better Elder warnings. Both are good. Both cannot land as written —**
 they rewrite the same line of the same file. **This is the only reliable way a conflict
 is born:** genuinely overlapping, incompatible changes. (Two edits to two *different*
-files — like G-1 — never collide on a line.)
+files — like B-1 — never collide on a line.)
 
 ---
 
@@ -178,7 +178,7 @@ and after.
 
 **SG 14 reflection (graded — submit to KHUB):**
 1. Did you experience conflicts? What produced this one?
-2. What steps helped avoid merge conflicts? (Think: G-1's territories.)
+2. What steps helped avoid merge conflicts? (Think: B-1's territories.)
 3. How did code review improve the final result — give one concrete example.
 4. What was challenging about collaborating with Git and GitHub?
 
@@ -189,5 +189,5 @@ data-visualization objective is a sensei decision — see the alignment file.)
 
 ---
 
-**Rescue guide, drills 3–4 & conflict script:** `mission_g2_teachers_tale_rescue.md`
-**Sensei prep:** `mission_g2_teacher_prep.md` · **SG 14 map:** `mission_g2_sg14_alignment.md`
+**Rescue guide, drills 3–4 & conflict script:** `teacher/mission_b2_teachers_tale_rescue.md`
+**Sensei prep:** `teacher/mission_b2_teacher_prep.md` · **SG 14 map:** `teacher/mission_b2_sg14_alignment.md`

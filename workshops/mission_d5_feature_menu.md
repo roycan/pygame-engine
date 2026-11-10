@@ -1,6 +1,6 @@
 # 🌀 PROJECT SAFARI — Feature & Effort-Token Menu (printable)
 
-**Project Safari · Ecosystem Simulation** — for `workshop p-1: Three Shinobi, One Feasible Mission`
+**Project Safari · Ecosystem Simulation** — for `workshop D-5: Three Shinobi, One Feasible Mission`
 
 **How to read effort tokens:** a token is a **relative estimate of work** — a 3-token
 feature takes noticeably more work than a 1-token feature. Tokens are **not hours, not

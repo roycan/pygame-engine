@@ -1,6 +1,6 @@
-# 📜 D-1 DATA RECORD — The Shinobi Data Ledger
+# 📜 C-8 DATA RECORD — The Shinobi Data Ledger
 
-*(Workshop D-1 · one per shinobi · SG 18 practice · short formative evidence — this is
+*(Workshop C-8 · one per shinobi · SG 18 practice · short formative evidence — this is
 NOT the graded SG 18 Activity 1 exercise or its Annex A rubric)*
 
 **Squad:** ______ **Date:** ______ **Class period:** ______

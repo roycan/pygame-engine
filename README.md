@@ -2,11 +2,30 @@
 
 An educational 2D turn-based grid game engine that teaches **Object-Oriented Programming** to Grade 9 students. Students write `Hero`, `Villain` and `NPC` subclasses, assemble a game in a config file, and play it in the browser (Flask + HTML5 Canvas + Bulma).
 
-Full specification: [`plans/prompt_v2.md`](plans/prompt_v2.md) · Execution plan: [`plans/implementation_plan.md`](plans/implementation_plan.md)
-
 **Teaching with it?** The Grade 9 workshop worksheet lives at [`workshops/workshop_01_meet_the_engine.md`](workshops/workshop_01_meet_the_engine.md), and `make zip` builds the student distribution (`dist/rogue_edu_workshop.zip`).
 
 **Deploying it?** The class site runs free on **Render** with GitHub push-to-deploy: fork → PR → merge → the class arcade at `/games` redeploys automatically. Details in [`DEPLOYING.md`](DEPLOYING.md).
+
+## Getting the code (students)
+
+One clone per machine, run from **Git Bash** (never PowerShell):
+
+```bash
+git clone https://github.com/roycan/pygame-engine.git
+cd pygame-engine
+```
+
+A public repo clones with **no login**. If the machine is bare, start at section 0 of [`workshops/workshop_01_meet_the_engine.md`](workshops/workshop_01_meet_the_engine.md) — it installs Python, VS Code and Git for Windows first, then clones.
+
+Prefer no git on day one? `make zip` builds `dist/rogue_edu_workshop.zip`, and that ZIP is handed out instead. And when you need **your own copy to push to**, use GitHub's **Use this template** button rather than forking the teacher's repo.
+
+**Where the teacher material lives:** nowhere in git. `plans/` (answer keys) and `teacher/` (mission prep, SG alignment maps, tale/rescue guides, the worksheet answer gate) are git-ignored, so a clone contains none of it — public or not.
+
+## License & attribution
+
+MIT — see [`LICENSE`](LICENSE). It covers the engine, the teaching materials, and the original artwork in `workshops/`.
+
+RogueEdu is original teaching material. The shinobi/rank theme is an homage used for classroom engagement; this project is **not affiliated with, endorsed by, or licensed from** any anime or manga franchise.
 
 ## Quick start
 

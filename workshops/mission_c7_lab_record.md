@@ -1,6 +1,6 @@
-# 🧪 L-1 LAB RECORD — Equip the Data Lab
+# 🧪 C-7 LAB RECORD — Equip the Data Lab
 
-*(Workshop L-1 · one per shinobi · SG 17 Activity 3 · submit screenshots on the LMS
+*(Workshop C-7 · one per shinobi · SG 17 Activity 3 · submit screenshots on the LMS
 as your sensei directs)*
 
 **Squad:** ______ **Date:** ______ **Class period:** ______

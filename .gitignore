@@ -10,6 +10,10 @@ dist/
 tools/__pycache__/
 curriculum/
 plans/
+# teacher-only material: prep/alignment/tale docs, the worksheet answer
+# layer (test_worksheet.py + worksheet_answers.py). Never tracked, so the
+# public repo students clone contains no teacher answers.
+teacher/
 
 
 # NOTE: package-lock.json is deliberately NOT ignored -- CI runs `npm ci`

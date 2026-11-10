@@ -1,6 +1,6 @@
-# 🌀 RogueEdu — WORKSHOP S-1: The Shinobi's Blueprint Mission
+# 🌀 RogueEdu — WORKSHOP D-4: The Shinobi's Blueprint Mission
 
-*(SG 15 · Fundamentals of the Software Development Life Cycle · Genin Edition · 20 minutes · no code today)*
+*(SG 15 · Fundamentals of the Software Development Life Cycle · Chūnin Edition · 20 minutes · no code today)*
 
 **From Idea to Application.** Today the village does not fight, clone, or merge. Today
 it does what every real software project does **before** any of that: it plans,
@@ -10,7 +10,7 @@ interrogates a client, and draws.
 
 **Squad:** ______ **Date:** ______ **Mission Record page:** ☐ received
 
-**Prerequisites:** G-2 completed (the slime bites for 6; you know the Stamp Law) ·
+**Prerequisites:** B-2 completed (the slime bites for 6; you know the Stamp Law) ·
 Grade 8 wireframing (refreshed, not re-taught) · **one printed Mission Record per squad** ·
 paper grid sheet (or Canva/draw.io if the squad prefers — no new tools, no tutorials).
 
@@ -126,7 +126,7 @@ the ambush, a stat value — **and where**. Then:
 
 ## 🥷 PHASE 4 — What comes next (2 min — all three predict)
 
-1. **Implementation:** the coder who builds your blueprint walks in with G-2's kit.
+1. **Implementation:** the coder who builds your blueprint walks in with B-2's kit.
    Name the order they follow: change → ______ → ______ → Stamp Law → merge → pull →
    and the last arrow: ______.
 2. **Testing:** how would you *test* "the warning is met before the first fight"?
@@ -140,7 +140,7 @@ the ambush, a stat value — **and where**. Then:
 
 **And honestly:** Deployment and Maintenance are real phases too — the SG itself
 delivers them later (CS4). You have lived **implementation, testing, integration, and
-review** in G-1/G-2; you have **not** yet lived deployment or long-term maintenance.
+review** in B-1/B-2; you have **not** yet lived deployment or long-term maintenance.
 
 ---
 
@@ -151,7 +151,7 @@ question, wireframe traceable to requirements. Rank: ______ **Sensei stamp:** __
 
 **Exit line for the ledger:** *We did Planning, Requirements Analysis, and Design.
 Implementation, Testing, Deployment, Maintenance remain — and we know exactly which
-G-2 skills the first of those will use.*
+B-2 skills the first of those will use.*
 
 ---
 ---
@@ -178,12 +178,12 @@ Version B **plus**, in this order:
   record the disagreement.
 - **+3 min: Blueprint swap.** Squads exchange records and review with three questions:
   *is every requirement traceable in the mockup? · is the ambiguity flagged as a
-  question, not guessed away? · would a stranger know what to build?* — G-2's review
+  question, not guessed away? · would a stranger know what to build?* — B-2's review
   skills, in blueprint clothing.
 **Realistic total: 28–30 min. If time collapses, the swap goes first.**
 
 ---
 
 **Sensei prep (verified map/interface reference, Gamekeeper answers, rescue):**
-`mission_s1_teacher_prep.md` · **SG 15/16 connections:** `mission_s1_sg15_alignment.md` ·
-**Record page:** `mission_s1_record.md`
+`teacher/mission_d4_teacher_prep.md` · **SG 15/16 connections:** `teacher/mission_d4_sg15_alignment.md` ·
+**Record page:** `mission_d4_record.md`

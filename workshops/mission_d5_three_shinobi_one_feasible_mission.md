@@ -1,6 +1,6 @@
-# 🌀 RogueEdu — WORKSHOP P-1: Three Shinobi, One Feasible Mission
+# 🌀 RogueEdu — WORKSHOP D-5: Three Shinobi, One Feasible Mission
 
-*(SG 16 · Project Management / Project Proposal · Genin Edition · 20 minutes · no code today)*
+*(SG 16 · Project Management / Project Proposal · Chūnin Edition · 20 minutes · no code today)*
 
 **From Idea to Application — part two: what turns a blueprint into a plan that can
 actually be delivered.**
@@ -10,7 +10,7 @@ actually be delivered.**
 **Squad:** ______ **Date:** ______ **Squad Mission Management Card:** ☐ received
 **Feature menu + token board:** ☐ received
 
-**Prerequisites:** S-1 completed (you planned, distilled requirements, sketched) ·
+**Prerequisites:** D-4 completed (you planned, distilled requirements, sketched) ·
 you know the chakra check · **no computers today** — the mission is decided with
 **words, marks, and tokens**.
 
@@ -63,7 +63,7 @@ department supplies the *rules of the living world* your simulation must respect
 
 ## 🥷 PHASE 1 — The MoSCoW Strike (5 min — Scope Master leads, all decide)
 
-1. Open the **feature menu** (`mission_p1_feature_menu.md`). Each feature is
+1. Open the **feature menu** (`mission_d5_feature_menu.md`). Each feature is
    pre-priced in **effort tokens** — relative work estimates, not hours.
 2. Mark every feature **M / S / C / W**. Start from the value center: feature 1
    (chase rules, 2 tokens) is **Must** — without it there is no predator–prey dynamic.
@@ -184,6 +184,6 @@ first — it is the strongest 3 minutes in the deck of this mission.**
 ---
 
 **Sensei prep (client script, verified arithmetic, rescue):**
-`mission_p1_teacher_prep.md` · **Feature menu:** `mission_p1_feature_menu.md` ·
-**Card:** `mission_p1_squad_mission_management_card.md` ·
-**SG 16 connections:** `mission_p1_sg16_alignment.md`
+`teacher/mission_d5_teacher_prep.md` · **Feature menu:** `mission_d5_feature_menu.md` ·
+**Card:** `mission_d5_squad_mission_management_card.md` ·
+**SG 16 connections:** `teacher/mission_d5_sg16_alignment.md`
