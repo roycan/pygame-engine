@@ -21,11 +21,16 @@ Prefer no git on day one? `make zip` builds `dist/rogue_edu_workshop.zip`, and t
 
 **Where the teacher material lives:** nowhere in git. `plans/` (answer keys) and `teacher/` (mission prep, SG alignment maps, tale/rescue guides, the worksheet answer gate) are git-ignored, so a clone contains none of it — public or not.
 
+
+
+
 ## License & attribution
 
 MIT — see [`LICENSE`](LICENSE). It covers the engine, the teaching materials, and the original artwork in `workshops/`.
 
-RogueEdu is original teaching material. The shinobi/rank theme is an homage used for classroom engagement; this project is **not affiliated with, endorsed by, or licensed from** any anime or manga franchise.
+RogueEdu is original teaching material. The shinobi/rank theme is an homage used for classroom engagement; this project is **not affiliated with, endorsed by, or licensed from** any anime or manga franchise. All trademarks and registered trademarks are property of their respective owners.
+
+
 
 ## Quick start
 
