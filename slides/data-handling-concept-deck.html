@@ -124,13 +124,13 @@
         <b>reliable and meaningful</b> · support data-driven decisions.</p>
       </div>
       <div class="card">
-        <h3>You already lived this <span class="lab re">Mission D-1</span></h3>
+        <h3>You already lived this <span class="lab re">Mission C-8</span></h3>
         <p class="small">The village ledger: 8 records, 1 duplicate, 1 half-empty, three
         spellings of one village. This deck names what you did — and why it mattered.</p>
       </div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 — Introduction to Data Handling</b> (competency, schedule, LR1–2, Activities 1–3) · companion workshop: <b>mission_d1_*</b></span><span>1 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 — Introduction to Data Handling</b> (competency, schedule, LR1–2, Activities 1–3) · companion workshop: <b>mission_c8_*</b></span><span>1 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 2 · FROM TOOLS TO INFORMATION ================= -->
@@ -188,7 +188,7 @@
       </div>
       <div class="note" style="font-size:22px"><span class="pausechip">PREDICT</span>
         Before any code: name one way a school spreadsheet of scores could be wrong in a
-        way the computer would <b>never notice on its own</b>. (Your D-1 prediction had the
+        way the computer would <b>never notice on its own</b>. (Your C-8 prediction had the
         same shape.)</div>
     </div>
   </div>
@@ -421,7 +421,7 @@ Bianca Cruz - Math: 0</span></pre>
       from an empty file.</b> "No data" has two meanings with two very different
       outcomes — a <i>valid structure with zero records</i> loads; a <i>zero-byte file</i>
       is broken JSON and raises. (All three rows executed before this slide shipped.)</div>
-      <div class="warn" style="font-size:22px"><b>Your rescue card R2</b> in Mission D-1
+      <div class="warn" style="font-size:22px"><b>Your rescue card R2</b> in Mission C-8
       said exactly this: <code>JSONDecodeError</code> = syntax error <b>or</b> zero-byte
       file — not a feature, not a warning to ignore.</div>
       <div class="small">Handy probe when a file "isn't there": <code>print(os.getcwd())</code>
@@ -429,7 +429,7 @@ Bianca Cruz - Math: 0</span></pre>
       <code>import os</code>).</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (os.getcwd, Colab folder note) · three empty-cases executed (teacher note B) · <b>mission_d1</b> R2</span><span>10 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR1</b> (os.getcwd, Colab folder note) · three empty-cases executed (teacher note B) · <b>mission_c8</b> R2</span><span>10 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 11 · ACTIVITY 1 INTRO ================= -->
@@ -503,7 +503,7 @@ Bianca Cruz - Math: 0</span></pre>
         <span class="k">if</span> character[<span class="s">"power_level"</span>] >= powerLevel:
             <span class="k">print</span>(f<span class="s">"{character['name']} - {character['power_level']}"</span>)</pre>
       <p class="small" style="margin-top:12px">One loop, one condition, prints only
-      matches — the same selection pattern as D-1's by-rank count, at the method scale.
+      matches — the same selection pattern as C-8's by-rank count, at the method scale.
       <b>Test it twice</b> with different thresholds: results that only work once may be
       an accident.</p>
     </div>
@@ -531,7 +531,7 @@ Bianca Cruz - Math: 0</span></pre>
   <h2>Raw data is not ready data</h2>
   <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:26px">
     <div class="card"><h3>You have already seen this</h3>
-      <p class="small">Mission D-1's village ledger arrived with <b>duplicates, a
+      <p class="small">Mission C-8's village ledger arrived with <b>duplicates, a
       half-empty record, and three spellings of one village</b>. The office could not
       count it as received — and the computer never complained once.</p>
       <p class="small" style="margin-top:10px">The SG's diagnosis: external sources "often
@@ -550,7 +550,7 @@ Bianca Cruz - Math: 0</span></pre>
         from success.)</i></div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Introduction</b> (missing/duplicates/inconsistencies, verbatim) · <b>mission_d1</b> scenario</span><span>14 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Introduction</b> (missing/duplicates/inconsistencies, verbatim) · <b>mission_c8</b> scenario</span><span>14 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 15 · MISSING ≠ ZERO ================= -->
@@ -596,7 +596,7 @@ missing = value <span class="k">is None</span> <span class="k">or</span> (
       counting it twice inflates every total.</p>
 <pre class="code" style="font-size:19px; padding:14px 20px">a == b  →  <span class="out">True</span></pre>
       <p class="small">Safe to <b>remove, keeping one copy</b> — nothing is lost, because
-      nothing differs. Report it: D-1 printed <code>[DUPLICATE] mission 101 — identical
+      nothing differs. Report it: C-8 printed <code>[DUPLICATE] mission 101 — identical
       copy removed</code>.</p></div>
     <div class="card" style="border:3px solid var(--red)"><h3 style="color:var(--red)">Type 2 — same ID, conflicting content</h3>
       <p class="small">Same key, different values: id 1, math 88 <b>vs</b> id 1, math 75.
@@ -604,7 +604,7 @@ missing = value <span class="k">is None</span> <span class="k">or</span> (
 <pre class="code" style="font-size:19px; padding:14px 20px">a == c  →  <span class="out">False</span></pre>
       <p class="small">Never auto-delete and never <b>first-record-wins</b> — that just
       picks an answer for the data. <b>Flag it for human review</b> and keep both until
-      someone decides. D-1's <code>[REVIEW]</code> branch is this rule in code.</p></div>
+      someone decides. C-8's <code>[REVIEW]</code> branch is this rule in code.</p></div>
   </div>
   <div class="grid" style="grid-template-columns:1fr; margin-top:22px">
     <div class="note" style="font-size:23px"><b>The question before any deletion:</b>
@@ -636,7 +636,7 @@ missing = value <span class="k">is None</span> <span class="k">or</span> (
       <b>meaning</b> is quietly wrong. Standardization is how a label earns the right to
       be counted.</p></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> (inconsistency example, verbatim) · D-1 rules 3–5 · all transformations executed</span><span>17 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> (inconsistency example, verbatim) · C-8 rules 3–5 · all transformations executed</span><span>17 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 18 · TRANSFORMING ================= -->
@@ -653,7 +653,7 @@ missing = value <span class="k">is None</span> <span class="k">or</span> (
       <p class="small">Same format everywhere: dates as YYYY-MM-DD, statuses lowercase,
       names trimmed — slide 17's work, generalized.</p></div>
     <div class="card"><h3>Aggregating</h3>
-      <p class="small">Many records → one number: totals, averages, counts. (D-1's
+      <p class="small">Many records → one number: totals, averages, counts. (C-8's
       "open missions by rank" is an aggregation — and why its limit sentence mattered.)</p></div>
     <div class="card"><h3>Reformatting / restructuring</h3>
       <p class="small">One shape → another: split a full name into first/last, pivot a
@@ -694,12 +694,12 @@ missing = value <span class="k">is None</span> <span class="k">or</span> (
     texts blur this (our SG's sentence does; your teacher notes record it). ETL and ELT
     are the two <i>orderings</i>; both have the same three jobs.</div>
     <div class="card"><h3>ILA reflection — answer before Meeting 2</h3>
-      <p class="small">1) Name the stage where <i>your</i> D-1 rules ran — and why.
+      <p class="small">1) Name the stage where <i>your</i> C-8 rules ran — and why.
       2) Why load-before-transform (ELT) can suit exploratory work? 3) Which stage's
       output would you show a client to prove the data is trustworthy — and what would
       you check first?</p></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> ETL sentence corrected per teacher notes E · D-1 Phase 4 "pipeline words" · diagram HTML/SVG</span><span>19 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2</b> ETL sentence corrected per teacher notes E · C-8 Phase 4 "pipeline words" · diagram HTML/SVG</span><span>19 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 20 · ACTIVITY 2 ================= -->
@@ -765,10 +765,10 @@ missing = (<span class="k">any</span>(v <span class="k">is None</span> <span cla
         <b>0 passes</b>: <code>0 → missing? False</code> (executed).</p></div>
       <div class="flag" style="font-size:21px"><b>Also report, don't vanish:</b> whatever
       you skip, <b>print it with its reason</b> — the SG's second modification. An
-      invisible deletion is a decision nobody can audit (D-1's law 6).</div>
+      invisible deletion is a decision nobody can audit (C-8's law 6).</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2 sample line</b> critiqued per teacher notes C · D-1 TODO-1 reference answer · behavior executed</span><span>21 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2 sample line</b> critiqued per teacher notes C · C-8 TODO-1 reference answer · behavior executed</span><span>21 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 22 · FIND REPORT DUPLICATES ================= -->
@@ -789,7 +789,7 @@ seen_ids = {}
             <span class="k">continue</span>          <span class="c"># different data — do NOT pick a winner</span>
     seen_ids[student[<span class="s">"id"</span>]] = student
     cleaned.append(student)</pre>
-      <p class="small" style="margin-top:10px"><i>(The structure D-1 drilled — dict
+      <p class="small" style="margin-top:10px"><i>(The structure C-8 drilled — dict
       equality <code>==</code> decides which branch runs: <code>True</code> = twin,
       <code>False</code> = conflict. Executed both ways.)</i></p>
     </div>
@@ -845,13 +845,13 @@ seen_ids = {}
       <code>x2</code>), one job per block, comments on the <i>decisions</i>. Your
       reviewer is a classmate — and future-you in a month. The Annex A rubric literally
       pays points for this (Good Coding Practices).</p></div>
-    <div class="note" style="font-size:22px"><b>The save rule (D-1's law 5):</b> the
+    <div class="note" style="font-size:22px"><b>The save rule (C-8's law 5):</b> the
     source file stays <b>read-only</b> — clean into a <b>separate</b> output
     (<code>students_cleaned.json</code>). Keeping raw + cleaned side by side is what
     makes the work auditable. <i>(The SG's own workflow has a different, in-place option
     in Activity 3 — teacher notes F explains the choice.)</i></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2/Activity 2</b> (save_raw/save_cleaned split) · D-1 laws 5–6 · Annex A rubric criteria</span><span>23 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 LR2/Activity 2</b> (save_raw/save_cleaned split) · C-8 laws 5–6 · Annex A rubric criteria</span><span>23 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 24 · TRUST BUT VERIFY ================= -->
@@ -861,7 +861,7 @@ seen_ids = {}
   <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
     <div class="card"><h3>Count everything you changed</h3>
       <table class="cmp" style="font-size:22px">
-        <tr><th>Check (D-1's ledger, executed)</th><th>Value</th></tr>
+        <tr><th>Check (C-8's ledger, executed)</th><th>Value</th></tr>
         <tr><td>Raw records read</td><td><b>8</b></td></tr>
         <tr><td>Unique ids present</td><td><b>7</b> (→ 1 duplicate copy)</td></tr>
         <tr><td>Records with missing team</td><td><b>1</b> (→ flagged, excluded)</td></tr>
@@ -884,7 +884,7 @@ seen_ids = {}
       the point.</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> (display removed records) · D-1 Record §4 counts, re-executed this session</span><span>24 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 2</b> (display removed records) · C-8 Record §4 counts, re-executed this session</span><span>24 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 25 · BEYOND ================= -->
@@ -902,7 +902,7 @@ seen_ids = {}
         <li>Same four obligations as today, on data <b>you didn't curate</b></li>
       </ul>
       <p class="small">Note the SG's <code>update_json()</code> writes back <b>in
-      place</b> — know the difference from D-1's save-separate rule, and say which you
+      place</b> — know the difference from C-8's save-separate rule, and say which you
       chose and why (teacher notes F).</p></div>
     <div class="grid" style="grid-template-columns:1fr">
       <div class="card"><h3>Take these with you</h3>
@@ -920,7 +920,7 @@ seen_ids = {}
         parser changes.</p></div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 3</b> (sampler link, four methods, no-shared-source note) · SG 19 preview · D-1 limit sentence</span><span>25 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 18 Activity 3</b> (sampler link, four methods, no-shared-source note) · SG 19 preview · C-8 limit sentence</span><span>25 / 25</span></div>
 </section>
 
 </div></div>

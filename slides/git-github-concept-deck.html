@@ -139,7 +139,7 @@
     </div>
     <div class="grid" style="grid-template-columns:1fr">
       <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
-        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission G-1</span></h3>
+        <h3 style="color:var(--green)">You have already lived this <span class="lab re">Mission B-1</span></h3>
         <p class="small">Three shinobi. Two feature branches. One Scout merge. A pull that
         changed your game. Every slide in this deck points back to something that
         <b>already happened on your machines</b>.</p>
@@ -152,7 +152,7 @@
       </div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 13 – Git Collaboration Tool Part1_FinalSG.md</b> — header, DLC, outline · companion: <b>workshops/mission_g1_*</b></span><span>1 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG 13 – Git Collaboration Tool Part1_FinalSG.md</b> — header, DLC, outline · companion: <b>workshops/mission_b1_*</b></span><span>1 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 2 · THE PROBLEM ================= -->
@@ -182,12 +182,12 @@
     </div>
   </div>
   <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
-    <div class="warn"><b>Mission G-1 without Git</b> <span class="lab re">imagine it</span>: two shinobi
+    <div class="warn"><b>Mission B-1 without Git</b> <span class="lab re">imagine it</span>: two shinobi
     editing one folder — one careless <b>Save</b> erases a teammate's contribution, and the
     mission fails with no way back. <b>The fix is not "be careful with filenames." The fix is
     a system that remembers every version for you.</b></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction</b> (VCS tracks and manages changes; why use Git) · scenario mirrors <b>mission_g1</b> roles</span><span>2 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction</b> (VCS tracks and manages changes; why use Git) · scenario mirrors <b>mission_b1</b> roles</span><span>2 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 3 · VCS & DVCS ================= -->
@@ -214,11 +214,11 @@
       <div class="note" style="font-size:22px"><b>The village archive</b> <span class="lab re">analogy</span>:
       every shinobi carries a <b>complete copy of the archive</b> — scrolls and all. The
       village hall keeps the shared copy. <b>The analogy is the on-ramp; the machinery
-      is real:</b> Mission G-1 put a full clone on all three machines
+      is real:</b> Mission B-1 put a full clone on all three machines
       <span class="lab pr">verified</span> — <code>git log</code> showed the same history everywhere.</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction + Glossary</b> (VCS, Distributed System) · verified: 3 clones in Mission G-1</span><span>3 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 § Introduction + Glossary</b> (VCS, Distributed System) · verified: 3 clones in Mission B-1</span><span>3 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 4 · GIT VS GITHUB ================= -->
@@ -235,7 +235,7 @@
   <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
     <div class="note"><b>The sentence that must survive this slide:</b> <b>Git is the tool;
     GitHub is a hall that hosts Git repositories.</b> Siblings exist — GitLab, Bitbucket —
-    they all speak Git. In Mission G-1 your squad repo lived on GitHub, but every push,
+    they all speak Git. In Mission B-1 your squad repo lived on GitHub, but every push,
     pull, branch, and merge was <b>Git</b> working on your machine. <i>The village analogy:
     the archive is the system; the hall is where squads share theirs.</i></div>
   </div>
@@ -266,13 +266,13 @@
     <div class="card" style="text-align:center"><h3>Arena-Master's machine</h3><p class="small">local repo<br><span class="chip">full history</span></p></div>
   </div>
   <div class="grid" style="grid-template-columns:1fr; margin-top:24px">
-    <div class="note" style="font-size:22px"><b>Mission G-1, Phase 1</b> <span class="lab re">flashback</span>:
+    <div class="note" style="font-size:22px"><b>Mission B-1, Phase 1</b> <span class="lab re">flashback</span>:
     <b>clone</b> = receiving your own complete village archive — the project <i>and</i> its
     whole history, not a ZIP of files. That is why all three machines could prove the
     <b>same short hash</b> with <code>git log -1</code>. A copy of files alone would have had
     no history to prove.</div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 1 + Glossary</b> (clone = full history + version-control metadata, unlike a ZIP) · <b>mission_g1 Phase 1</b></span><span>5 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 1 + Glossary</b> (clone = full history + version-control metadata, unlike a ZIP) · <b>mission_b1 Phase 1</b></span><span>5 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 6 · THE FOUR STAGES (major visual) ================= -->
@@ -295,7 +295,7 @@
   </div>
   <div class="grid" style="grid-template-columns:1fr; margin-top:30px">
     <div class="note"><b>The first three stages live on your computer</b> <span class="lab cw">SG13</span> —
-    only push touches the network. <span class="lab re">Mission G-1 map</span>: working folder →
+    only push touches the network. <span class="lab re">Mission B-1 map</span>: working folder →
     the <b>Staged</b> list in VS Code → <code>git log</code> → the squad repo on GitHub.
     <i>Analogy: write the scroll · seal the envelope · file the checkpoint · send it to
     the hall.</i></div>
@@ -336,7 +336,7 @@
     <div class="warn"><b>The chain, said once, fully:</b> saving a file is <b>not</b> staging
     it · staging is <b>not</b> committing · committing is <b>not</b> pushing.</div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 2–3 + Glossary (stage)</b> · <b>mission_g1 Phase 3</b> (same sequence, live)</span><span>7 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 2–3 + Glossary (stage)</b> · <b>mission_b1 Phase 3</b> (same sequence, live)</span><span>7 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 8 · CORE OPERATIONS ================= -->
@@ -344,7 +344,7 @@
   <div class="kicker">6 · The core operations</div>
   <h2>Six commands, one honest table</h2>
   <table class="cmp" style="margin-top:22px; font-size:22px">
-    <tr><th>Command</th><th>What it does <span class="lab cw">SG13</span></th><th>Scope</th><th><span class="lab re">G-1</span></th></tr>
+    <tr><th>Command</th><th>What it does <span class="lab cw">SG13</span></th><th>Scope</th><th><span class="lab re">B-1</span></th></tr>
     <tr><td><b>git clone</b></td><td>Creates a complete, fresh local copy of a repository — full history, not a ZIP</td><td>Remote → Local</td><td>Phase 1</td></tr>
     <tr><td><b>git add</b></td><td>Adds changes from the working directory to the staging area</td><td>Local</td><td>Phase 3 · the +</td></tr>
     <tr><td><b>git commit</b></td><td>Records a snapshot of <b>staged</b> changes into local history, with a message</td><td>Local</td><td>Phase 3</td></tr>
@@ -390,11 +390,11 @@
     <b>only when they pull</b>.</div>
     <div class="note" style="font-size:22px"><b>Fetch vs pull</b> <span class="lab cw">SG13 pull definition</span>:
     <b>pull = fetch + integrate</b>. Fetch alone just <i>looks</i> — "what's new out there?"
-    (Scout's Phase 2 watch). Pull brings it in and merges it. <span class="lab re">G-1</span>:
+    (Scout's Phase 2 watch). Pull brings it in and merges it. <span class="lab re">B-1</span>:
     Arena-Master's game changed in Phase 5 — the moment they <b>pulled</b>, not when the
     Scout pushed.</div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 4–5 + Glossary (push, pull)</b> · <b>mission_g1 Phases 4–5</b></span><span>9 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 steps 4–5 + Glossary (push, pull)</b> · <b>mission_b1 Phases 4–5</b></span><span>9 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 10 · VS CODE SOURCE CONTROL TOUR ================= -->
@@ -499,7 +499,7 @@
       why a clone is more than a ZIP download? · name the command that moves changes from
       Staged to history? · say what push does <i>not</i> do?</p></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2 + Glossary</b> · <b>mission_g1 Phases 1–3</b></span><span>12 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2 + Glossary</b> · <b>mission_b1 Phases 1–3</b></span><span>12 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 13 · MEETING 2 BRIDGE ================= -->
@@ -523,10 +523,10 @@
   </div>
   <div class="grid" style="grid-template-columns:1fr; margin-top:26px">
     <div class="note" style="font-size:23px"><b>Carry this question into the meeting:</b>
-    in Mission G-1, Loremaster and Arena-Master worked at the <b>same time</b> and
+    in Mission B-1, Loremaster and Arena-Master worked at the <b>same time</b> and
     <b>nobody's game broke</b>. What made that possible?</div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 Branching and Merging</b> · <b>mission_g1 Phase 2</b></span><span>13 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 Branching and Merging</b> · <b>mission_b1 Phase 2</b></span><span>13 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 14 · WHY BRANCHES EXIST ================= -->
@@ -552,12 +552,12 @@
       independently without affecting the main project</b> — features and experiments grow
       in private.</p></div>
     <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
-      <h3 style="color:var(--green)">You already know the feeling <span class="lab re">G-1 Phase 2</span></h3>
+      <h3 style="color:var(--green)">You already know the feeling <span class="lab re">B-1 Phase 2</span></h3>
       <p class="small">On <code>feature/elder-lore</code>, Loremaster edited freely — and
       <b>main was untouched</b> the whole time. Switch branches and watch the Elder's line
       change under your feet: <b>that is what a branch is.</b></p></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4</b> (branching definition, verbatim intent) · <b>mission_g1 Phase 2</b></span><span>14 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4</b> (branching definition, verbatim intent) · <b>mission_b1 Phase 2</b></span><span>14 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 15 · MAIN VS FEATURE ================= -->
@@ -568,13 +568,13 @@
     <div class="bridge" style="grid-template-columns:1fr">
       <div class="bcol" style="border:3px solid var(--teal)"><h4 style="color:var(--teal)">main <span class="small">— the village's official game</span></h4>
         <p class="small">The project's <b>official version</b> <span class="lab cw">SG13</span> —
-        the one the sensei clones, the one that must always run. In Mission G-1, only the
+        the one the sensei clones, the one that must always run. In Mission B-1, only the
         <b>Scout</b> touched main, on purpose.</p></div>
     </div>
     <div class="bridge" style="grid-template-columns:1fr">
       <div class="bcol"><h4>feature/… <span class="small">— the training paths</span></h4>
         <p class="small">Independent lines for <b>new features and fixes</b>
-        <span class="lab cw">SG13</span>. G-1 grew <code>feature/elder-lore</code> and
+        <span class="lab cw">SG13</span>. B-1 grew <code>feature/elder-lore</code> and
         <code>feature/second-slime</code> — in private, from main.</p></div>
     </div>
   </div>
@@ -585,7 +585,7 @@
     <i>Naming law: <code>feature/&lt;what-it-does&gt;</code> — the name should tell the next
     reader what grows there.</i></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (branches, main vs feature)</b> · naming: mission_g1 Phase 2</span><span>15 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (branches, main vs feature)</b> · naming: mission_b1 Phase 2</span><span>15 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 16 · MANAGING BRANCHES ================= -->
@@ -608,7 +608,7 @@ git push -u origin feature/elder-lore
       picker showed both kinds.</p>
     </div>
     <div class="grid" style="grid-template-columns:1fr">
-      <div class="card"><h3>In VS Code — your actual workflow <span class="lab re">G-1</span></h3>
+      <div class="card"><h3>In VS Code — your actual workflow <span class="lab re">B-1</span></h3>
         <p class="small">Status bar (bottom-left) → branch name → <b>Create new branch…</b> →
         type the name → you are there. Switch the same way. <b>Publish Branch</b> after the
         first commit.</p></div>
@@ -622,7 +622,7 @@ git push -u origin feature/elder-lore
         slide 8.</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 4 (publish branch, cloud icon) + §1.4</b> · <b>mission_g1 Phases 2–3</b></span><span>16 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 4 (publish branch, cloud icon) + §1.4</b> · <b>mission_b1 Phases 2–3</b></span><span>16 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 17 · UNDERSTANDING MERGING ================= -->
@@ -655,12 +655,12 @@ git push -u origin feature/elder-lore
       primary way completed features land in the main line. The merge commit has
       <b>two parents</b>: proof that two histories met.</p></div>
     <div class="card" style="background:var(--green-wash); border-color:#c4d8bd">
-      <h3 style="color:var(--green)">The Scout did this twice <span class="lab re">G-1 Phase 4</span></h3>
+      <h3 style="color:var(--green)">The Scout did this twice <span class="lab re">B-1 Phase 4</span></h3>
       <p class="small">On main: <b>Git: Merge Branch…</b> → <code>origin/feature/elder-lore</code>,
       then <code>origin/feature/second-slime</code>. Then push — and the graph showed merged
       lines flowing into one point.</p></div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (merging)</b> · <b>mission_g1 Phase 4</b></span><span>17 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.4 + Glossary (merging)</b> · <b>mission_b1 Phase 4</b></span><span>17 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 18 · PREDICT MERGE ≠ WORKING ================= -->
@@ -691,7 +691,7 @@ git push -u origin feature/elder-lore
       works. <b>Only running the game proves the game.</b></div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_g1 Teacher's Tale</b> (mission_g1_teachers_tale_rescue.md) · SG13 understanding made honest</span><span>18 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>mission_b1 Teacher's Tale</b> (teacher/mission_b1_teachers_tale_rescue.md) · SG13 understanding made honest</span><span>18 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 19 · TWO DEVELOPERS, ONE LINE ================= -->
@@ -714,7 +714,7 @@ from student_starter.classes import (
       work — <b>SG 14 meets one on purpose.</b></p>
     </div>
     <div class="grid" style="grid-template-columns:1fr">
-      <div class="card"><h3>Why G-1 had none <span class="lab re">design honesty</span></h3>
+      <div class="card"><h3>Why B-1 had none <span class="lab re">design honesty</span></h3>
         <p class="small">The two shinobi edited <b>two different files</b> — different lines
         of the same file merge automatically; different files cannot collide on a line.
         That made conflicts <b>unlikely — not impossible</b>. Off-territory edits can still
@@ -728,7 +728,7 @@ from student_starter.classes import (
         disagree on the same lines).</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 5 warning + §1.4</b> · conflict demo &amp; G-1 territory design: mission_g1 documents</span><span>19 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.3 step 5 warning + §1.4</b> · conflict demo &amp; B-1 territory design: mission_b1 documents</span><span>19 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 20 · COMPLETE WORKFLOW ================= -->
@@ -750,7 +750,7 @@ from student_starter.classes import (
     </div>
   </div>
   <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:24px">
-    <div class="card"><h3>Which arrows did <i>you</i> press? <span class="lab re">G-1</span></h3>
+    <div class="card"><h3>Which arrows did <i>you</i> press? <span class="lab re">B-1</span></h3>
       <p class="small">Phase 1 clone · Phase 2 branch · Phase 3 stage–commit–publish–push ·
       Phase 4 Scout's merge · Phase 5 pull + verify. <b>Nobody skipped a station.</b></p></div>
     <div class="card"><h3>The two honest guards</h3>
@@ -763,7 +763,7 @@ from student_starter.classes import (
     choose, commit what you staged, push what you committed, pull what your squad shared —
     and verify what you pulled.</div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2–1.4</b> (workflow assembled) · arrows verified in <b>mission_g1 Phases 1–5</b></span><span>20 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.2–1.4</b> (workflow assembled) · arrows verified in <b>mission_b1 Phases 1–5</b></span><span>20 / 25</span></div>
 </section>
 
 <!-- ================= SLIDE 21 · GIT IN THE REAL WORLD ================= -->
@@ -802,9 +802,9 @@ from student_starter.classes import (
 <!-- ================= SLIDE 22 · CURRICULUM ALIGNMENT ================= -->
 <section class="slide" id="s22">
   <div class="kicker">Curriculum alignment</div>
-  <h2>SG13 ↔ this deck ↔ Mission G-1</h2>
+  <h2>SG13 ↔ this deck ↔ Mission B-1</h2>
   <table class="cmp" style="margin-top:22px; font-size:22px">
-    <tr><th>SG13 requirement</th><th>Deck slides</th><th>Mission G-1 evidence</th></tr>
+    <tr><th>SG13 requirement</th><th>Deck slides</th><th>Mission B-1 evidence</th></tr>
     <tr><td>Importance &amp; benefits of a VCS; terminologies <span class="lab cw">objectives</span></td>
         <td>2–5, 12</td><td>Three clones, one shared history (Phase 1 hash check) <span class="lab re">direct</span></td></tr>
     <tr><td>Git vs GitHub; DVCS; local vs remote <span class="lab cw">§ Introduction</span></td>
@@ -850,7 +850,7 @@ from student_starter.classes import (
       <i>not</i> proof of a working game.</p></div>
       <div class="card" style="background:var(--teal-wash); border-color:#bcd8d1">
         <p style="font-size:27px"><b>5.</b> <b>Every machine carries the whole history.</b>
-        That is what "distributed" means — and why Mission G-1 could prove the same hash on
+        That is what "distributed" means — and why Mission B-1 could prove the same hash on
         all three machines.</p></div>
     </div>
   </div>
@@ -918,7 +918,7 @@ git help everyday      <span class="c"># the daily commands</span></pre>
     <div class="grid" style="grid-template-columns:1fr">
       <div class="card"><h3>On the lab machines, this was done <b>for</b> you</h3>
         <p class="small">Identity, sign-in, and the shared game environment were teacher-prepped
-        before Mission G-1 — that is why your scroll could start at <b>clone</b>. This
+        before Mission B-1 — that is why your scroll could start at <b>clone</b>. This
         appendix is your map for <b>your own machine</b>.</p></div>
       <div class="card"><h3>Why identity matters</h3>
         <p class="small">Every commit is <b>signed</b> with your name and email — the history
@@ -926,11 +926,11 @@ git help everyday      <span class="c"># the daily commands</span></pre>
         seat's; on your own machine, make it yours.</p></div>
       <div class="note" style="font-size:21px"><b>SG13's individual practice</b> (clone
         GitHubRepo, testHello.py: clone → edit → stage → commit → push → edit on GitHub →
-        pull) is exactly Mission G-1's arc, solo. Run it on your personal machine with
+        pull) is exactly Mission B-1's arc, solo. Run it on your personal machine with
         these four steps as the foundation.</div>
     </div>
   </div>
-  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.1</b> (steps, prerequisites, GitHub Education, git help) · lab reality: mission_g1_teacher_prep.md</span><span>25 / 25</span></div>
+  <div class="foot"><span>© 2026 Sir Roy · </span><span class="src">source: <b>SG13 §1.1</b> (steps, prerequisites, GitHub Education, git help) · lab reality: teacher/mission_b1_teacher_prep.md</span><span>25 / 25</span></div>
 </section>
 
 </div></div>
