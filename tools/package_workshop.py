@@ -27,6 +27,7 @@ INCLUDED_TOP_LEVEL = (
     "workshops",
     ".gitignore",
     "README.md",
+    "STUDENT_TRIAGE_CARD.md",
     "DEPLOYING.md",
     "requirements.txt",
     "pytest.ini",

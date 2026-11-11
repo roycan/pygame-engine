@@ -24,8 +24,10 @@ scripts and teachers).
 from __future__ import annotations
 
 import importlib
+import importlib.util
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 from engine.actions import Action, SpeakAction
 from engine.base_classes import Hero, NPC, Villain
@@ -194,6 +196,28 @@ def inspect_classes(module_name: str = "student_starter.classes") -> list[Findin
                 )
             )
 
+        # ---- Inherited state actually present? --------------------------
+        # A constructor that never calls super().__init__() builds just fine
+        # but crashes the engine at registration with a bare AttributeError.
+        # Catch it HERE, in doctor language, before the game ever runs.
+        required_state = ["name", "x", "y"]
+        if base_name in ("Hero", "Villain"):
+            required_state += ["hp", "max_hp", "attack_power"]
+        missing_state = [attr for attr in required_state if not hasattr(instance, attr)]
+        if missing_state:
+            findings.append(
+                Finding(
+                    "FAIL",
+                    "Instance missing required engine state "
+                    f"({'/'.join(missing_state)}). Did you forget to call "
+                    "super().__init__(...) in your constructor?",
+                    "Fix: first line inside your __init__ should be "
+                    "super().__init__('Name', x, y, hp=10, attack_power=3). "
+                    "(NPCs: super().__init__('Name', x, y).)",
+                )
+            )
+            continue  # behaviour tests would only repeat this crash
+
         # ---- Safe behavior test ------------------------------------------
         view = MockSafeGameView()
         if base_name == "Villain":
@@ -345,6 +369,39 @@ def _title_findings(game_config_module: str) -> list[Finding]:
     ]
 
 
+def _stale_import_findings(game_config_module: str) -> list[Finding]:
+    """Catch the #1 copy-the-template trap: the pair edits THEIR classes.py
+    but game_config.py still imports ``_template.classes`` -- so the arena
+    card looks healthy, plays fine, and silently runs the TEMPLATE code."""
+    try:
+        spec = importlib.util.find_spec(game_config_module)
+    except (ImportError, AttributeError, ValueError):
+        return []  # an unimportable config is already reported elsewhere
+    if spec is None or not spec.origin or not spec.origin.endswith(".py"):
+        return []
+    try:
+        text = Path(spec.origin).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not (stripped.startswith(("from ", "import "))):
+            continue  # import lines only, per the check's contract
+        if "_template.classes" in stripped:
+            return [
+                Finding(
+                    "WARN",
+                    "Stale import detected in game_config.py! You are "
+                    "importing from _template.classes instead of your "
+                    "local classes.py.",
+                    "Your edits to classes.py are being ignored. Fix: "
+                    "point the import at YOUR folder, e.g. "
+                    "from arenas.<your_team>.classes import ...",
+                )
+            ]
+    return []
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     target = _resolve_target(args[0] if args else None)
@@ -354,6 +411,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Checking {classes_target} ...\n")
         findings.extend(inspect_classes(classes_target))
         findings.extend(_title_findings(target))
+        findings.extend(_stale_import_findings(target))
     else:
         print(f"Checking {target} ...\n")
         findings.extend(inspect_classes(target))

@@ -19,6 +19,8 @@ A public repo clones with **no login**. If the machine is bare, start at section
 
 Prefer no git on day one? `make zip` builds `dist/rogue_edu_workshop.zip`, and that ZIP is handed out instead. And when you need **your own copy to push to**, use GitHub's **Use this template** button rather than forking the teacher's repo.
 
+* **Student Triage Card & Arena Modding Guide:** See [`STUDENT_TRIAGE_CARD.md`](STUDENT_TRIAGE_CARD.md) for arena setup steps, canvas rendering boundaries, and quick fixes for common 500 errors and missing `super().__init__()` calls.
+
 **Where the teacher material lives:** nowhere in git. `plans/` (answer keys) and `teacher/` (mission prep, SG alignment maps, tale/rescue guides, the worksheet answer gate) are git-ignored, so a clone contains none of it — public or not.
 
 

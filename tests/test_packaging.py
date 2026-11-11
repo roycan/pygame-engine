@@ -28,6 +28,7 @@ def test_selection_includes_essentials():
         "Makefile",
         "package.json",
         ".gitignore",
+        "STUDENT_TRIAGE_CARD.md",
         "tools/probe_arena.py",
         "rogue_edu/app.py",
         "rogue_edu/engine/core.py",
@@ -47,6 +48,25 @@ def test_selection_includes_essentials():
         "rogue_edu/templates/games.html",
     ):
         assert needed in rel, f"workshop ZIP must include {needed!r}"
+
+
+def test_root_level_files_match_the_shipped_whitelist():
+    """The ZIP's TOP-LEVEL files are an explicit whitelist (103 -> 104 when the
+    triage card was added). Adding a root file means editing INCLUDED_TOP_LEVEL
+    in tools/package_workshop.py on purpose -- and updating this set."""
+    rel = relative_selection()
+    top_level = {path for path in rel if "/" not in path}
+    assert top_level == {
+        ".gitignore",
+        "DEPLOYING.md",
+        "Makefile",
+        "Procfile",
+        "README.md",
+        "STUDENT_TRIAGE_CARD.md",
+        "package.json",
+        "pytest.ini",
+        "requirements.txt",
+    }
 
 
 def test_teacher_answer_layer_never_ships():
