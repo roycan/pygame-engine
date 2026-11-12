@@ -95,6 +95,7 @@ Automated tests cover renderer *logic* via a stub canvas; pixels need eyes. Open
 9. [ ] On a phone-width window the board scales down and stays fully visible (no horizontal scroll).
 10. [ ] The D-pad appears under the board on a touch/small screen and each button moves the hero.
 11. [ ] `/games` shows the starter plus every arena as a card; on a phone the cards stack in one column, and a broken arena shows a yellow "needs fixing" card instead of breaking the menu.
+12. [ ] The log shows the newest turn at the TOP under a "This turn" divider, with older lines below under "Earlier" (no scrolling needed to see what just happened).
 
 ## Project layout
 
@@ -106,7 +107,10 @@ rogue_edu/
 │   ├── view.py        #   SafeGameView: read-only snapshot + difflib typo catcher
 │   └── core.py        #   GameEngine: turn loop, loud validation, turn JSON
 ├── student_starter/   # classes.py (edit me) + game_config.py (compose me)
-├── arenas/            # the class arcade: one folder per pair, _template + sample_pair
+├── arenas/            # the class arcade: one folder per pair (_template + sample_pair
+│                      #   + inferno_drake, a two-phase boss + necromancer_squad,
+│                      #   a multi-wave summoner squad + quest_givers, a questgiver
+│                      #   hierarchy — worked examples; Track 3 rules: TRACK3_VISUAL_SANDBOX.md)
 ├── demos/demo_dungeon/# read-only worked example
 ├── check_my_class.py  # student diagnostic
 ├── app.py             # Flask server (sessions, /api/step, /api/reset)

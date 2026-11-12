@@ -176,7 +176,7 @@ The engine validates every returned action; bad stats are clamped *with a warnin
 Nobody can touch *anyone else*: attack damage is computed from sanitized `attack_power` (0–40) engine-side; movement happens only through validated intents; the `view` given to `act()` carries no reference to any other entity. A student's *own* object is different — `self.x`, `self.hp`, and a `take_damage()` override are ordinary Python the engine never re-checks (Python has convention, not enforcement). That is deliberate: the Heist Lab rows 7–9 turn those "own-object mutations" into the week's deepest lesson. One operational note: an infinite loop in `act()` can hang that student's own server — `Ctrl+C` and fix (triage card).
 
 **"How much do I need to understand before teaching it?"**
-Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by the full automated gate (`make test`, all green), including end-to-end golden scenarios, so its behavior is pinned.
+Read [`rogue_edu/student_starter/classes.py`](rogue_edu/student_starter/classes.py:1) and [`rogue_edu/student_starter/game_config.py`](rogue_edu/student_starter/game_config.py:1) and play the demo dungeon. That is the entire student-facing surface. The engine internals ([`rogue_edu/engine/`](rogue_edu/engine/core.py:1)) you can treat as a black box — it is protected by the full automated gate (`make test`, all green), including end-to-end golden scenarios, so its behavior is pinned. Track 3's surgical amendment — Tier 3a never touches it, Tier 3b is a reviewed opt-in — is defined in [`TRACK3_VISUAL_SANDBOX.md`](TRACK3_VISUAL_SANDBOX.md:1).
 
 **"What does a multi-week unit look like?"**
 Week 1: workshop (`make zip` builds the ready-to-distribute [`dist/rogue_edu_workshop.zip`](tools/package_workshop.py:1); Windows setup walkthrough included). Weeks 2–3: the edit→check→play loop toward a tiered goal. Week 4: deploy to Render, then a play-day where students try each other's games and explain each other's villain AI — explaining the AI *is* the code review.
@@ -192,11 +192,15 @@ Clone it, run `make test` (the whole gate green), run the checker, run `python a
 TEACHER_GUIDE.md            ← you are here
 README.md                   ← quick start + manual visual checklist (incl. mobile points)
 DEPLOYING.md                ← Render + GitHub, step by step
+TRACK3_VISUAL_SANDBOX.md    ← Track 3 rules: visual-sandbox tiers + the black-box amendment
 workshops/                  ← the 90-minute student worksheet (answer key lives in plans/, teacher-only)
 rogue_edu/student_starter/  ← THE two files students edit (Weeks 1–4)
-rogue_edu/arenas/           ← the class arcade: _template + sample_pair + one folder per pair
+rogue_edu/arenas/           ← the class arcade: _template + sample_pair + inferno_drake
+                            ←   (two-phase boss) + necromancer_squad (summoner squad)
+                            ←   + quest_givers (questgiver hierarchy) + one folder per pair
 rogue_edu/demos/            ← read-only worked example (three villain AIs)
-rogue_edu/engine/           ← the black box students never edit (the test gate guards it)
+rogue_edu/engine/           ← the black box students never edit (the test gate guards it;
+                            ←   Track 3 amendment: TRACK3_VISUAL_SANDBOX.md)
 rogue_edu/check_my_class.py ← the code doctor (also checks pair arenas + TITLE)
 Makefile                    ← make test (the gate) · make zip (Workshop 01) · make smoke (live check)
 ```

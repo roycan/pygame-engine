@@ -49,6 +49,11 @@ test('update twice (a refresh) leaves exactly one row per line', () => {
   const rows = document.querySelectorAll('#log-list .log-row');
   assert.equal(rows.length, 3);
   assert.equal(document.querySelectorAll('#log-list .log-row.is-clickable').length, 2);
+  // Dividers must not ghost either: exactly one "This turn" + one "Earlier".
+  const dividers = document.querySelectorAll('#log-list .log-divider');
+  assert.equal(dividers.length, 2);
+  assert.equal(dividers[0].textContent, 'This turn');
+  assert.equal(dividers[1].textContent, 'Earlier');
 });
 
 test('updateDialogue twice with the same payload stays stable', () => {

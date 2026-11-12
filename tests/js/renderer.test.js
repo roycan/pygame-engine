@@ -116,6 +116,23 @@ test('renderLogs renders history + clickable current events + raw JSON inspector
   assert.ok(inspector.textContent.includes('"tile_pos": ['));
 });
 
+test('renderLogs puts the newest turn on top, above older history', () => {
+  game.renderLogs(payload);
+  const items = document.querySelectorAll('#log-list > li');
+  // Order: "This turn" divider, the 2 current events, "Earlier" divider,
+  // then the 1 history line -- newest bulletin first.
+  assert.equal(items.length, 5);
+  assert.equal(items[0].className, 'log-divider');
+  assert.equal(items[0].textContent, 'This turn');
+  assert.equal(items[1].textContent, 'H moves east.');
+  assert.equal(items[2].textContent, 'S waits.');
+  assert.equal(items[3].className, 'log-divider');
+  assert.equal(items[3].textContent, 'Earlier');
+  assert.equal(items[4].textContent, 'an older line');
+  // Dividers are never clickable rows.
+  assert.equal(document.querySelectorAll('#log-list .log-divider.is-clickable').length, 0);
+});
+
 test('clicking a current-turn event row selects it for highlighting', () => {
   const first = document.querySelector('#log-list .log-row.is-clickable');
   first.click();

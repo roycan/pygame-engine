@@ -3,6 +3,9 @@
 Keep this open while you build. **90 seconds stuck → raise your hand.** That's the
 rule, not defeat. Predict before you run; one change at a time; evidence is your rank.
 
+The track's rules — what you may touch, the two tiers, the honest limits — live in
+[`TRACK3_VISUAL_SANDBOX.md`](TRACK3_VISUAL_SANDBOX.md:1).
+
 ---
 
 ## The recipe (once per pair)

@@ -5,6 +5,10 @@ appears automatically as a card on the `/games` menu of the deployed
 class site — no registration, no shared file to edit, no merge conflicts
 on anyone else's code.
 
+Track 3's rules — what you may touch, the two tiers, and the honest
+limits of arena-only work — live in
+[`TRACK3_VISUAL_SANDBOX.md`](../../TRACK3_VISUAL_SANDBOX.md:1).
+
 ## The recipe (start to merged PR)
 
 1. **Copy the template** and rename the folder to your pair (lowercase,
@@ -71,7 +75,29 @@ class Slime(Villain):
 When the class arcade is live, this rule is the difference between
 "works on my screen" and "works on every screen."
 
-## Worked example
+## Worked examples
 
 `sample_pair/` is a finished, merged example (Sir Rosita vs the slime
 twins). Read it before starting — it is a real PR in folder form.
+
+`inferno_drake/` is a second finished example: a two-phase BOSS (the
+Inferno Drake enrages at half hp — its icon flips 🐉→🔥, its damage
+doubles, and the action log renames it "ENRAGED"). Read it when you
+want to see subclassing + internal state + method overriding push a
+villain further than chase-and-bite.
+
+`necromancer_squad/` is a third: a summoner boss that COMMANDS A
+SQUAD. The Necromancer holds a list of SkeletonMinion children and
+raises one buried grave (🦴→💀) every third chant; if the master falls
+first, every grave rises at once in vengeance. Read it for class
+composition, turn counters in internal state, and event-driven
+awakening — plus the honest note about why a true mid-game spawn
+needs an engine feature (the engine is the sole mutator).
+
+`quest_givers/` is the Track 3 flagship: a questgiver HIERARCHY. A
+student-authored `QuestGiver` base runs a quest state machine
+(📜 offered → ⚔️ accepted → ✅ done) and its subclasses — `SlayerQuest`
+(counts dead wired targets) and `PilgrimageQuest` (counts visited wired
+shrines) — override one hook. Read it for the template-method pattern,
+wired-reference composition, and quest status told entirely through
+symbol, name, and dialogue (no engine changes).

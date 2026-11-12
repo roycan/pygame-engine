@@ -131,25 +131,44 @@ function highlightEventTile(tile, ctx, cell) {
 // LOG PANEL -- beginner text by default, raw JSON behind the toggle
 // =====================================================================
 
-/** Past log lines render plain; the CURRENT turn's events are clickable
- * rows carrying data-x/data-y for spatial highlighting. */
+/** Newest turn FIRST: the CURRENT turn's events (clickable rows carrying
+ * data-x/data-y for spatial highlighting) render at the TOP under a
+ * "This turn" divider, with older history below under "Earlier" -- so the
+ * latest action is always in view without scrolling. Within each block the
+ * order stays chronological (hero acts, then villains respond). */
 function renderLogs(payload) {
   const list = typeof document !== "undefined" ? document.getElementById("log-list") : null;
   if (list) {
     list.innerHTML = "";
     const lines = payload.log || [];
-    const eventCount = (payload.events || []).length;
-    lines.slice(0, lines.length - eventCount).forEach(function (line) {
-      appendLogRow(list, line, null);
-    });
-    (payload.events || []).forEach(function (ev) {
-      appendLogRow(list, ev.beginner_text, ev.tile_pos);
-    });
+    const events = payload.events || [];
+    const history = lines.slice(0, lines.length - events.length);
+    if (events.length) {
+      appendDivider(list, "This turn");
+      events.forEach(function (ev) {
+        appendLogRow(list, ev.beginner_text, ev.tile_pos);
+      });
+    }
+    if (history.length) {
+      appendDivider(list, "Earlier");
+      history.forEach(function (line) {
+        appendLogRow(list, line, null);
+      });
+    }
+    list.scrollTop = 0; // keep the newest bulletin in view
   }
   const inspector = typeof document !== "undefined" ? document.getElementById("inspector") : null;
   if (inspector) {
     inspector.textContent = JSON.stringify(payload.events || [], null, 2);
   }
+}
+
+/** A non-clickable section header ("This turn" / "Earlier"). */
+function appendDivider(list, text) {
+  const li = document.createElement("li");
+  li.className = "log-divider";
+  li.textContent = text;
+  list.appendChild(li);
 }
 
 function appendLogRow(list, text, tilePos) {

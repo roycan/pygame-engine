@@ -159,6 +159,41 @@ def test_sample_pair_example_is_discoverable_and_playable(client):
     assert b"Sir Rosita" in page.data
 
 
+def test_inferno_drake_arena_is_discoverable_and_playable(client):
+    """Second real arena: the two-phase boss ships discoverable AND
+    playable -- its hero is embedded on first paint like the starter's."""
+    html = client.get("/games").data.decode("utf-8")
+    assert "Inferno Drake" in html
+    page = client.get("/play/inferno_drake")
+    assert page.status_code == 200
+    assert b"Sir Ashworth" in page.data
+    assert b"Inferno Drake" in page.data
+
+
+def test_necromancer_squad_arena_is_discoverable_and_playable(client):
+    """Third real arena: the multi-wave summoner squad ships discoverable
+    AND playable -- its hero and its buried squad are embedded on load."""
+    html = client.get("/games").data.decode("utf-8")
+    assert "Necromancer" in html
+    page = client.get("/play/necromancer_squad")
+    assert page.status_code == 200
+    assert b"Warden Mora" in page.data
+    assert b"Bone Pile I" in page.data
+    assert b"Necromancer" in page.data
+
+
+def test_quest_givers_arena_is_discoverable_and_playable(client):
+    """Fourth real arena: the Track 3 flagship questgiver hierarchy ships
+    discoverable AND playable -- hero and both questgivers embedded."""
+    html = client.get("/games").data.decode("utf-8")
+    assert "Quest Givers" in html
+    page = client.get("/play/quest_givers")
+    assert page.status_code == 200
+    assert b"Sir Cadan" in page.data
+    assert b"Gravekeeper Vael" in page.data
+    assert b"Sage Elowen" in page.data
+
+
 def test_games_survives_an_arena_with_an_infinite_import_loop(
     client, tmp_path, monkeypatch
 ):
