@@ -40,7 +40,9 @@ def test_dormant_graves_wait_and_can_be_smashed():
     start = pile.position
     pile.take_damage(7)  # one blow: not enough
     assert pile.is_alive()
-    pile.take_damage(7)  # second blow: 8 hp gone
+    pile.take_damage(7)  # second blow: 14 of 15 hp gone
+    assert pile.is_alive()
+    pile.take_damage(7)  # third blow finishes it
     assert not pile.is_alive()  # smashed before it ever woke
 
 

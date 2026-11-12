@@ -75,6 +75,28 @@ class Slime(Villain):
 When the class arcade is live, this rule is the difference between
 "works on my screen" and "works on every screen."
 
+## Is your arena losable? (the balance rule)
+
+A game nobody can lose teaches nobody anything. Before your PR, answer
+three questions honestly:
+
+1. **Does naive play die?** Face-tank everything, ignore the boss's
+   telegraphs — play it badly ON PURPOSE. A careless player must be
+   able to lose. (The play-day is the real test: hand it to someone
+   who hasn't read your code.)
+2. **Does a figured-out strategy win THIN?** The right order — adds
+   first, use cover, respect the enrage — should win with less than a
+   third of your hero's hp left. A comfortable win means the threat
+   was decoration.
+3. **Is the danger countable and telegraphed?** Players must be able
+   to read hp bars and the log's damage numbers and see the hit coming
+   (the Inferno Drake's free-hit enrage turn is the model). Unseen
+   damage isn't difficulty — it's a support ticket.
+
+Difficulty is tiered on purpose: `student_starter` and `sample_pair`
+stay easy (Week 1 success is the design); the creative arenas are
+where the boss bites.
+
 ## Worked examples
 
 `sample_pair/` is a finished, merged example (Sir Rosita vs the slime

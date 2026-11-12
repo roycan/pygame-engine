@@ -33,9 +33,9 @@ from engine.base_classes import Hero, NPC, Villain
 class GraveWarden(Hero):
     """The graveyard's guardian: tough (hp=60), measured (attack_power=7).
 
-    Two blows smash a sleeping bone pile; two blows also fell a risen
-    skeleton. The question this arena asks is not "can you win?" but
-    "in what ORDER?" -- rush the master, or clear the graves first?
+    Three blows smash a sleeping bone pile; three blows also fell a
+    risen skeleton. The question this arena asks is not "can you win?"
+    but "in what ORDER?" -- rush the master, or clear the graves first?
     """
 
     def __init__(self, x, y):
@@ -49,7 +49,7 @@ class SkeletonMinion(Villain):
     """A grave that is ALSO a future soldier -- the squad's rank and file.
 
     Dormant (🦴 Bone Pile): sits still, never fights, but is ALIVE and
-    can be smashed in two blows before it wakes.
+    can be smashed in three blows before it wakes.
 
     Risen (💀 Risen Skeleton): the classic chase-and-bite brain.
 
@@ -60,7 +60,7 @@ class SkeletonMinion(Villain):
     """
 
     def __init__(self, x, y, label="I", master=None):
-        super().__init__(f"Bone Pile {label}", x, y, hp=8, attack_power=3)
+        super().__init__(f"Bone Pile {label}", x, y, hp=15, attack_power=4)
         self.label = label
         self.awake = False  # internal state: the grave's own private flag
         self.master = master  # composition: a reference BACK to the boss
@@ -138,7 +138,7 @@ class GraveKeeper(NPC):
     def interact(self, view):
         return SpeakAction(
             "Two rules, warden. Every THIRD chant, the Necromancer raises "
-            "one bone pile -- smash a sleeping pile in two blows before "
+            "one bone pile -- smash a sleeping pile in three blows before "
             "its turn comes. But if you strike the master down first, "
             "every grave rises AT ONCE, in vengeance. Choose your order."
         )

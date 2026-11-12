@@ -50,7 +50,7 @@ class RestlessDead(Villain):
     """
 
     def __init__(self, x, y):
-        super().__init__("Restless Dead", x, y, hp=12, attack_power=5)
+        super().__init__("Restless Dead", x, y, hp=15, attack_power=7)
 
     def act(self, view):
         dx, dy = view.get_direction_toward_hero(self)
